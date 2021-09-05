@@ -7,5 +7,6 @@ namespace InternetAppProject.Models
 {
     public class Class
     {
+        public int id { get; set; }
     }
 }
