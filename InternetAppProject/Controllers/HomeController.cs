@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace InternetAppProject.Controllers
 {
+
+    // good luck, test push!
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
