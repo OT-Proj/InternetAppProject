@@ -7,10 +7,5 @@ namespace InternetAppProject.Models
 {
     public class Class
     {
-        // this is igor
-        int x;
-        // this is ofek;
-        int y;
     }
 }
-
