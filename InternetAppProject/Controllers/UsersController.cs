@@ -58,6 +58,7 @@ namespace InternetAppProject.Controllers
         {
             if (ModelState.IsValid)
             {
+                user.Create_time = DateTime.Now;
                 _context.Add(user);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -97,6 +98,8 @@ namespace InternetAppProject.Controllers
             {
                 try
                 {
+                    var existing_Data = _context.User.Where(U => U.Id == id).First();
+                    user.Create_time = existing_Data.Create_time;
                     _context.Update(user);
                     await _context.SaveChangesAsync();
                 }

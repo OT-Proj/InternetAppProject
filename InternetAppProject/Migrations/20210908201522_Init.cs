@@ -3,15 +3,39 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace InternetAppProject.Migrations
 {
-    public partial class Mig06 : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "DriveId",
-                table: "Image",
-                type: "int",
-                nullable: true);
+            migrationBuilder.CreateTable(
+                name: "DriveType",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Level = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Max_Capacity = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<int>(type: "int", nullable: false),
+                    Last_change = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DriveType", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tag",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tag", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Drive",
@@ -29,6 +53,30 @@ namespace InternetAppProject.Migrations
                         name: "FK_Drive_DriveType_TypeIdId",
                         column: x => x.TypeIdId,
                         principalTable: "DriveType",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Image",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Data = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    UploadTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EditTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsPublic = table.Column<bool>(type: "bit", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DriveId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Image", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Image_Drive_DriveId",
+                        column: x => x.DriveId,
+                        principalTable: "Drive",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -59,6 +107,30 @@ namespace InternetAppProject.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ImageTag",
+                columns: table => new
+                {
+                    ImagesId = table.Column<int>(type: "int", nullable: false),
+                    TagsId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ImageTag", x => new { x.ImagesId, x.TagsId });
+                    table.ForeignKey(
+                        name: "FK_ImageTag_Image_ImagesId",
+                        column: x => x.ImagesId,
+                        principalTable: "Image",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ImageTag_Tag_TagsId",
+                        column: x => x.TagsId,
+                        principalTable: "Tag",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PurchaseEvent",
                 columns: table => new
                 {
@@ -80,14 +152,19 @@ namespace InternetAppProject.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Drive_TypeIdId",
+                table: "Drive",
+                column: "TypeIdId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Image_DriveId",
                 table: "Image",
                 column: "DriveId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Drive_TypeIdId",
-                table: "Drive",
-                column: "TypeIdId");
+                name: "IX_ImageTag_TagsId",
+                table: "ImageTag",
+                column: "TagsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PurchaseEvent_UserIDId",
@@ -100,24 +177,21 @@ namespace InternetAppProject.Migrations
                 column: "DId",
                 unique: true,
                 filter: "[DId] IS NOT NULL");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Image_Drive_DriveId",
-                table: "Image",
-                column: "DriveId",
-                principalTable: "Drive",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Image_Drive_DriveId",
-                table: "Image");
+            migrationBuilder.DropTable(
+                name: "ImageTag");
 
             migrationBuilder.DropTable(
                 name: "PurchaseEvent");
+
+            migrationBuilder.DropTable(
+                name: "Image");
+
+            migrationBuilder.DropTable(
+                name: "Tag");
 
             migrationBuilder.DropTable(
                 name: "User");
@@ -125,13 +199,8 @@ namespace InternetAppProject.Migrations
             migrationBuilder.DropTable(
                 name: "Drive");
 
-            migrationBuilder.DropIndex(
-                name: "IX_Image_DriveId",
-                table: "Image");
-
-            migrationBuilder.DropColumn(
-                name: "DriveId",
-                table: "Image");
+            migrationBuilder.DropTable(
+                name: "DriveType");
         }
     }
 }
