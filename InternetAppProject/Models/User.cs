@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,8 +21,9 @@ namespace InternetAppProject.Models
 
         public DateTime Create_time { get; set; }
 
+        [ForeignKey("DId")]
         public Drive D { get; set; }
 
-        public IEnumerator<PurchaseEvent> Purchases { get; set; }
+        public IEnumerable<PurchaseEvent> Purchases { get; set; }
     }
 }

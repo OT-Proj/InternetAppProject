@@ -15,5 +15,7 @@ namespace InternetAppProject.Data
         }
         public DbSet<InternetAppProject.Models.DriveType> DriveType { get; set; }
         public DbSet<InternetAppProject.Models.Tag> Tag { get; set; }
+        public DbSet<InternetAppProject.Models.Image> Image { get; set; }
+        public DbSet<InternetAppProject.Models.PurchaseEvent> PurchaseEvent { get; set; }
     }
 }
