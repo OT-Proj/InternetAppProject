@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InternetAppProject.Data;
 using InternetAppProject.Models;
+using System.IO;
 
 namespace InternetAppProject.Controllers
 {
@@ -54,10 +55,20 @@ namespace InternetAppProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Data,UploadTime,EditTime,IsPublic,Description")] Image image)
+        public async Task<IActionResult> Create([Bind("Id,ImageFile,IsPublic,Description")] Image image)
         {
             if (ModelState.IsValid)
             {
+                image.UploadTime = DateTime.Now;
+                image.EditTime = image.UploadTime;
+
+                // converting image from user to format stored in the DB
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    image.ImageFile.CopyTo(ms);
+                    image.Data = ms.ToArray();
+                }
+
                 _context.Add(image);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -86,7 +97,7 @@ namespace InternetAppProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Data,UploadTime,EditTime,IsPublic,Description")] Image image)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ImageFile,IsPublic,Description")] Image image)
         {
             if (id != image.Id)
             {
@@ -97,6 +108,27 @@ namespace InternetAppProject.Controllers
             {
                 try
                 {
+                    var existing_image = _context.Image.Where(img => img.Id == id).First();
+                    if (existing_image == null)
+                    {
+                        return NotFound();
+                    }
+                    if (image.ImageFile != null)
+                    {
+                        // converting image from user to format stored in the DB
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            image.ImageFile.CopyTo(ms);
+                            image.Data = ms.ToArray();
+                        }
+                    }
+                    else
+                    {
+                        // user did not update the image file
+                        image.ImageFile = existing_image.ImageFile;
+                        image.Data = existing_image.Data;
+                    }
+                    image.EditTime = DateTime.Now;
                     _context.Update(image);
                     await _context.SaveChangesAsync();
                 }
