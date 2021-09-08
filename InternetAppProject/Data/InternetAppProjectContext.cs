@@ -14,5 +14,6 @@ namespace InternetAppProject.Data
         {
         }
         public DbSet<InternetAppProject.Models.DriveType> DriveType { get; set; }
+        public DbSet<InternetAppProject.Models.Tag> Tag { get; set; }
     }
 }

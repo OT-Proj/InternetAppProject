@@ -4,14 +4,16 @@ using InternetAppProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace InternetAppProject.Migrations
 {
     [DbContext(typeof(InternetAppProjectContext))]
-    partial class InternetAppProjectContextModelSnapshot : ModelSnapshot
+    [Migration("20210908183840_Mig04")]
+    partial class Mig04
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
