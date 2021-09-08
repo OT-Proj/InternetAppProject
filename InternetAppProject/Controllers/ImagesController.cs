@@ -23,7 +23,8 @@ namespace InternetAppProject.Controllers
         // GET: Images
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Image.ToListAsync());
+            var images = _context.Image.Include(x => x.Tags);
+            return View(await images.ToListAsync());
         }
 
         // GET: Images/Details/5
@@ -34,7 +35,7 @@ namespace InternetAppProject.Controllers
                 return NotFound();
             }
 
-            var image = await _context.Image
+            var image = await _context.Image.Include(x => x.Tags)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (image == null)
             {
@@ -47,6 +48,7 @@ namespace InternetAppProject.Controllers
         // GET: Images/Create
         public IActionResult Create()
         {
+            ViewData["Tags"] = new SelectList(_context.Tag, "Id", nameof(Tag.Name));
             return View();
         }
 
@@ -55,7 +57,7 @@ namespace InternetAppProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ImageFile,IsPublic,Description")] Image image)
+        public async Task<IActionResult> Create([Bind("Id,ImageFile,IsPublic,Description")] Image image, int[] tags)
         {
             if (ModelState.IsValid)
             {
@@ -69,7 +71,11 @@ namespace InternetAppProject.Controllers
                     image.Data = ms.ToArray();
                 }
 
-                _context.Add(image);
+                // add selected tags: get tag objects from DB than add to the new image
+                var t = _context.Tag.Where(tag => tags.Contains(tag.Id));
+                image.Tags = new List<Tag>();
+                ((List<Tag>)image.Tags).AddRange(t); // casting IEnumerable as list
+                _context.Update(image);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -129,6 +135,7 @@ namespace InternetAppProject.Controllers
                         image.Data = existing_image.Data;
                     }
                     image.EditTime = DateTime.Now;
+                    _context.Remove(existing_image);
                     _context.Update(image);
                     await _context.SaveChangesAsync();
                 }

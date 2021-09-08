@@ -87,7 +87,7 @@ namespace InternetAppProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Password,Zip,Credit_card,Visual_mode,Create_time")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Password,Zip,Credit_card,Visual_mode")] User user)
         {
             if (id != user.Id)
             {
@@ -100,6 +100,7 @@ namespace InternetAppProject.Controllers
                 {
                     var existing_Data = _context.User.Where(U => U.Id == id).First();
                     user.Create_time = existing_Data.Create_time;
+                    _context.Remove(existing_Data);
                     _context.Update(user);
                     await _context.SaveChangesAsync();
                 }

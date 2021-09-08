@@ -22,7 +22,8 @@ namespace InternetAppProject.Controllers
         // GET: Tags
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Tag.ToListAsync());
+            var tags = _context.Tag.Include(x => x.Images);
+            return View(await tags.ToListAsync());
         }
 
         // GET: Tags/Details/5
@@ -33,7 +34,7 @@ namespace InternetAppProject.Controllers
                 return NotFound();
             }
 
-            var tag = await _context.Tag
+            var tag = await _context.Tag.Include(x => x.Images)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (tag == null)
             {
