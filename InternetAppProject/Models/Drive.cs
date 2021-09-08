@@ -21,5 +21,5 @@ namespace InternetAppProject.Models
 
     public DriveType TypeId { get; set; }
 
-}
+    }
 }
