@@ -18,7 +18,7 @@ namespace InternetAppProject.Models
 
         public bool Visual_mode { get; set; }
 
-        public DateTime Create_time { get; set};
+        public DateTime Create_time { get; set; }
 
         public Drive D { get; set; }
 
