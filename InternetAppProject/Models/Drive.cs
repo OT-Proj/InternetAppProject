@@ -11,15 +11,15 @@ namespace InternetAppProject.Models
 {
     public class Drive
     {
-    public int Id { get; set; }
+        public int Id { get; set; }
 
-    public int User UserId { get; set; }
+        public User UserId { get; set; }
 
-    public IEnumerable<Image> ImageId { get; set; }
+        public IEnumerable<Image> ImageId { get; set; }
 
-    public int Current_usage { get; set; }
+        public int Current_usage { get; set; }
 
-    public DriveType TypeId { get; set; }
+        public DriveType TypeId { get; set; }
 
-}
+    }
 }

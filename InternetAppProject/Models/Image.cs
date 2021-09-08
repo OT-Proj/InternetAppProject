@@ -10,8 +10,9 @@ namespace InternetAppProject.Models
     public class Image
     {
         public int Id { get; set; }
-        public byte[] Image { get; set; }
+        public byte[] Data { get; set; }
 
+        [NotMapped] //prevents creation of this property in the DB
         public IFormFile ImageFile { get; set; }
 
         public IEnumerable<Tag> Tags { get; set; }

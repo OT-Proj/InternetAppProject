@@ -13,7 +13,6 @@ namespace InternetAppProject.Data
             : base(options)
         {
         }
-
-        public DbSet<InternetAppProject.Models.Class> Class { get; set; }
+        public DbSet<InternetAppProject.Models.DriveType> DriveType { get; set; }
     }
 }
