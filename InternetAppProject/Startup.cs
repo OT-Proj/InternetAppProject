@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using InternetAppProject.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace InternetAppProject
 {
@@ -29,6 +30,13 @@ namespace InternetAppProject
 
             services.AddDbContext<InternetAppProjectContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("InternetAppProjectContext")));
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(
+            options =>
+            {
+                options.LoginPath = "/Users/Login";
+                options.AccessDeniedPath = "/Users/AccessDenied";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,5 +66,7 @@ namespace InternetAppProject
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
+
     }
+
 }
