@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InternetAppProject.Migrations
 {
     [DbContext(typeof(InternetAppProjectContext))]
-    [Migration("20210909165509_update01")]
-    partial class update01
+    [Migration("20210909191642_update")]
+    partial class update
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -220,7 +220,7 @@ namespace InternetAppProject.Migrations
             modelBuilder.Entity("InternetAppProject.Models.Image", b =>
                 {
                     b.HasOne("InternetAppProject.Models.Drive", "DId")
-                        .WithMany("ImageId")
+                        .WithMany("Images")
                         .HasForeignKey("DIdId");
 
                     b.Navigation("DId");
@@ -246,7 +246,7 @@ namespace InternetAppProject.Migrations
 
             modelBuilder.Entity("InternetAppProject.Models.Drive", b =>
                 {
-                    b.Navigation("ImageId");
+                    b.Navigation("Images");
 
                     b.Navigation("UserId");
                 });

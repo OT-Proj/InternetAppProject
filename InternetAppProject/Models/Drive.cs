@@ -15,7 +15,7 @@ namespace InternetAppProject.Models
 
         public User UserId { get; set; }
 
-        public IEnumerable<Image> ImageId { get; set; }
+        public IEnumerable<Image> Images { get; set; }
 
         public int Current_usage { get; set; }
 
