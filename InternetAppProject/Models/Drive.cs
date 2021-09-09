@@ -21,10 +21,5 @@ namespace InternetAppProject.Models
 
         public DriveType TypeId { get; set; }
 
-        
-        //one to many(image->drive)
-        public IEnumerable<Image> Images { get; set; }
-        
-
     }
 }

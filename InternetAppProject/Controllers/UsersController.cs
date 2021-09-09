@@ -16,7 +16,6 @@ namespace InternetAppProject.Controllers
 {
     public class UsersController : Controller
     {
-        private const string User_Id = "User_Id";
         private readonly InternetAppProjectContext _context;
 
         public UsersController(InternetAppProjectContext context)
@@ -25,7 +24,7 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: Users
-        [Authorize(Roles = "Ofek")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.User.ToListAsync());
@@ -65,9 +64,10 @@ namespace InternetAppProject.Controllers
             if (ModelState.IsValid)
             {
                 user.Create_time = DateTime.Now;
+                user.Type = Models.User.UserType.Client;
                 _context.Add(user);
                 await _context.SaveChangesAsync();
-                LoginUser(user.Id.ToString(), user.Name);
+                LoginUser(user.Id.ToString(), user.Type);
                 return RedirectToAction(nameof(Index));
             }
             return View(user);
@@ -86,6 +86,14 @@ namespace InternetAppProject.Controllers
             {
                 return NotFound();
             }
+
+            // make select list out of the user types enum
+            var types = Enum.GetValues(typeof(InternetAppProject.Models.User.UserType)).Cast<InternetAppProject.Models.User.UserType>().Select(v => new SelectListItem
+            {
+                Text = v.ToString(),
+                Value = ((int)v).ToString()
+            }).ToList();
+            ViewData["Types"] = new SelectList(types, "Value", "Text");
             return View(user);
         }
 
@@ -94,7 +102,7 @@ namespace InternetAppProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Password,Zip,Credit_card,Visual_mode")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Password,Type,Zip,Credit_card,Visual_mode")] User user)
         {
             if (id != user.Id)
             {
@@ -168,6 +176,11 @@ namespace InternetAppProject.Controllers
             return View();
         }
 
+        public IActionResult Logout()
+        {
+            return View("index");
+        }
+
         // POST: Users/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -185,7 +198,8 @@ namespace InternetAppProject.Controllers
                 if (q.Count() > 0)
                 {
                     // user is found
-                    LoginUser(q.First().Name, q.First().Name);
+                    LogoutUser();
+                    LoginUser(q.First().Name, q.First().Type);
                     return View("Index",await _context.User.ToListAsync());
                 }
                 else
@@ -200,12 +214,13 @@ namespace InternetAppProject.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
-        private async void LoginUser(string userName, string userType)
+        private async void LoginUser(string userName, InternetAppProject.Models.User.UserType userType)
         {
+            string type = Enum.GetName(typeof(InternetAppProject.Models.User.UserType),userType);
             var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, userName),
-                    new Claim(ClaimTypes.Role, userType),
+                    new Claim(ClaimTypes.Role, type),
                 };
 
             var claimsIdentity = new ClaimsIdentity(
