@@ -66,6 +66,13 @@ namespace InternetAppProject.Controllers
                 user.Create_time = DateTime.Now;
                 user.Type = Models.User.UserType.Client;
                 _context.Add(user);
+
+                // create a new drive for the user
+                Drive d = new Drive();
+                d.UserId = user;
+                d.Current_usage = 0;
+                _context.Add(d);
+
                 await _context.SaveChangesAsync();
                 LoginUser(user.Id.ToString(), user.Type);
                 return RedirectToAction(nameof(Index));
@@ -178,7 +185,8 @@ namespace InternetAppProject.Controllers
 
         public IActionResult Logout()
         {
-            return View("index");
+            LogoutUser();
+            return RedirectToAction("Index", "Home");
         }
 
         // POST: Users/Create
@@ -188,6 +196,7 @@ namespace InternetAppProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([Bind("Name,Password")] User user)
         {
+            LogoutUser();
             if (ModelState.IsValid)
             {
                 var q = from u in _context.User
@@ -198,7 +207,6 @@ namespace InternetAppProject.Controllers
                 if (q.Count() > 0)
                 {
                     // user is found
-                    LogoutUser();
                     LoginUser(q.First().Name, q.First().Type);
                     return View("Index",await _context.User.ToListAsync());
                 }
