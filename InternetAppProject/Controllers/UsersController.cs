@@ -74,7 +74,7 @@ namespace InternetAppProject.Controllers
                 _context.Add(d);
 
                 await _context.SaveChangesAsync();
-                LoginUser(user.Id.ToString(), user.Type);
+                LoginUser(user.Name.ToString(), user.Type);
                 return RedirectToAction(nameof(Index));
             }
             return View(user);
