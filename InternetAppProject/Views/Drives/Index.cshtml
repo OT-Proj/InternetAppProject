@@ -15,6 +15,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.Current_usage)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Images)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -23,6 +29,18 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Current_usage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserId.Name)
+            </td>
+            <td>
+                @if (item.Images != null)
+                {
+                    @foreach (Image image in item.Images)
+                    {
+                        @image.Id
+                    }
+                }
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
