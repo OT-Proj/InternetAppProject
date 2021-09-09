@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using InternetAppProject.Data;
 using InternetAppProject.Models;
 using System.IO;
+using System.Security.Claims;
 
 namespace InternetAppProject.Controllers
 {
@@ -75,6 +76,17 @@ namespace InternetAppProject.Controllers
                 var t = _context.Tag.Where(tag => tags.Contains(tag.Id));
                 image.Tags = new List<Tag>();
                 ((List<Tag>)image.Tags).AddRange(t); // casting IEnumerable as list
+
+
+                // connect image to the currently logged in user's drive
+                var q = from u in _context.User
+                        where u.Name == User.FindFirstValue(ClaimTypes.Name)
+                        select u.D;
+
+                if (q.Count() > 0)
+                {
+                    image.DId = q.First(); // q.First() is the logged in user's drive
+                }
                 _context.Update(image);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

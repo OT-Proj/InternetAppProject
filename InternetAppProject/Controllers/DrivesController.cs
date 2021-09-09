@@ -22,7 +22,8 @@ namespace InternetAppProject.Controllers
         // GET: Drives
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Drive.ToListAsync());
+            var data = _context.Drive.Include(x => x.UserId).Include(x => x.Images);
+            return View(await data.ToListAsync());
         }
 
         // GET: Drives/Details/5
