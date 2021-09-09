@@ -119,6 +119,7 @@ namespace InternetAppProject.Controllers
                     {
                         return NotFound();
                     }
+                    // first check if the user uploaded a new image to replace to old one
                     if (image.ImageFile != null)
                     {
                         // converting image from user to format stored in the DB
@@ -130,11 +131,12 @@ namespace InternetAppProject.Controllers
                     }
                     else
                     {
-                        // user did not update the image file
+                        // user did not update the image file, save the old one instead
                         image.ImageFile = existing_image.ImageFile;
                         image.Data = existing_image.Data;
                     }
                     image.EditTime = DateTime.Now;
+                    image.UploadTime = existing_image.UploadTime;
                     _context.Remove(existing_image);
                     _context.Update(image);
                     await _context.SaveChangesAsync();

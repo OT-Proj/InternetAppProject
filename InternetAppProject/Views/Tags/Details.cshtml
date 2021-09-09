@@ -4,7 +4,7 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>All images tagged as: @Html.DisplayFor(model => model.Name)</h1>
+<h1>All images tagged as: @Html.DisplayFor(model => model.Name)</h1> <br>
 <div class="row">
     @foreach (Image img in Model.Images)
     {
@@ -20,6 +20,7 @@
                     <p class="card-text">@img.Description</p>
                 </div>
             </div>
+            
         }
     }
 </div>
