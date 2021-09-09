@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace InternetAppProject.Migrations
 {
-    public partial class Init : Migration
+    public partial class update01 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -67,15 +67,15 @@ namespace InternetAppProject.Migrations
                     UploadTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EditTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsPublic = table.Column<bool>(type: "bit", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DriveId = table.Column<int>(type: "int", nullable: true)
+                    DIdId = table.Column<int>(type: "int", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Image", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Image_Drive_DriveId",
-                        column: x => x.DriveId,
+                        name: "FK_Image_Drive_DIdId",
+                        column: x => x.DIdId,
                         principalTable: "Drive",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -89,6 +89,7 @@ namespace InternetAppProject.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Type = table.Column<int>(type: "int", nullable: false),
                     Zip = table.Column<int>(type: "int", nullable: false),
                     Credit_card = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Visual_mode = table.Column<bool>(type: "bit", nullable: false),
@@ -157,9 +158,9 @@ namespace InternetAppProject.Migrations
                 column: "TypeIdId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Image_DriveId",
+                name: "IX_Image_DIdId",
                 table: "Image",
-                column: "DriveId");
+                column: "DIdId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ImageTag_TagsId",

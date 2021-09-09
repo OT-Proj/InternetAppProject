@@ -8,10 +8,17 @@ namespace InternetAppProject.Models
 {
     public class User
     {
+        public enum UserType
+        {
+            Client,
+            Admin
+        }
         public int Id { get; set; }
         public string Name { get; set; }
 
         public string Password { get; set; }
+
+        public UserType Type { get; set; }
 
         public int Zip { get; set; }
         

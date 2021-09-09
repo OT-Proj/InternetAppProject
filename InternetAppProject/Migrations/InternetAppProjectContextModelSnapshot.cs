@@ -88,14 +88,14 @@ namespace InternetAppProject.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("DIdId")
+                        .HasColumnType("int");
+
                     b.Property<byte[]>("Data")
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("DriveId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("EditTime")
                         .HasColumnType("datetime2");
@@ -108,7 +108,7 @@ namespace InternetAppProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DriveId");
+                    b.HasIndex("DIdId");
 
                     b.ToTable("Image");
                 });
@@ -173,6 +173,9 @@ namespace InternetAppProject.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Visual_mode")
                         .HasColumnType("bit");
 
@@ -214,15 +217,17 @@ namespace InternetAppProject.Migrations
 
             modelBuilder.Entity("InternetAppProject.Models.Image", b =>
                 {
-                    b.HasOne("InternetAppProject.Models.Drive", null)
+                    b.HasOne("InternetAppProject.Models.Drive", "DId")
                         .WithMany("ImageId")
-                        .HasForeignKey("DriveId");
+                        .HasForeignKey("DIdId");
+
+                    b.Navigation("DId");
                 });
 
             modelBuilder.Entity("InternetAppProject.Models.PurchaseEvent", b =>
                 {
                     b.HasOne("InternetAppProject.Models.User", "UserID")
-                        .WithMany("Purchases")
+                        .WithMany("PurchaseEvents")
                         .HasForeignKey("UserIDId");
 
                     b.Navigation("UserID");
@@ -246,7 +251,7 @@ namespace InternetAppProject.Migrations
 
             modelBuilder.Entity("InternetAppProject.Models.User", b =>
                 {
-                    b.Navigation("Purchases");
+                    b.Navigation("PurchaseEvents");
                 });
 #pragma warning restore 612, 618
         }
