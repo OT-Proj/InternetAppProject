@@ -24,6 +24,7 @@ namespace InternetAppProject.Models
         [ForeignKey("DId")]
         public Drive D { get; set; }
 
-        public IEnumerable<PurchaseEvent> Purchases { get; set; }
+        //one to many
+        public IEnumerable<PurchaseEvent> PurchaseEvents  { get; set; }
     }
 }
