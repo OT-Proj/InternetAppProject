@@ -10,6 +10,7 @@ using InternetAppProject.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InternetAppProject.Controllers
 {
@@ -24,16 +25,9 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: Users
+        [Authorize(Roles = "Ofek")]
         public async Task<IActionResult> Index()
         {
-            var identity = (ClaimsIdentity)User.Identity;
-            User.Claims.Append(new Claim(User_Id, "bla"));
-            Claim id = identity.Claims.FirstOrDefault(c => c.Type == User_Id);
-            ViewData["name"] = "unidentified";
-            if (id != null)
-            {
-                ViewData["name"] = id.Value;
-            }
             return View(await _context.User.ToListAsync());
         }
 
@@ -73,8 +67,7 @@ namespace InternetAppProject.Controllers
                 user.Create_time = DateTime.Now;
                 _context.Add(user);
                 await _context.SaveChangesAsync();
-                LogoutUser();
-                LoginUser(user.Id, user.Name);
+                LoginUser(user.Id.ToString(), user.Name);
                 return RedirectToAction(nameof(Index));
             }
             return View(user);
@@ -169,16 +162,50 @@ namespace InternetAppProject.Controllers
             return _context.User.Any(e => e.Id == id);
         }
 
+        // GET: Users/Create
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        // POST: Users/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login([Bind("Name,Password")] User user)
+        {
+            if (ModelState.IsValid)
+            {
+                var q = from u in _context.User
+                        where u.Name == user.Name &&
+                                u.Password == user.Password
+                        select u;
+
+                if (q.Count() > 0)
+                {
+                    // user is found
+                    LoginUser(q.First().Name, q.First().Name);
+                    return View("Index",await _context.User.ToListAsync());
+                }
+                else
+                {
+                    ViewData["Error"] = "Username/password is incorrect.";
+                }
+            }
+            return View(user);
+        }
+
         private async void LogoutUser()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
-        private async void LoginUser(int id, string username)
+        private async void LoginUser(string userName, string userType)
         {
             var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, username),
-                    new Claim(User_Id, id.ToString()),
+                    new Claim(ClaimTypes.Name, userName),
+                    new Claim(ClaimTypes.Role, userType),
                 };
 
             var claimsIdentity = new ClaimsIdentity(
@@ -186,7 +213,7 @@ namespace InternetAppProject.Controllers
 
             var authProperties = new AuthenticationProperties
             {
-                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10)
+                //ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10)
             };
 
             await HttpContext.SignInAsync(

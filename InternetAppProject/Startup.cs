@@ -9,9 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using InternetAppProject.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
+using InternetAppProject.Data;
 
 namespace InternetAppProject
 {
@@ -30,14 +29,19 @@ namespace InternetAppProject
             services.AddControllersWithViews();
 
             services.AddDbContext<InternetAppProjectContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("InternetAppProjectContext")));
+                options.UseSqlServer(Configuration.GetConnectionString("InternetAppProjectContext")));
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(10);
+            });
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(
-            options =>
-            {
-                options.LoginPath = "/Users/Login";
-                options.AccessDeniedPath = "/Users/AccessDenied";
-            });
+                options =>
+                {
+                    options.LoginPath = "/Users/Login";
+                    options.AccessDeniedPath = "/Users/AccessDenied";
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,6 +62,9 @@ namespace InternetAppProject
 
             app.UseRouting();
 
+            app.UseSession();
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -67,7 +74,5 @@ namespace InternetAppProject
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
-
     }
-
 }
