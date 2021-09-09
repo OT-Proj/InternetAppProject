@@ -218,7 +218,7 @@ namespace InternetAppProject.Migrations
             modelBuilder.Entity("InternetAppProject.Models.Image", b =>
                 {
                     b.HasOne("InternetAppProject.Models.Drive", "DId")
-                        .WithMany("ImageId")
+                        .WithMany("Images")
                         .HasForeignKey("DIdId");
 
                     b.Navigation("DId");
@@ -244,7 +244,7 @@ namespace InternetAppProject.Migrations
 
             modelBuilder.Entity("InternetAppProject.Models.Drive", b =>
                 {
-                    b.Navigation("ImageId");
+                    b.Navigation("Images");
 
                     b.Navigation("UserId");
                 });
