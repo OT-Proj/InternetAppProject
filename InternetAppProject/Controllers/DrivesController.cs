@@ -34,7 +34,7 @@ namespace InternetAppProject.Controllers
                 return NotFound();
             }
 
-            var drive = await _context.Drive
+            var drive = await _context.Drive.Include(d => d.UserId).Include(d => d.Images).ThenInclude(img => img.Tags)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (drive == null)
             {
