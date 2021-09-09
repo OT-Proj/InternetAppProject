@@ -14,6 +14,7 @@ namespace InternetAppProject.Models
 
         [NotMapped] //prevents creation of this property in the DB
         public IFormFile ImageFile { get; set; }
+         
 
         public IEnumerable<Tag> Tags { get; set; }
 
@@ -22,6 +23,9 @@ namespace InternetAppProject.Models
         public DateTime EditTime { get; set; }
 
         public bool IsPublic { get; set; }
+
+        //one to many(Image->Drive)
+        public Drive DId { get; set; }
 
         public string Description { get; set; }
     }

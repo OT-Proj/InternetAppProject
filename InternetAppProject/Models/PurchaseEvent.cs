@@ -13,5 +13,6 @@ namespace InternetAppProject.Models
         public DateTime Time { get; set; }
 
         public int Amount { get; set; }
+
     }
 }
