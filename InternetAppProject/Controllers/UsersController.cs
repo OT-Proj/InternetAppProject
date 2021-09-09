@@ -26,11 +26,13 @@ namespace InternetAppProject.Controllers
         // GET: Users
         public async Task<IActionResult> Index()
         {
-            var id = User.Claims.FirstOrDefault(c => c.Type == User_Id);
+            var identity = (ClaimsIdentity)User.Identity;
+            User.Claims.Append(new Claim(User_Id, "bla"));
+            Claim id = identity.Claims.FirstOrDefault(c => c.Type == User_Id);
             ViewData["name"] = "unidentified";
             if (id != null)
             {
-                ViewData["name"] = User.Claims.FirstOrDefault(c => c.Type == User_Id).Value;
+                ViewData["name"] = id.Value;
             }
             return View(await _context.User.ToListAsync());
         }
@@ -71,6 +73,7 @@ namespace InternetAppProject.Controllers
                 user.Create_time = DateTime.Now;
                 _context.Add(user);
                 await _context.SaveChangesAsync();
+                LogoutUser();
                 LoginUser(user.Id, user.Name);
                 return RedirectToAction(nameof(Index));
             }
@@ -166,21 +169,25 @@ namespace InternetAppProject.Controllers
             return _context.User.Any(e => e.Id == id);
         }
 
+        private async void LogoutUser()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        }
         private async void LoginUser(int id, string username)
         {
-            // HttpContext.Session.SetString("username", username);
-
             var claims = new List<Claim>
                 {
-                    new Claim(User_Id, id.ToString()),
                     new Claim(ClaimTypes.Name, username),
-                    //new Claim(ClaimTypes.Role, type.ToString()),
+                    new Claim(User_Id, id.ToString()),
                 };
 
             var claimsIdentity = new ClaimsIdentity(
                 claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            var authProperties = new AuthenticationProperties();
+            var authProperties = new AuthenticationProperties
+            {
+                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10)
+            };
 
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
