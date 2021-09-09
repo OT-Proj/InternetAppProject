@@ -4,19 +4,40 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
-
+<h1>@Html.DisplayFor(model => model.UserId.Name)'s Drive</h1>
+<div>Current usage:  @Html.DisplayFor(model => model.Current_usage) / 100</div>
+<p>
+    <a asp-controller="Images" asp-action="Create">Upload new image</a>
+</p>
 <div>
     <h4>Drive</h4>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Current_usage)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Current_usage)
-        </dd>
-    </dl>
+    <div class="row">
+        @foreach (Image img in Model.Images)
+        {
+            @if (img.Data != null)
+            {
+                string temp = Convert.ToBase64String(img.Data);
+                // show image card
+                <div class="card col-md-4" style="width: 18rem;">
+                    <a asp-controller="Images" asp-action="Details" asp-route-id="@img.Id">
+                        <img class="card-img-top" alt="Card image cap" src="data:image/png;base64,@temp" />
+                    </a>
+                    <div class="card-body">
+                        <p class="card-text">@img.Description</p>
+                        <br />
+                        @foreach (Tag t in img.Tags)
+                        {
+                            <a asp-controller="Tags" asp-action="Details" asp-route-id="@t.Id">
+                                <span class="badge bg-primary"><span class="image-tag">@t.Name</span></span>
+                            </a>
+                        }
+                    </div>
+                </div>
+
+            }
+        }
+    </div>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |

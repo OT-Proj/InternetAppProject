@@ -18,6 +18,12 @@
                 </a>
                 <div class="card-body">
                     <p class="card-text">@img.Description</p>
+                    @foreach (Tag t in img.Tags)
+                    {
+                        <a asp-controller="Tags" asp-action="Details" asp-route-id="@t.Id">
+                            <span class="badge bg-primary"><span class="image-tag">@t.Name</span></span>
+                        </a>
+                    }
                 </div>
             </div>
             

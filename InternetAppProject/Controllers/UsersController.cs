@@ -74,7 +74,7 @@ namespace InternetAppProject.Controllers
                 _context.Add(d);
 
                 await _context.SaveChangesAsync();
-                LoginUser(user.Name.ToString(), user.Type);
+                LoginUser(user.Name.ToString(), user.Type, user.Id, user.D.Id);
                 return RedirectToAction(nameof(Index));
             }
             return View(user);
@@ -199,15 +199,17 @@ namespace InternetAppProject.Controllers
             LogoutUser();
             if (ModelState.IsValid)
             {
+                // need do join users and drives in order to fetch drive.Id. 
                 var q = from u in _context.User
+                        join d in _context.Drive on u.D.Id equals d.Id
                         where u.Name == user.Name &&
                                 u.Password == user.Password
-                        select u;
+                        select new { userObj = u, driveObj = d};
 
                 if (q.Count() > 0)
                 {
                     // user is found
-                    LoginUser(q.First().Name, q.First().Type);
+                    LoginUser(q.First().userObj.Name, q.First().userObj.Type, q.First().userObj.Id, q.First().driveObj.Id);
                     return View("Index",await _context.User.ToListAsync());
                 }
                 else
@@ -222,13 +224,17 @@ namespace InternetAppProject.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
-        private async void LoginUser(string userName, InternetAppProject.Models.User.UserType userType)
+        private async void LoginUser(string userName, InternetAppProject.Models.User.UserType userType, int id, int drive)
         {
             string type = Enum.GetName(typeof(InternetAppProject.Models.User.UserType),userType);
+            string sid = id.ToString();
+            string did = drive.ToString();
             var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, userName),
                     new Claim(ClaimTypes.Role, type),
+                    new Claim("id", sid), // user.Id
+                    new Claim("drive", did), // user.D.Id
                 };
 
             var claimsIdentity = new ClaimsIdentity(
