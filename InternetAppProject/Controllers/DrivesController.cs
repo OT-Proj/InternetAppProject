@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InternetAppProject.Data;
 using InternetAppProject.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace InternetAppProject.Controllers
 {
@@ -29,18 +31,23 @@ namespace InternetAppProject.Controllers
         // GET: Drives/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-
             if (id == null)
             {
                 return NotFound();
             }
 
             var drive = await _context.Drive.Include(d => d.UserId).Include(d => d.Images).ThenInclude(img => img.Tags)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (drive == null)
             {
                 return NotFound();
             }
+
+            var UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "id").Value;
+            var user = await  _context.User.FindAsync(id);
+            
+            drive.Images = drive.Images.ToList().FindAll(img => img.IsPublic);
 
             return View(drive);
         }
