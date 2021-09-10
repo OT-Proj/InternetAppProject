@@ -47,6 +47,7 @@ namespace InternetAppProject.Controllers
             var UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "id").Value;
             var user = await  _context.User.FindAsync(id);
             
+            //if the user is not the owner and not the 
             drive.Images = drive.Images.ToList().FindAll(img => img.IsPublic);
 
             return View(drive);
