@@ -125,7 +125,7 @@ namespace InternetAppProject.Controllers
                 return NotFound();
             }
 
-            var drive = await _context.Drive
+            var drive = await _context.Drive.Include(d => d.UserId)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (drive == null)
             {
@@ -140,8 +140,20 @@ namespace InternetAppProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var drive = await _context.Drive.FindAsync(id);
-            _context.Drive.Remove(drive);
+            var q = from d in _context.Drive
+                    join u in _context.User on d.Id equals u.D.Id
+                    join im in _context.Image on d.Id equals im.DId.Id into sub
+                    from subq in sub.DefaultIfEmpty() // left outer join (for empty drives)
+                    where d.Id == id
+                    select new { userObj = u, driveObj = d, image = subq };
+            
+            if(q.Count() < 1)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            _context.User.Remove(q.First().userObj);
+            _context.Drive.Remove(q.First().driveObj);
+            q.ToList().ForEach(i =>{ if (i.image != null) _context.Image.Remove(i.image); }); // iterate over results and delete each image
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
