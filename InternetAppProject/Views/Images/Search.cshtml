@@ -1,0 +1,66 @@
+﻿@model IEnumerable<InternetAppProject.Models.Image>
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+<h1>Image search</h1>
+<h6>Here you can images by description. Please notice you cannot view non-public images of other people!</h6>
+
+<div>
+    <input name="Name" id="inpSearch" />
+    <button class="btnSearch btn btn-primary">Search</button>
+    <div class="spinner-grow text-success d-none" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Data)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @if (item.Data != null)
+                {
+                    string img = Convert.ToBase64String(item.Data);
+                    <a asp-action="Details" asp-route-id="@item.Id.ToString()">
+                        <img src="data:image/png;base64,@img" width="50" height="50" />
+                    </a>
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+<script type="text/template" id="template">
+    <tr>
+        <td>
+            <a href="\images\details\${id}">
+                <img src="data:image/png;base64,${data}" width="50" height="50" />
+            </a>
+        </td>
+        <td>
+            ${description}
+        </td>
+    </tr>
+</script>
+
+@section Scripts{
+    <script src="~/js/searchImage.js"></script>
+}

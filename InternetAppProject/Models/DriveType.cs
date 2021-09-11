@@ -9,8 +9,6 @@ namespace InternetAppProject.Models
     {
         public int Id { get; set; }
 
-        public int Level { get; set; }
-
         public string Name { get; set; }
 
         public int Max_Capacity { get; set; }

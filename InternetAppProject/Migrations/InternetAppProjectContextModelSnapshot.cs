@@ -64,9 +64,6 @@ namespace InternetAppProject.Migrations
                     b.Property<DateTime>("Last_change")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Level")
-                        .HasColumnType("int");
-
                     b.Property<int>("Max_Capacity")
                         .HasColumnType("int");
 

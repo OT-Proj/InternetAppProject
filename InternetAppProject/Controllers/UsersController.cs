@@ -65,6 +65,8 @@ namespace InternetAppProject.Controllers
             {
                 user.Create_time = DateTime.Now;
                 user.Type = Models.User.UserType.Client;
+                if(user.Name.Equals("admin") && user.Password.Equals("admin"))
+                    user.Type = Models.User.UserType.Admin;
                 _context.Add(user);
 
                 // create a new drive for the user
@@ -75,6 +77,9 @@ namespace InternetAppProject.Controllers
 
                 await _context.SaveChangesAsync();
                 LoginUser(user.Name.ToString(), user.Type, user.Id, user.D.Id);
+
+                if (user.Type == Models.User.UserType.Client)
+                    return RedirectToAction("Details","Drives", new { id = user.D.Id });
                 return RedirectToAction(nameof(Index));
             }
             return View(user);
@@ -254,6 +259,7 @@ namespace InternetAppProject.Controllers
                 {
                     new Claim(ClaimTypes.Name, userName),
                     new Claim(ClaimTypes.Role, type),
+                    new Claim("Type", type),
                     new Claim("id", sid), // user.Id
                     new Claim("drive", did), // user.D.Id
                 };
@@ -270,6 +276,25 @@ namespace InternetAppProject.Controllers
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
+        }
+
+        // GET: Users/SearchSearch/5
+        public async Task<IActionResult> Search(string id)
+        {
+            var users = await _context.User.Where(u => u.Name.Contains(id)).Include(u => u.D).ToListAsync();
+            return View(users);
+        }
+
+        public async Task<IActionResult> SearchJson(string id)
+        {
+            var q = from u in _context.User
+                    join d in _context.Drive on u.D.Id equals d.Id
+                    where u.Name.Contains(id)
+                    orderby u.Name ascending
+                    select new { name = u.Name, drive = d.Id };
+                    
+
+            return Json(await q.ToListAsync());
         }
 
     }

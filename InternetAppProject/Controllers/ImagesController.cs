@@ -202,5 +202,67 @@ namespace InternetAppProject.Controllers
         {
             return _context.Image.Any(e => e.Id == id);
         }
+
+        public async Task<IActionResult> Search(string id)
+        {
+            var images = await _context.Image.Include(i => i.DId).Where(i => i.Description.Contains(id)).ToListAsync();
+            
+            if (((ClaimsIdentity)User.Identity) != null)
+            {
+                var UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "id");
+                var UserType = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "Type");
+                images = images.FindAll(img =>
+                {
+                    Drive d = img.DId;
+                    if (UserId != null && UserType != null)
+                    {
+                        if (UserId.Value != d.Id.ToString() && UserType.Value != "Admin" && !img.IsPublic)
+                        {
+                            return false; // if user has no authority we remove the image
+                        }
+                        return true;
+                    }
+                    return img.IsPublic;
+                }
+                );
+            }
+            else
+            {
+                images = images.FindAll(img => img.IsPublic); // user is not logged in and can only view public images
+            }
+            
+            return View(images);
+        }
+
+        public async Task<IActionResult> SearchJson(string id)
+        {
+            var images = await _context.Image.Include(i=> i.DId).Where(i => i.Description.Contains(id)).ToListAsync();
+            if (((ClaimsIdentity)User.Identity) != null)
+            {
+                var UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "id");
+                var UserType = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "Type");
+                images = images.FindAll(img =>
+                {
+                    //Drive d = _context.Image.Include(o => o.DId).Where(o => o.Id == img.Id).FirstOrDefault().DId;
+                    Drive d = img.DId;
+                    if (UserId != null && UserType != null)
+                    {
+                        if (UserId.Value != d.Id.ToString() && UserType.Value != "Admin" && !img.IsPublic)
+                        {
+                            return false; // if user has no authority we remove the image
+                        }
+                        return true;
+                    }
+                    return img.IsPublic;
+                }
+                );
+            }
+            else
+            {
+                images = images.FindAll(img => img.IsPublic); // user is not logged in and can only view public images
+            }
+            images.ForEach(i => i.DId = null);
+            return Json(images);
+        }
     }
 }

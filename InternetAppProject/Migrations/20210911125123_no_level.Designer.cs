@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InternetAppProject.Migrations
 {
     [DbContext(typeof(InternetAppProjectContext))]
-    [Migration("20210910152306_Init")]
-    partial class Init
+    [Migration("20210911125123_no_level")]
+    partial class no_level
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -65,9 +65,6 @@ namespace InternetAppProject.Migrations
 
                     b.Property<DateTime>("Last_change")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("Level")
-                        .HasColumnType("int");
 
                     b.Property<int>("Max_Capacity")
                         .HasColumnType("int");

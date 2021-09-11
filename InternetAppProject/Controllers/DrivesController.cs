@@ -44,11 +44,28 @@ namespace InternetAppProject.Controllers
                 return NotFound();
             }
 
-            var UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "id").Value;
-            var user = await  _context.User.FindAsync(id);
-            
-            //if the user is not the owner and not the 
-            drive.Images = drive.Images.ToList().FindAll(img => img.IsPublic);
+            if (((ClaimsIdentity)User.Identity) != null)
+            {
+                var UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "id");
+                var UserType = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "Type");
+                if (UserId != null && UserType != null)
+                {
+                    // user is logged in
+                    if (drive.UserId.Id.ToString() != UserId.Value && UserType.Value != "Admin")
+                    {
+                        // user is neither owner nor an admin therefore not authorized to view private images
+                        drive.Images = drive.Images.ToList().FindAll(img => img.IsPublic);
+                    }
+                }
+                else
+                {
+                    // user is not logged in and therefore unautorized to view private images
+                    drive.Images = drive.Images.ToList().FindAll(img => img.IsPublic);
+                }
+
+                //if the user is not the owner and not the 
+                
+            }
 
             return View(drive);
         }
