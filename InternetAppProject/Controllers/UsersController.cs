@@ -281,12 +281,20 @@ namespace InternetAppProject.Controllers
         // GET: Users/SearchSearch/5
         public async Task<IActionResult> Search(string id)
         {
+            if (id == null)
+            {
+                return View();
+            }
             var users = await _context.User.Where(u => u.Name.Contains(id)).Include(u => u.D).ToListAsync();
             return View(users);
         }
 
         public async Task<IActionResult> SearchJson(string id)
         {
+            if (id == null)
+            {
+                return Json(new List<User>());
+            }
             var q = from u in _context.User
                     join d in _context.Drive on u.D.Id equals d.Id
                     where u.Name.Contains(id)

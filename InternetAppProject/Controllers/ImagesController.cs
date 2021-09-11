@@ -205,6 +205,11 @@ namespace InternetAppProject.Controllers
 
         public async Task<IActionResult> Search(string id)
         {
+            if(id == null)
+            {
+                return View();
+            }
+
             var images = await _context.Image.Include(i => i.DId).Where(i => i.Description.Contains(id)).ToListAsync();
             
             if (((ClaimsIdentity)User.Identity) != null)
@@ -236,6 +241,10 @@ namespace InternetAppProject.Controllers
 
         public async Task<IActionResult> SearchJson(string id)
         {
+            if(id == null)
+            {
+                return Json(new List<Image>());
+            }
             var images = await _context.Image.Include(i=> i.DId).Where(i => i.Description.Contains(id)).ToListAsync();
             if (((ClaimsIdentity)User.Identity) != null)
             {

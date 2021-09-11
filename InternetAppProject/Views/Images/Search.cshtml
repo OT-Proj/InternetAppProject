@@ -28,23 +28,25 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @if (Model != null)
         {
-        <tr>
-            <td>
-                @if (item.Data != null)
-                {
-                    string img = Convert.ToBase64String(item.Data);
-                    <a asp-action="Details" asp-route-id="@item.Id.ToString()">
-                        <img src="data:image/png;base64,@img" width="50" height="50" />
-                    </a>
-                }
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-        </tr>
-        }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @if (item.Data != null)
+                        {
+                            string img = Convert.ToBase64String(item.Data);
+                            <a asp-action="Details" asp-route-id="@item.Id.ToString()">
+                                <img src="data:image/png;base64,@img" width="50" height="50" />
+                            </a>
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                </tr>
+            }}
     </tbody>
 </table>
 

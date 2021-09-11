@@ -28,17 +28,19 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @if (Model != null)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                <a class="nav-link text-dark" asp-area="" asp-controller="Drives" asp-action="Details" asp-route-id="@item.D.Id.ToString()">@Html.DisplayFor(modelItem => item.Name)'s Drive</a>
-            </td>
-        </tr>
-        }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Drives" asp-action="Details" asp-route-id="@item.D.Id.ToString()">@Html.DisplayFor(modelItem => item.Name)'s Drive</a>
+                    </td>
+                </tr>
+            }}
     </tbody>
 </table>
 
