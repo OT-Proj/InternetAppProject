@@ -62,8 +62,6 @@ namespace InternetAppProject.Controllers
                     // user is not logged in and therefore unautorized to view private images
                     drive.Images = drive.Images.ToList().FindAll(img => img.IsPublic);
                 }
-
-                //if the user is not the owner and not the 
                 
             }
 

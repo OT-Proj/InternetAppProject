@@ -203,15 +203,44 @@ namespace InternetAppProject.Controllers
             return _context.Image.Any(e => e.Id == id);
         }
 
-        public async Task<IActionResult> Search(string id)
+        // GET: Images/Search/5
+        public async Task<IActionResult> Search()
         {
-            if(id == null)
+            return View();
+        }
+
+        // POST: Images/Search/5
+        [HttpPost]
+        public async Task<IActionResult> Search(string desc, DateTime start, DateTime end)
+        {
+            DateTime DTdefault = new DateTime();
+            if (desc == null && start.CompareTo(DTdefault) == 0 && end.CompareTo(DTdefault) == 0)
             {
                 return View();
             }
+            if (desc == null)
+            {
+                //return Json(new List<Image>());
+                desc = "";
+            }
+            if (start.CompareTo(DTdefault) == 0) // start was left empty
+            {
+                start = DateTime.MinValue;
+            }
+            if (end.CompareTo(DTdefault) == 0) // end was left empty
+            {
+                end = DateTime.MaxValue;
+            }
 
-            var images = await _context.Image.Include(i => i.DId).Where(i => i.Description.Contains(id)).ToListAsync();
-            
+            var q = from i in _context.Image
+                    join d in _context.Drive on i.DId.Id equals d.Id
+                    where i.Description.Contains(desc) &&
+                          i.UploadTime.CompareTo(start) >= 0 &&
+                          i.UploadTime.CompareTo(end) <= 0
+                    select i;
+
+            List<Image> images = await q.ToListAsync();
+
             if (((ClaimsIdentity)User.Identity) != null)
             {
                 var UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "id");
@@ -235,17 +264,47 @@ namespace InternetAppProject.Controllers
             {
                 images = images.FindAll(img => img.IsPublic); // user is not logged in and can only view public images
             }
-            
+
             return View(images);
         }
 
-        public async Task<IActionResult> SearchJson(string id)
+
+        [HttpPost]
+        public async Task<IActionResult> SearchJson(string desc, DateTime start, DateTime end)
         {
-            if(id == null)
+            DateTime DTdefault = new DateTime();
+            if (desc == null && start.CompareTo(DTdefault) == 0 && end.CompareTo(DTdefault) == 0)
             {
-                return Json(new List<Image>());
+                return Json(null);
             }
-            var images = await _context.Image.Include(i=> i.DId).Where(i => i.Description.Contains(id)).ToListAsync();
+            if (desc == null) {
+                //return Json(new List<Image>());
+                desc = "";
+            }
+            if (start.CompareTo(DTdefault) == 0) // start was left empty
+            {
+                start = DateTime.MinValue;
+            }
+            if (end.CompareTo(DTdefault) == 0) // end was left empty
+            {
+                end = DateTime.MaxValue;
+            }
+
+            var q = from i in _context.Image
+                    join d in _context.Drive on i.DId.Id equals d.Id
+                    where i.Description.Contains(desc) &&
+                          i.UploadTime.CompareTo(start) >= 0 &&
+                          i.UploadTime.CompareTo(end) <= 0
+                    select new { id = i.Id, 
+                                data = i.Data, 
+                                description = i.Description, 
+                                uploadtime = i.UploadTime.ToString("MM/dd/yyyy HH:mm"), 
+                                IsPublic = i.IsPublic, 
+                                drive = d };
+
+            var images = await q.ToListAsync();
+
+            // permission check
             if (((ClaimsIdentity)User.Identity) != null)
             {
                 var UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "id");
@@ -253,7 +312,7 @@ namespace InternetAppProject.Controllers
                 images = images.FindAll(img =>
                 {
                     //Drive d = _context.Image.Include(o => o.DId).Where(o => o.Id == img.Id).FirstOrDefault().DId;
-                    Drive d = img.DId;
+                    Drive d = img.drive;
                     if (UserId != null && UserType != null)
                     {
                         if (UserId.Value != d.Id.ToString() && UserType.Value != "Admin" && !img.IsPublic)
@@ -270,7 +329,7 @@ namespace InternetAppProject.Controllers
             {
                 images = images.FindAll(img => img.IsPublic); // user is not logged in and can only view public images
             }
-            images.ForEach(i => i.DId = null);
+
             return Json(images);
         }
     }

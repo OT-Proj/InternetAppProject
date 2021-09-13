@@ -26,7 +26,6 @@ namespace InternetAppProject.Models
 
         //one to many(Image->Drive)
         public Drive DId { get; set; }
-
         public string Description { get; set; }
     }
 }
