@@ -11,14 +11,14 @@
 </p>
 <div>
     <hr />
-    <div class="row">
+    <div class="row container">
         @foreach (Image img in Model.Images)
         {
             @if (img.Data != null)
             {
                 string temp = Convert.ToBase64String(img.Data);
                 // show image card
-                <div class="card col-md-4" style="width: 18rem;">
+                <div class="card col-md-4 gy-3 px-3">
                     <a asp-controller="Images" asp-action="Details" asp-route-id="@img.Id">
                         <img class="card-img-top" alt="Card image cap" src="data:image/png;base64,@temp" />
                     </a>
@@ -28,7 +28,7 @@
                         @foreach (Tag t in img.Tags)
                         {
                             <a asp-controller="Tags" asp-action="Details" asp-route-id="@t.Id">
-                                <span class="badge bg-primary"><span class="image-tag">@t.Name</span></span>
+                               <span class="badge bg-primary image-tag gx-1">@t.Name</span>
                             </a>
                         }
                     </div>
