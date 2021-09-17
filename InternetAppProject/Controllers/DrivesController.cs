@@ -28,7 +28,27 @@ namespace InternetAppProject.Controllers
             return View(await data.ToListAsync());
         }
 
-    
+        // GET: Upgrade
+        public async Task<IActionResult> Upgrade(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            Drive d = _context.Drive.Include(d => d.TypeId).Where(d => d.Id == id).FirstOrDefault();
+            if (d == null)
+            {
+                return NotFound();
+            }
+            int current_max = d.TypeId.Max_Capacity;
+            var q = from dt in _context.DriveType
+                    where dt.Max_Capacity > current_max
+                    select dt;
+
+            ViewData["Types"] = new SelectList(await q.ToListAsync(), "Id", nameof(DriveType.Name));
+
+            return View();
+        }
 
         // POST: Drives/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
