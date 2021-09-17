@@ -87,6 +87,23 @@ namespace InternetAppProject.Controllers
                 {
                     image.DId = q.First(); // q.First() is the logged in user's drive
                 }
+                else
+                {
+                    return NotFound();
+                }
+
+                image.DId.TypeId = _context.Drive.Include(d => d.TypeId)
+                    .Where(d => d.Id == image.DId.Id).FirstOrDefault().TypeId;
+
+                // check if the drive didn't exceed max capacity
+                if (image.DId.Current_usage >= image.DId.TypeId.Max_Capacity)
+                {
+                    return View("Error");
+                }
+
+                //drive has free capcity left
+                image.DId.Current_usage++;
+                
                 _context.Update(image);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -192,7 +209,16 @@ namespace InternetAppProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var image = await _context.Image.FindAsync(id);
+            var image = _context.Image.Include(i => i.DId).Where(i => i.Id == id).FirstOrDefault();
+            if(image == null)
+            {
+                return NotFound();
+            }
+            if (image.DId != null)
+            {
+                image.DId.Current_usage--;
+                image.DId.Current_usage = Math.Max(image.DId.Current_usage, 0); // prevent negatives
+            }
             _context.Image.Remove(image);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

@@ -3,9 +3,15 @@
 @{
     ViewData["Title"] = "Delete";
 }
-
-<h1>Are you sure you want to delete @Model.UserId.Name's drive?</h1>
-<h4 class="text-danger">Warning: deleting a drive will delete it's respective user and all of their images.</h4>
+@if (Model.UserId != null)
+{
+    <h1>Are you sure you want to delete @Model.UserId.Name's drive?</h1>
+    <h4 class="text-danger">Warning: deleting a drive will delete it's respective user and all of their images.</h4>
+}
+@if (Model.UserId == null)
+{
+    <h4>This drive is orphaned and belongs to no user, it is recommended for deletion.</h4>
+}
 <div>
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />

@@ -71,6 +71,12 @@ namespace InternetAppProject.Controllers
 
                 // create a new drive for the user
                 Drive d = new Drive();
+                var q = from t in _context.DriveType
+                        where t.Name.Equals("Free")
+                        select t;
+                DriveType dt = q.FirstOrDefault();
+                d.TypeId = dt;
+
                 d.UserId = user;
                 d.Current_usage = 0;
                 _context.Add(d);

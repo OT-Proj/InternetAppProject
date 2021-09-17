@@ -28,6 +28,41 @@ namespace InternetAppProject.Controllers
             return View(await data.ToListAsync());
         }
 
+    
+
+        // POST: Drives/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DoUpgrade(int? TypeId)
+        {
+            if (TypeId == null)
+            {
+                return NotFound();
+            }
+            DriveType dt = _context.DriveType.Where(t => t.Id == TypeId).FirstOrDefault();
+
+            var DriveClaim = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "drive");
+            if(DriveClaim == null)
+            {
+                return NotFound();
+            }
+
+            int UserDriveId = Int32.Parse(DriveClaim.Value);
+            var q = from d in _context.Drive
+                    join u in _context.User on d.Id equals u.D.Id
+                    join im in _context.Image on d.Id equals im.DId.Id into sub
+                    from subq in sub.DefaultIfEmpty() // left outer join (for empty drives)
+                    where d.Id == UserDriveId
+                    select d;
+            Drive UserDrive = q.FirstOrDefault();
+            UserDrive.TypeId = dt;
+            _context.Update(UserDrive);
+            await _context.SaveChangesAsync();
+            return View("Details", UserDrive);
+        }
+
         // GET: Drives/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -36,10 +71,15 @@ namespace InternetAppProject.Controllers
                 return NotFound();
             }
 
-            var drive = await _context.Drive.Include(d => d.UserId).Include(d => d.Images).ThenInclude(img => img.Tags)
+            var drive = await _context.Drive.Include(d => d.TypeId).Include(d => d.UserId).Include(d => d.Images).ThenInclude(img => img.Tags)
                  .FirstOrDefaultAsync(m => m.Id == id);
 
             if (drive == null)
+            {
+                return NotFound();
+            }
+
+            if(drive.UserId == null)
             {
                 return NotFound();
             }
@@ -83,6 +123,12 @@ namespace InternetAppProject.Controllers
         {
             if (ModelState.IsValid)
             {
+                var q = from t in _context.DriveType
+                        where t.Name.Equals("Free")
+                        select t;
+                DriveType dt = q.FirstOrDefault();
+                drive.TypeId = dt;
+
                 _context.Add(drive);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

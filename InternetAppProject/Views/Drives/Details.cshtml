@@ -4,36 +4,41 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>@Html.DisplayFor(model => model.UserId.Name)'s Drive</h1>
-<div>Current usage:  @Html.DisplayFor(model => model.Current_usage) / 100</div>
+
+
+<div>Current usage:  @Html.DisplayFor(model => model.Current_usage) / @Html.DisplayFor(model => model.TypeId.Max_Capacity)</div>
 <p>
     <a asp-controller="Images" asp-action="Create">Upload new image</a>
 </p>
 <div>
     <hr />
     <div class="row container">
-        @foreach (Image img in Model.Images)
+        @if (Model.Images != null)
         {
-            @if (img.Data != null)
+            @foreach (Image img in Model.Images)
             {
-                string temp = Convert.ToBase64String(img.Data);
-                // show image card
-                <div class="card col-md-4 gy-3 px-3">
-                    <a asp-controller="Images" asp-action="Details" asp-route-id="@img.Id">
-                        <img class="card-img-top" alt="Card image cap" src="data:image/png;base64,@temp" />
-                    </a>
-                    <div class="card-body">
-                        <p class="card-text">@img.Description</p>
-                        <br />
-                        @foreach (Tag t in img.Tags)
-                        {
-                            <a asp-controller="Tags" asp-action="Details" asp-route-id="@t.Id">
-                               <span class="badge bg-primary image-tag gx-1">@t.Name</span>
-                            </a>
-                        }
+                @if (img.Data != null)
+                {
+                    string temp = Convert.ToBase64String(img.Data);
+                    // show image card
+                    <div class="card col-md-4 gy-3 px-3">
+                        <a asp-controller="Images" asp-action="Details" asp-route-id="@img.Id">
+                            <img class="card-img-top" alt="Card image cap" src="data:image/png;base64,@temp" />
+                        </a>
+                        <div class="card-body">
+                            <p class="card-text">@img.Description</p>
+                            <br />
+                            @foreach (Tag t in img.Tags)
+                            {
+                                <a asp-controller="Tags" asp-action="Details" asp-route-id="@t.Id">
+                                    <span class="badge bg-primary image-tag gx-1">@t.Name</span>
+                                </a>
+                            }
+                            <a asp-controller="Images" asp-action="Delete" asp-route-id="@img.Id"> Delete </a>
+                        </div>
                     </div>
-                </div>
 
+                }
             }
         }
     </div>
