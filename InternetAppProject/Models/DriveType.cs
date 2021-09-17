@@ -16,7 +16,5 @@ namespace InternetAppProject.Models
         public int Price { get; set; }
 
         public DateTime Last_change { get; set; }
-
-        public IEnumerable<Upgrade> upgrades { get; set; }
     }
 }

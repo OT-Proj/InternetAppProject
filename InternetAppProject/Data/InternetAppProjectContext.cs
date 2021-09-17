@@ -19,6 +19,5 @@ namespace InternetAppProject.Data
         public DbSet<InternetAppProject.Models.PurchaseEvent> PurchaseEvent { get; set; }
         public DbSet<InternetAppProject.Models.User> User { get; set; }
         public DbSet<InternetAppProject.Models.Drive> Drive { get; set; }
-        public DbSet<InternetAppProject.Models.Upgrade> Upgrade { get; set; }
     }
 }
