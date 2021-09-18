@@ -230,7 +230,7 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: Images/Search/5
-        public async Task<IActionResult> Search()
+        public IActionResult Search()
         {
             return View();
         }

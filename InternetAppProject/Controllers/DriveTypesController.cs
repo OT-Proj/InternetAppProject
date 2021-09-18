@@ -151,5 +151,73 @@ namespace InternetAppProject.Controllers
         {
             return _context.DriveType.Any(e => e.Id == id);
         }
+
+        // GET: DriveTypes/Search/5
+        public IActionResult Search()
+        {
+            return View(new List<DriveType>());
+        }
+
+        // POST: DriveTypes/Search/5
+        [HttpPost]
+        public async Task<IActionResult> Search(string name, int? minCapacity, int? maxPrice)
+        {
+            if(name == null & minCapacity == null && maxPrice == null)
+            {
+                return View(new List<DriveType>());
+            }
+            if(name == null)
+            {
+                name = "";
+            }
+            if(minCapacity == null)
+            {
+                minCapacity = 0;
+            }
+            if(maxPrice == null)
+            {
+                maxPrice = int.MaxValue;
+            }
+            var q = from dt in _context.DriveType
+                    where dt.Name.Contains(name) &&
+                          dt.Max_Capacity >= minCapacity &&
+                          dt.Price <= maxPrice
+                    select dt;
+            return View(await q.ToListAsync());
+        }
+
+       // POST: DriveTypes/SearchJson/5
+       [HttpPost]
+       public async Task<IActionResult> SearchJson(string name, int? minCapacity, int? maxPrice)
+       {
+            if (name == null & minCapacity == null && maxPrice == null)
+            {
+                return View(new List<DriveType>());
+            }
+            if (name == null)
+            {
+                name = "";
+            }
+            if (minCapacity == null)
+            {
+                minCapacity = 0;
+            }
+            if (maxPrice == null)
+            {
+                maxPrice = int.MaxValue;
+            }
+            var q = from dt in _context.DriveType
+                    where dt.Name.Contains(name) &&
+                          dt.Max_Capacity >= minCapacity &&
+                          dt.Price <= maxPrice
+                    select new
+                    {
+                        name = dt.Name,
+                        capacity = dt.Max_Capacity,
+                        price = dt.Price,
+                        changed = dt.Last_change.ToString("MM/dd/yyyy HH:mm"),
+                    };
+            return Json(await q.ToListAsync());
+       } 
     }
 }

@@ -35,7 +35,7 @@ namespace InternetAppProject.Controllers
             {
                 return NotFound();
             }
-            Drive d = _context.Drive.Include(d => d.TypeId).Where(d => d.Id == id).FirstOrDefault();
+            Drive d = _context.Drive.Include(d => d.UserId).Include(d => d.TypeId).Where(d => d.Id == id).FirstOrDefault();
             if (d == null)
             {
                 return NotFound();
@@ -43,11 +43,56 @@ namespace InternetAppProject.Controllers
             int current_max = d.TypeId.Max_Capacity;
             var q = from dt in _context.DriveType
                     where dt.Max_Capacity > current_max
+                    orderby dt.Max_Capacity ascending
                     select dt;
 
-            ViewData["Types"] = new SelectList(await q.ToListAsync(), "Id", nameof(DriveType.Name));
+            List<DriveType> lst = await q.ToListAsync();
+            ViewData["Types"] = new SelectList(lst, "Id", nameof(DriveType.Name));
+
+            // calculate initial payment amount for the first option presented to the user
+            ViewData["Amount"] = 0;
+            if (lst.FirstOrDefault() != null)
+            {
+                ViewData["Amount"] = Math.Max(lst.FirstOrDefault().Price - UserPaid(d.UserId), 0);
+            }
 
             return View();
+        }
+
+        // POST: Drives/PaymentAmountJson/5
+        [HttpPost]
+        public IActionResult PaymentAmountJson(int? id)
+        {
+            if (id == null)
+            {
+                return Json(null);
+            }
+
+            // find the relevant drive type
+            DriveType dt = _context.DriveType.Where(dt => dt.Id == id).FirstOrDefault();
+            if (dt == null)
+            {
+                return Json(null);
+            }
+
+            // find how much the user already paid
+            if (((ClaimsIdentity)User.Identity) == null)
+            {
+                return Json(null);
+
+            }
+            int UserId = Int32.Parse(((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "id").Value);
+            User user = _context.User.Where(u => u.Id == UserId).FirstOrDefault();
+
+            // calculate final debt; if negative, default is 0 (free upgrade)
+            int debt = Math.Max(dt.Price - UserPaid(user), 0);
+
+            // return valid Json
+            var result = new PriceResult{ amount = debt };
+            List<PriceResult> resultList = new List<PriceResult>();
+            resultList.Add(result);
+
+            return Json(resultList);
         }
 
         // POST: Drives/Create
@@ -61,24 +106,36 @@ namespace InternetAppProject.Controllers
             {
                 return NotFound();
             }
+            // verify the designated drive type actually exists in our DB:
             DriveType dt = _context.DriveType.Where(t => t.Id == TypeId).FirstOrDefault();
 
+            // verify user is logged in and has a drive:
             var DriveClaim = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "drive");
             if(DriveClaim == null)
             {
                 return NotFound();
             }
 
+            // update existing drive
             int UserDriveId = Int32.Parse(DriveClaim.Value);
             var q = from d in _context.Drive
                     join u in _context.User on d.Id equals u.D.Id
                     join im in _context.Image on d.Id equals im.DId.Id into sub
                     from subq in sub.DefaultIfEmpty() // left outer join (for empty drives)
                     where d.Id == UserDriveId
-                    select d;
-            Drive UserDrive = q.FirstOrDefault();
+                    select new { drive = d, user = u };
+
+            Drive UserDrive = q.FirstOrDefault().drive;
+            User Owner = q.FirstOrDefault().user;
             UserDrive.TypeId = dt;
             _context.Update(UserDrive);
+
+            // Record the purchase event in the DB:
+            PurchaseEvent pe = new PurchaseEvent { Time = DateTime.Now,
+                UserID = Owner,
+                Amount = Math.Max(dt.Price - UserPaid(Owner), 0),
+            };
+            _context.PurchaseEvent.Add(pe);
             await _context.SaveChangesAsync();
             return View("Details", UserDrive);
         }
@@ -251,6 +308,27 @@ namespace InternetAppProject.Controllers
         private bool DriveExists(int id)
         {
             return _context.Drive.Any(e => e.Id == id);
+        }
+
+        private int UserPaid(User user)
+        {
+            if(user == null)
+            {
+                return 0;
+            }
+            var q = from pe in _context.PurchaseEvent
+                    join u in _context.User on pe.UserID.Id equals u.Id
+                    where pe.UserID.Id == user.Id
+                    group pe by pe.UserID.Id into user_purchases
+                    select new
+                    {
+                        sum = user_purchases.Sum(x => x.Amount)
+                    };
+            if (q.Count() > 0)
+            {
+                return q.FirstOrDefault().sum;
+            }
+            return 0;
         }
     }
 }

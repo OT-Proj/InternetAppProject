@@ -22,7 +22,8 @@ namespace InternetAppProject.Controllers
         // GET: PurchaseEvents
         public async Task<IActionResult> Index()
         {
-            return View(await _context.PurchaseEvent.ToListAsync());
+            var events = await _context.PurchaseEvent.Include(e => e.UserID).ToListAsync();
+            return View(events);
         }
 
         // GET: PurchaseEvents/Details/5
