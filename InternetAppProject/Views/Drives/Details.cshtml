@@ -4,11 +4,16 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>@Html.DisplayFor(model => model.UserId.Name)'s Drive</h1>
-<a asp-action="Upgrade" asp-route-id="@Model.Id"> Upgrade now! </a>
-<div>Current usage:  @Html.DisplayFor(model => model.Current_usage) / @Html.DisplayFor(model => model.TypeId.Max_Capacity)</div>
+<p>
+    <h1>@Html.DisplayFor(model => model.UserId.Name)'s Drive</h1>
+    <div>Current usage:  @Html.DisplayFor(model => model.Current_usage) / @Html.DisplayFor(model => model.TypeId.Max_Capacity)</div>
+    <a asp-action="Upgrade" asp-route-id="@Model.Id">Upgrade now!</a>
+
+</p>
 <p>
     <a asp-controller="Images" asp-action="Create">Upload new image</a>
+    <br/> or... <br/>
+    <a asp-controller="Drives" asp-action="Fill" asp-route-id="@Model.Id">Fill with beautiful Pixabay images!</a>
 </p>
 <div>
     <hr />

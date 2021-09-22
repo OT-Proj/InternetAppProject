@@ -9,6 +9,12 @@ using InternetAppProject.Data;
 using InternetAppProject.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using Newtonsoft.Json.Linq;
+using System.IO;
+using DriveType = InternetAppProject.Models.DriveType;
+using System.Net;
 
 namespace InternetAppProject.Controllers
 {
@@ -303,6 +309,67 @@ namespace InternetAppProject.Controllers
             q.ToList().ForEach(i =>{ if (i.image != null) _context.Image.Remove(i.image); }); // iterate over results and delete each image
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+        public async Task<IActionResult> Fill(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var drive = await _context.Drive.Include(d => d.UserId).Include(d => d.TypeId).Include(d => d.Images)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (drive == null)
+            {
+                return NotFound();
+            }
+            var UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "id");
+            if(UserId == null)
+            {
+                return NotFound(); // user not logged in.
+            }
+            if (drive.UserId.Id != Int32.Parse(UserId.Value))
+            {
+                return NotFound(); // no permission
+            }
+
+
+            // fill drive with web service: Art Institute of Chicago API
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://pixabay.com/");
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                // our key is 23510481-c5bf39e0b210f2fe4301098dd
+                String key = "23510481-c5bf39e0b210f2fe4301098dd";
+                HttpResponseMessage Res = await client.GetAsync("api/?key=" + key + "&q=yellow+flowers&image_type=photo&pretty=true");
+                if (Res.IsSuccessStatusCode)
+                {
+                    var Response = Res.Content.ReadAsStringAsync().Result;
+                    JObject parsed = JObject.Parse(Response);
+
+                    // create new image object from recieved data
+
+                    int freeSlots = drive.TypeId.Max_Capacity - drive.Current_usage; // if negative nothing will be added
+                    freeSlots = Math.Min(freeSlots, parsed["hits"].Count()); // limit the number of images to the number of results
+                    
+                    for(int i = 0; i < freeSlots; i++) {
+                        Image I = new Image() { DId = drive, UploadTime = DateTime.Now, IsPublic = true, EditTime = DateTime.Now };
+                        using (WebClient c = new WebClient())
+                        {
+                            byte[] image = c.DownloadData(parsed["hits"][i]["webformatURL"].ToString());
+                            I.Data = image;
+                        }
+                        I.Description = "this image was originally uploaded by Pixabay/" + parsed["hits"][i]["user"].ToString();
+                        _context.Image.Update(I);
+                        drive.Current_usage++;
+                    }
+                    _context.Drive.Update(drive);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            return RedirectToAction("Details", "Drives", new { id = id });
         }
 
         private bool DriveExists(int id)

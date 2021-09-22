@@ -242,7 +242,8 @@ namespace InternetAppProject.Controllers
                 {
                     // user is found
                     LoginUser(q.First().userObj.Name, q.First().userObj.Type, q.First().userObj.Id, q.First().driveObj.Id);
-                    return View("Index",await _context.User.ToListAsync());
+                    return RedirectToAction("Details", "Drives", new { id = q.First().driveObj.Id });
+                    //return View("Index",await _context.User.ToListAsync());
                 }
                 else
                 {

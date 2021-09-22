@@ -192,7 +192,7 @@ namespace InternetAppProject.Controllers
        {
             if (name == null & minCapacity == null && maxPrice == null)
             {
-                return View(new List<DriveType>());
+                return Json(new List<DriveType>());
             }
             if (name == null)
             {

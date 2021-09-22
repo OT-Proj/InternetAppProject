@@ -150,5 +150,18 @@ namespace InternetAppProject.Controllers
         {
             return _context.PurchaseEvent.Any(e => e.Id == id);
         }
+
+        public IActionResult Graphs()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> ByDayJson()
+        {
+            var q = from u in _context.PurchaseEvent
+                    orderby u.Amount
+                    select new GraphByDayData { value = u.Amount, date = u.Time };
+            return Json(await q.ToListAsync());
+        }
     }
 }
