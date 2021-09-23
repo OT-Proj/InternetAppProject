@@ -312,5 +312,11 @@ namespace InternetAppProject.Controllers
             return Json(await q.ToListAsync());
         }
 
+        public async Task<IActionResult> Maps()
+        {
+            //var users = await _context.User.ToListAsync();
+            return View();
+        }
+
     }
 }
