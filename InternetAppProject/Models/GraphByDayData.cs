@@ -9,7 +9,10 @@ namespace InternetAppProject.Models
     [NotMapped]
     public class GraphByDayData
     {
-        public DateTime date { get; set; }
+        public String date { get; set; }
+
+        public int userID { get; set; }
+        public DateTime date_fixed { get; set; }
         public int value { get; set; }
     }
 }

@@ -4,152 +4,26 @@
     ViewData["Title"] = "Graphs";
 }
 
-<h1>Graphs</h1>
+<meta charset="utf-8">
 
+<link rel="stylesheet" href="~/css/graph.css">
+<div class="text-left">
+    <h1>Graphs</h1>
+    <table>
+        <tr>
+            <td>
+                <div id="svg1" class="svg1"></div>
+            </td>
+            <td>
+                <div id="svg2" class="svg2"></div>
+            </td>
+        </tr>
 
-<svg width="700" height="400"></svg>
+    </table>  
+</div>
 
 @section Scripts{
-    <script src="https://d3js.org/d3.v4.js"></script>
-    <script>
-        //Read the data
-        var json_result = $.ajax({
-            type: "GET",
-            url: "/PurchaseEvents/ByDayJson",
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-        });
-
-
-        var margin = { top: 10, right: 30, bottom: 30, left: 60 },
-            width = 460 - margin.left - margin.right,
-            height = 400 - margin.top - margin.bottom;
-
-        // append the svg object to the body of the page
-        var svg = d3.select("#my_dataviz")
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform",
-                "translate(" + margin.left + "," + margin.top + ")");
-
-        //Read the data
-        /*
-        json_result.done(
-            // Now I can use this dataset:
-            function (data) {
-
-                // Add X axis --> it is a date format
-                var x = d3.scaleTime()
-                    .domain(d3.extent(data, function (d) { return d.date; }))
-                    .range([0, width]);
-                svg.append("g")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(d3.axisBottom(x));
-
-                // Add Y axis
-                var y = d3.scaleLinear()
-                    .domain([0, d3.max(data, function (d) { return +d.value; })])
-                    .range([height, 0]);
-                svg.append("g")
-                    .call(d3.axisLeft(y));
-
-                // Add the line
-                svg.append("path")
-                    .datum(data)
-                    .attr("fill", "none")
-                    .attr("stroke", "steelblue")
-                    .attr("stroke-width", 1.5)
-                    .attr("d", d3.line()
-                        .x(function (d) { return x(d.date) })
-                        .y(function (d) { return y(d.value) })
-                    )
-
-            }); */
-
-        json_result.done(
-            // Now I can use this dataset:
-            function (data) {
-
-                data.forEach(function (d) {
-                    d.date = d3.timeParse("%Y-%m-%d %H")(d.date)
-                });
-
-                var svg = d3.select("svg"),
-                    margin = 200,
-                    width = svg.attr("width") - margin, //300
-                    height = svg.attr("height") - margin //200
-
-                // Step 4 
-                var days = 10; // display 10 days backwards
-                var xScale = d3.scaleTime().domain([new Date() - days * 24 * 60 * 60 * 1000, new Date()]).range([0, width]),
-                    yScale = d3.scaleLinear().domain([0, 1000]).range([height, 0]);
-
-                var g = svg.append("g")
-                    .attr("transform", "translate(" + 100 + "," + 100 + ")");
-
-                // Step 5
-                // Title
-                svg.append('text')
-                    .attr('x', width / 2 + 100)
-                    .attr('y', 100)
-                    .attr('text-anchor', 'middle')
-                    .style('font-family', 'Helvetica')
-                    .style('font-size', 20)
-                    .text('Line Chart');
-
-                // X label
-                svg.append('text')
-                    .attr('x', width / 2 + 100)
-                    .attr('y', height - 15 + 150)
-                    .attr('text-anchor', 'middle')
-                    .style('font-family', 'Helvetica')
-                    .style('font-size', 12)
-                    .text('Independant');
-
-                // Y label
-                svg.append('text')
-                    .attr('text-anchor', 'middle')
-                    .attr('transform', 'translate(60,' + height + ')rotate(-90)')
-                    .style('font-family', 'Helvetica')
-                    .style('font-size', 12)
-                    .text('Dependant');
-
-                // Step 6
-                g.append("g")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(d3.axisBottom(xScale));
-
-                g.append("g")
-                    .call(d3.axisLeft(yScale));
-
-                // Step 7
-                svg.append('g')
-                    .selectAll("dot")
-                    .data(data)
-                    .enter()
-                    .append("circle")
-                    .attr("cx", function (d) { return xScale(d.date); })
-                    .attr("cy", function (d) { return yScale(d.value); })
-                    .attr("r", 3)
-                    .attr("transform", "translate(" + 100 + "," + 100 + ")")
-                    .style("fill", "#CC0000");
-
-                // Step 8        
-                var line = d3.line()
-                    .x(function (d) { return xScale(d.date); })
-                    .y(function (d) { return yScale(d.value); })
-                    .curve(d3.curveMonotoneX)
-
-                svg.append("path")
-                    .datum(data)
-                    .attr("class", "line")
-                    .attr("transform", "translate(" + 100 + "," + 100 + ")")
-                    .attr("d", line)
-                    .style("fill", "none")
-                    .style("stroke", "#CC0000")
-                    .style("stroke-width", "2");
-            });
-    </script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="~/js/graph1.js"></script>
+    <script src="~/js/graph2.js"></script>
 }

@@ -10,13 +10,17 @@
     <a asp-action="Upgrade" asp-route-id="@Model.Id">Upgrade now!</a>
 
 </p>
-<p>
-    <a asp-controller="Images" asp-action="Create">Upload new image</a>
-    <br/> or... <br/>
-    <a asp-controller="Drives" asp-action="Fill" asp-route-id="@Model.Id">Fill with beautiful Pixabay images!</a>
-</p>
+<form asp-action="Fill" method="post">
+    <input type="hidden" name="id" value="@Model.Id" class="form-control" />
+    Add up to 3 images from Webservice, Pixabay: <input name="word" class="form-control" />
+    <br/>
+    <input type="submit" class="btn btn-primary" value="Fetch Images!" />
+</form>
 <div>
     <hr />
+    <p>
+        <a asp-controller="Images" asp-action="Create">Upload new image</a>
+    </p>
     <div class="row container">
         @if (Model.Images != null)
         {

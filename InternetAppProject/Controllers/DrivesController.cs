@@ -310,11 +310,19 @@ namespace InternetAppProject.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-        public async Task<IActionResult> Fill(int? id)
+
+        [HttpPost]
+        public async Task<IActionResult> Fill(int? id, string word)
         {
+            int max_allowed = 3;
+
             if (id == null)
             {
                 return NotFound();
+            }
+            if(word == null)
+            {
+                word = "Technology";
             }
             var drive = await _context.Drive.Include(d => d.UserId).Include(d => d.TypeId).Include(d => d.Images)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -342,7 +350,7 @@ namespace InternetAppProject.Controllers
 
                 // our key is 23510481-c5bf39e0b210f2fe4301098dd
                 String key = "23510481-c5bf39e0b210f2fe4301098dd";
-                HttpResponseMessage Res = await client.GetAsync("api/?key=" + key + "&q=yellow+flowers&image_type=photo&pretty=true");
+                HttpResponseMessage Res = await client.GetAsync("api/?key=" + key + "&q=" + word + "&image_type=photo&pretty=true");
                 if (Res.IsSuccessStatusCode)
                 {
                     var Response = Res.Content.ReadAsStringAsync().Result;
@@ -352,8 +360,8 @@ namespace InternetAppProject.Controllers
 
                     int freeSlots = drive.TypeId.Max_Capacity - drive.Current_usage; // if negative nothing will be added
                     freeSlots = Math.Min(freeSlots, parsed["hits"].Count()); // limit the number of images to the number of results
-                    
-                    for(int i = 0; i < freeSlots; i++) {
+                    freeSlots = Math.Min(freeSlots, max_allowed);
+                    for (int i = 0; i < freeSlots; i++) {
                         Image I = new Image() { DId = drive, UploadTime = DateTime.Now, IsPublic = true, EditTime = DateTime.Now };
                         using (WebClient c = new WebClient())
                         {
