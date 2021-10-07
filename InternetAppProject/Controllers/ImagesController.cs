@@ -216,8 +216,17 @@ namespace InternetAppProject.Controllers
             }
             if (image.DId != null)
             {
-                image.DId.Current_usage--;
-                image.DId.Current_usage = Math.Max(image.DId.Current_usage, 0); // prevent negatives
+                var userDrive = User.Claims.Where(c => c.Type == "drive").FirstOrDefault();
+                var userType = User.Claims.Where(c => c.Type == "Type").FirstOrDefault();
+                if (userDrive != null && (image.DId.Id == Int32.Parse(userDrive.Value) || userType.Value == "admin"))
+                {
+                    image.DId.Current_usage--;
+                    image.DId.Current_usage = Math.Max(image.DId.Current_usage, 0); // prevent negatives
+                }
+                else
+                {
+                    return NotFound(); // user is trying to delete image that's not theirs
+                }
             }
             int drive = image.DId.Id;
 

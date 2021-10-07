@@ -90,9 +90,9 @@ $(document).ready(function () {
                 .text(function (d) { return d.value; });
 
             svg.append('text')
-                .attr('x', 100)
+                .attr('x', -30)
                 .attr('y', -5)
-                .text('Profits per Day (last 7 days)');
+                .text('Profits per Day');
 
 
 

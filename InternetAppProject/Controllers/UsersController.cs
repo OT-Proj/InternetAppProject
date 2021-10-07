@@ -188,19 +188,30 @@ namespace InternetAppProject.Controllers
             */
 
             var q = from u in _context.User
-                    join d in _context.Drive on u.D.Id equals d.Id
-                    join im in _context.Image on d.Id equals im.DId.Id into sub
-                    from subq in sub.DefaultIfEmpty() // left outer join (for empty drives)
+                    join d in _context.Drive on u.D.Id equals d.Id into sub1
+                    from s1 in sub1.DefaultIfEmpty()
+                    join im in _context.Image on u.D.Id equals im.DId.Id into sub2
+                    from s2 in sub2.DefaultIfEmpty() // left outer join (for empty drives)
                     where u.Id == id
-                    select new { userObj = u, driveObj = d, image = subq };
+                    select new { userObj = u, driveObj = u.D, imageObj = u.D.Images.ToList()};
 
             if (q.Count() < 1)
             {
                 return RedirectToAction(nameof(Index));
             }
+
+            if(q.First().driveObj != null)
+            {
+                _context.Drive.Remove(q.First().driveObj);
+                if (q.First().imageObj != null)
+                {
+                    ((List<Image>)q.First().imageObj).ForEach(i => _context.Image.Remove(i));
+                }
+            }
+            var purchases = await _context.PurchaseEvent.Where(p => p.UserID.Id == q.First().userObj.Id).ToListAsync();
+            _context.RemoveRange(purchases);
             _context.User.Remove(q.First().userObj);
-            _context.Drive.Remove(q.First().driveObj);
-            q.ToList().ForEach(i => { if (i.image != null) _context.Image.Remove(i.image); }); // iterate over results and delete each image
+            //q.ToList().ForEach(i => { if (i.image != null) _context.Image.Remove(i.image); }); // iterate over results and delete each image
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -210,7 +221,7 @@ namespace InternetAppProject.Controllers
             return _context.User.Any(e => e.Id == id);
         }
 
-        // GET: Users/Create
+        // GET: Users/Login
         public IActionResult Login()
         {
             return View();

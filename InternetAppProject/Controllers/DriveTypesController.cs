@@ -145,6 +145,19 @@ namespace InternetAppProject.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var driveType = await _context.DriveType.FindAsync(id);
+            if (driveType == null)
+            {
+                return NotFound(); // no such drivetype exists
+            }
+            if(driveType.Name.Equals("Free"))
+            {
+                return NotFound(); // cannot delete "free" drivetype, it is required to stay
+            }
+            var drives = await _context.Drive.Include(d => d.TypeId).Where(d => d.TypeId.Id == id).ToListAsync();
+            if(drives.Count() > 0)
+            {
+                return NotFound(); // cannot delete drivetype, drives are depending on it.
+            }
             _context.DriveType.Remove(driveType);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
