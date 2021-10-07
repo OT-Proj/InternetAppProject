@@ -219,9 +219,11 @@ namespace InternetAppProject.Controllers
                 image.DId.Current_usage--;
                 image.DId.Current_usage = Math.Max(image.DId.Current_usage, 0); // prevent negatives
             }
+            int drive = image.DId.Id;
+
             _context.Image.Remove(image);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", "Drives", new { id = drive });
         }
 
         private bool ImageExists(int id)

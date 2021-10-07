@@ -44,6 +44,9 @@ namespace InternetAppProject.Migrations
                     b.Property<int>("Current_usage")
                         .HasColumnType("int");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("TypeIdId")
                         .HasColumnType("int");
 
@@ -148,26 +151,6 @@ namespace InternetAppProject.Migrations
                     b.ToTable("Tag");
                 });
 
-            modelBuilder.Entity("InternetAppProject.Models.Upgrade", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("DriveTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DriveTypeId");
-
-                    b.ToTable("Upgrade");
-                });
-
             modelBuilder.Entity("InternetAppProject.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -250,13 +233,6 @@ namespace InternetAppProject.Migrations
                     b.Navigation("UserID");
                 });
 
-            modelBuilder.Entity("InternetAppProject.Models.Upgrade", b =>
-                {
-                    b.HasOne("InternetAppProject.Models.DriveType", null)
-                        .WithMany("upgrades")
-                        .HasForeignKey("DriveTypeId");
-                });
-
             modelBuilder.Entity("InternetAppProject.Models.User", b =>
                 {
                     b.HasOne("InternetAppProject.Models.Drive", "D")
@@ -271,11 +247,6 @@ namespace InternetAppProject.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("UserId");
-                });
-
-            modelBuilder.Entity("InternetAppProject.Models.DriveType", b =>
-                {
-                    b.Navigation("upgrades");
                 });
 
             modelBuilder.Entity("InternetAppProject.Models.User", b =>

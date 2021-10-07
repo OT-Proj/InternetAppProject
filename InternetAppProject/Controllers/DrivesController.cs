@@ -32,7 +32,7 @@ namespace InternetAppProject.Controllers
         // GET: Drives
         public async Task<IActionResult> Index()
         {
-            var data = _context.Drive.Include(x => x.UserId).Include(x => x.Images);
+            var data = _context.Drive.Include(x => x.UserId);
             return View(await data.ToListAsync());
         }
 
@@ -123,7 +123,7 @@ namespace InternetAppProject.Controllers
             {
                 return NotFound();
             }
-            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
             // update existing drive
             int UserDriveId = Int32.Parse(DriveClaim.Value);
             var q = from d in _context.Drive
@@ -162,12 +162,12 @@ namespace InternetAppProject.Controllers
 
             if (drive == null)
             {
-                return View("Create");
+                return RedirectToAction("Create");
             }
 
             if(drive.UserId == null)
             {
-                return NotFound();
+                return NotFound(); // orphaned drive - error
             }
 
             if (((ClaimsIdentity)User.Identity) != null)
@@ -205,7 +205,7 @@ namespace InternetAppProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Current_usage")] Drive drive)
+        public async Task<IActionResult> Create([Bind("Id,Description")] Drive drive)
         {
             var UserClaim = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "id");
             if (UserClaim == null)
@@ -272,7 +272,7 @@ namespace InternetAppProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Current_usage")] Drive drive)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Description")] Drive drive)
         {
             if (id != drive.Id)
             {
@@ -283,7 +283,9 @@ namespace InternetAppProject.Controllers
             {
                 try
                 {
-                    _context.Update(drive);
+                    Drive existing = _context.Drive.Where(d => d.Id == id).FirstOrDefault();
+                    existing.Description = drive.Description;
+                    _context.Update(existing);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -297,7 +299,7 @@ namespace InternetAppProject.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", new { id = id });
             }
             return View(drive);
         }
@@ -326,15 +328,16 @@ namespace InternetAppProject.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var q = from d in _context.Drive
-                    join u in _context.User on d.Id equals u.D.Id
-                    join im in _context.Image on d.Id equals im.DId.Id into sub
-                    from subq in sub.DefaultIfEmpty() // left outer join (for empty drives)
+                    join u in _context.User on d.Id equals u.D.Id into sub1
+                    from s in sub1.DefaultIfEmpty()
+                    join im in _context.Image on d.Id equals im.DId.Id into sub2
+                    from subq in sub2.DefaultIfEmpty() // left outer join (for empty drives)
                     where d.Id == id
-                    select new { userObj = u, driveObj = d, image = subq };
+                    select new {userObj = d.UserId, driveObj = d, image = subq };
             
             if(q.Count() < 1)
             {
-                return RedirectToAction(nameof(Index));
+                return NotFound(); // drive does not exist. can't delete
             }
             _context.Drive.Remove(q.First().driveObj);
             q.ToList().ForEach(i =>{ if (i.image != null) _context.Image.Remove(i.image); }); // iterate over results and delete each image

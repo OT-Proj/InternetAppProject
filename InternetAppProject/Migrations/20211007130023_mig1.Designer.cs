@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InternetAppProject.Migrations
 {
     [DbContext(typeof(InternetAppProjectContext))]
-    [Migration("20210911125123_no_level")]
-    partial class no_level
+    [Migration("20211007130023_mig1")]
+    partial class mig1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -45,6 +45,9 @@ namespace InternetAppProject.Migrations
 
                     b.Property<int>("Current_usage")
                         .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("TypeIdId")
                         .HasColumnType("int");

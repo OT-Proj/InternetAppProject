@@ -6,6 +6,18 @@
 
 <p>
     <h1>@Html.DisplayFor(model => model.UserId.Name)'s Drive</h1>
+    <h6>@Html.DisplayFor(model => model.Description) 
+    @{
+        var uID = Context.User.Claims.FirstOrDefault(x => x.Type == "id");
+        if (uID != null)
+        {
+            if (Model.UserId.Name == uID.Value)
+            }
+    }
+
+    <a asp-action="Edit" asp-route-id="@Model.Id">(edit)</a>
+    
+    </h6>
     <div>Current usage:  @Html.DisplayFor(model => model.Current_usage) / @Html.DisplayFor(model => model.TypeId.Max_Capacity)</div>
     <a asp-action="Upgrade" asp-route-id="@Model.Id">Upgrade now!</a>
 

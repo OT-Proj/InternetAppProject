@@ -71,6 +71,7 @@ namespace InternetAppProject.Controllers
 
                 // create a new drive for the user
                 Drive d = new Drive();
+                d.Description = "";
                 var q = from t in _context.DriveType
                         where t.Name.Equals("Free")
                         select t;
@@ -233,16 +234,24 @@ namespace InternetAppProject.Controllers
             {
                 // need do join users and drives in order to fetch drive.Id. 
                 var q = from u in _context.User
-                        join d in _context.Drive on u.D.Id equals d.Id
+                        join d in _context.Drive on u.D.Id equals d.Id into subq
+                        from sub in subq.DefaultIfEmpty()
                         where u.Name == user.Name &&
                                 u.Password == user.Password
-                        select new { userObj = u, driveObj = d};
+                        select new { userObj = u, driveObj = u.D};
 
                 if (q.Count() > 0)
                 {
                     // user is found
-                    LoginUser(q.First().userObj.Name, q.First().userObj.Type, q.First().userObj.Id, q.First().driveObj.Id);
-                    return RedirectToAction("Details", "Drives", new { id = q.First().driveObj.Id });
+                    if(q.First().driveObj != null)
+                    {
+                        LoginUser(q.First().userObj.Name, q.First().userObj.Type, q.First().userObj.Id, q.First().driveObj.Id);
+                        return RedirectToAction("Details", "Drives", new { id = q.First().driveObj.Id });
+                    }
+
+                    LoginUser(q.First().userObj.Name, q.First().userObj.Type, q.First().userObj.Id, -1); //user has no drive!
+                    return RedirectToAction("Create", "Drives");
+
                     //return View("Index",await _context.User.ToListAsync());
                 }
                 else
