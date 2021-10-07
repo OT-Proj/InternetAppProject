@@ -160,7 +160,7 @@ namespace InternetAppProject.Controllers
         {
             if(id == null)
             {
-                id = 31;
+                id = 7;
             }
             DateTime start = DateTime.Now.AddDays(-1 * (double)id);
             var q1 = from u in _context.PurchaseEvent
@@ -169,7 +169,8 @@ namespace InternetAppProject.Controllers
                      select new GraphByDayData{ value = u.Amount, date = null, date_fixed = u.Time};
             var p = await q1.ToListAsync();
             p.ForEach(x => x.date = x.date_fixed.ToString("yyyy/MM/dd"));
-            var q2 = p.GroupBy(x => x.date).Select(x => new { value = x.Sum(x => x.value), date = x.Key, date_fixed = DateTime.Parse(x.Key) }).ToList();
+            var q2 = p.GroupBy(x => x.date)
+                .Select(x => new { value = x.Sum(x => x.value), date = x.Key, date_fixed = DateTime.Parse(x.Key) }).ToList();
             q2.Sort((x, y) => x.date_fixed.CompareTo(y.date_fixed));
             return Json(q2);
         }
@@ -179,7 +180,7 @@ namespace InternetAppProject.Controllers
         {
             if (id == null)
             {
-                id = 31;
+                id = 7;
             }
             DateTime start = DateTime.Now.AddDays(-1 * (double)id);
             var q1 = from u in _context.PurchaseEvent
@@ -191,7 +192,8 @@ namespace InternetAppProject.Controllers
             p.ForEach(x => x.date = x.date_fixed.ToString("yyyy/MM/dd"));
 
             // two groupBy calls - one is to distinguish users + date, the other to count only by date
-            var q2 = p.Distinct().GroupBy(x => new { x.userID, x.date}).GroupBy(x => x.Key.date).Select(x => new { value = x.Count(), date = x.Key, date_fixed = DateTime.Parse(x.Key) }).ToList();
+            var q2 = p.Distinct().GroupBy(x => new { x.userID, x.date}).GroupBy(x => x.Key.date)
+                .Select(x => new { value = x.Count(), date = x.Key, date_fixed = DateTime.Parse(x.Key) }).ToList();
             q2.Sort((x, y) => x.date_fixed.CompareTo(y.date_fixed));
             return Json(q2);
         }

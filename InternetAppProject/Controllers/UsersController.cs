@@ -253,11 +253,11 @@ namespace InternetAppProject.Controllers
             return View(user);
         }
 
-        private async void LogoutUser()
+        public async void LogoutUser()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
-        private async void LoginUser(string userName, InternetAppProject.Models.User.UserType userType, int id, int drive)
+        public async void LoginUser(string userName, InternetAppProject.Models.User.UserType userType, int id, int drive)
         {
             string type = Enum.GetName(typeof(InternetAppProject.Models.User.UserType),userType);
             string sid = id.ToString();

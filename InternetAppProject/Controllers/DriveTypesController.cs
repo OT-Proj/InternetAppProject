@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InternetAppProject.Data;
 using InternetAppProject.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 
 namespace InternetAppProject.Controllers
 {
@@ -218,6 +221,6 @@ namespace InternetAppProject.Controllers
                         changed = dt.Last_change.ToString("MM/dd/yyyy HH:mm"),
                     };
             return Json(await q.ToListAsync());
-       } 
+       }
     }
 }

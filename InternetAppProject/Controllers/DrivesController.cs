@@ -15,6 +15,8 @@ using Newtonsoft.Json.Linq;
 using System.IO;
 using DriveType = InternetAppProject.Models.DriveType;
 using System.Net;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace InternetAppProject.Controllers
 {
@@ -121,15 +123,16 @@ namespace InternetAppProject.Controllers
             {
                 return NotFound();
             }
-
+            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             // update existing drive
             int UserDriveId = Int32.Parse(DriveClaim.Value);
             var q = from d in _context.Drive
-                    join u in _context.User on d.Id equals u.D.Id
-                    join im in _context.Image on d.Id equals im.DId.Id into sub
-                    from subq in sub.DefaultIfEmpty() // left outer join (for empty drives)
+                    join u in _context.User on d.Id equals u.D.Id into sub1
+                    from subq1 in sub1.DefaultIfEmpty() // left outer join (for orphaned drives)
+                    join im in _context.Image on d.Id equals im.DId.Id into sub2
+                    from subq2 in sub2.DefaultIfEmpty() // left outer join (for empty drives)
                     where d.Id == UserDriveId
-                    select new { drive = d, user = u };
+                    select new { drive = d, user = d.UserId };
 
             Drive UserDrive = q.FirstOrDefault().drive;
             User Owner = q.FirstOrDefault().user;
@@ -159,7 +162,7 @@ namespace InternetAppProject.Controllers
 
             if (drive == null)
             {
-                return NotFound();
+                return View("Create");
             }
 
             if(drive.UserId == null)
@@ -204,16 +207,45 @@ namespace InternetAppProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Current_usage")] Drive drive)
         {
+            var UserClaim = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "id");
+            if (UserClaim == null)
+            {
+                return NotFound(); // redirect to whoops! you are not logged in.
+            }
+            int UserID = Int32.Parse(UserClaim.Value);
+            var user_q = from u in _context.User
+                         join d in _context.Drive on u.D.Id equals d.Id into subq
+                         from q in subq.DefaultIfEmpty()
+                         where u.Id == UserID
+                         select new { User = u, Drive = q.UserId.D};
+
+            Drive ExistingDrive = user_q.FirstOrDefault().Drive;
+
+            if(user_q.Count() < 1)
+            {
+                return NotFound(); // redirect to whoops! user not found
+            }
+            if(ExistingDrive != null)
+            {
+                return NotFound(); // redirect to whoops! user already has a drive
+            }
+
             if (ModelState.IsValid)
             {
+                // create the new drive and assign in the the logged in user
                 var q = from t in _context.DriveType
                         where t.Name.Equals("Free")
                         select t;
                 DriveType dt = q.FirstOrDefault();
                 drive.TypeId = dt;
-
+                drive.UserId = user_q.FirstOrDefault().User;
+                drive.Current_usage = 0;
                 _context.Add(drive);
                 await _context.SaveChangesAsync();
+
+                // update cookies to include current drive id
+                updateCookies(drive.UserId.Name, drive.UserId.Type, drive.UserId.Id, drive.Id);
+
                 return RedirectToAction(nameof(Index));
             }
             return View(drive);
@@ -304,7 +336,6 @@ namespace InternetAppProject.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
-            _context.User.Remove(q.First().userObj);
             _context.Drive.Remove(q.First().driveObj);
             q.ToList().ForEach(i =>{ if (i.image != null) _context.Image.Remove(i.image); }); // iterate over results and delete each image
             await _context.SaveChangesAsync();
@@ -404,6 +435,34 @@ namespace InternetAppProject.Controllers
                 return q.FirstOrDefault().sum;
             }
             return 0;
+        }
+        public async void updateCookies(string userName, InternetAppProject.Models.User.UserType userType, int id, int drive)
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            string type = Enum.GetName(typeof(InternetAppProject.Models.User.UserType), userType);
+            string sid = id.ToString();
+            string did = drive.ToString();
+            var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, userName),
+                    new Claim(ClaimTypes.Role, type),
+                    new Claim("Type", type),
+                    new Claim("id", sid), // user.Id
+                    new Claim("drive", did), // user.D.Id
+                };
+
+            var claimsIdentity = new ClaimsIdentity(
+                claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
+            {
+                //ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10)
+            };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
         }
     }
 }
