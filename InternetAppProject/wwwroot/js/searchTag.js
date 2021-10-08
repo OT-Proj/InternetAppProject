@@ -3,7 +3,8 @@ $(function () {
         var inpSearch = $('#inpSearch');//$('input', $(this).parent());//$(this).prev();
         var loader = $(this).next();
         loader.removeClass('d-none');
-        $.post({
+        $.ajax({
+            method: "post",
             url: "/Tags/SearchJson",
             data: { id: inpSearch.val() }
         }).done(function (result) {
