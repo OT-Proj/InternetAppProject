@@ -144,7 +144,10 @@ namespace InternetAppProject.Controllers
                 UserID = Owner,
                 Amount = Math.Max(dt.Price - UserPaid(Owner), 0),
             };
-            _context.PurchaseEvent.Add(pe);
+            if(pe.Amount > 0)
+            {
+                _context.PurchaseEvent.Add(pe);
+            }
             await _context.SaveChangesAsync();
             return View("Details", UserDrive);
         }
@@ -283,8 +286,13 @@ namespace InternetAppProject.Controllers
                 {
                     Drive existing = _context.Drive.Where(d => d.Id == id).Include(d => d.UserId).FirstOrDefault();
                     var uID = User.Claims.FirstOrDefault(x => x.Type == "id");
-                    if (uID == null || Int32.Parse(uID.Value) != existing.UserId.Id) {
-                        return NotFound(); // user is not the owner of the drive or is not logged in
+                    var uType = User.Claims.FirstOrDefault(x => x.Type == "Type");
+                    if (uID == null || uType == null)
+                    {
+                        return NotFound(); // user not logged in
+                    }
+                    if (Int32.Parse(uID.Value) != existing.UserId.Id && !uType.Value.Equals("Admin")) {
+                        return NotFound(); // user is not the owner of the drive and not admin
                     }
                     
                     existing.Description = drive.Description;

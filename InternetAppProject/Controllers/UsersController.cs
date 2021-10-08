@@ -24,7 +24,7 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: Users
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.User.ToListAsync());
@@ -128,6 +128,22 @@ namespace InternetAppProject.Controllers
                 return NotFound();
             }
 
+            var uID = User.Claims.FirstOrDefault(x => x.Type == "id");
+            var uType = User.Claims.FirstOrDefault(x => x.Type == "Type");
+            if (uID == null || uType == null)
+            {
+                return NotFound(); // user not logged in
+            }
+            bool isAdmin = false;
+            if(uType.Value.Equals("Admin"))
+            {
+                isAdmin = true;
+            }
+            if (Int32.Parse(uID.Value) != user.Id && !isAdmin)
+            {
+                return NotFound(); // someone who isn't the user or an admin trying to edit this account!
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -135,6 +151,11 @@ namespace InternetAppProject.Controllers
                     // fetch old user data to keep the create_time correct
                     var existing_Data = _context.User.Where(U => U.Id == id).First();
                     user.Create_time = existing_Data.Create_time;
+                    if(!isAdmin)
+                    {
+                        // user cannot edit roles unless they are admin
+                        user.Type = existing_Data.Type;
+                    }
                     _context.Remove(existing_Data);
                     _context.Update(user);
                     await _context.SaveChangesAsync();

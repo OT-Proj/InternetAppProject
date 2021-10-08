@@ -28,7 +28,10 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @item.UserID.Name
+                @if(item.UserID != null)
+                {
+                   @item.UserID.Name;
+                }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Time)
