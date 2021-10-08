@@ -4,14 +4,16 @@ using InternetAppProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace InternetAppProject.Migrations
 {
     [DbContext(typeof(InternetAppProjectContext))]
-    partial class InternetAppProjectContextModelSnapshot : ModelSnapshot
+    [Migration("20211008191709_workplace")]
+    partial class workplace
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -201,11 +203,11 @@ namespace InternetAppProject.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("P_lat")
-                        .HasColumnType("real");
+                    b.Property<int>("P_lat")
+                        .HasColumnType("int");
 
-                    b.Property<float>("P_long")
-                        .HasColumnType("real");
+                    b.Property<int>("P_long")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
