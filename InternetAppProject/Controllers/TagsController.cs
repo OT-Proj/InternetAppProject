@@ -165,7 +165,7 @@ namespace InternetAppProject.Controllers
         {
             if (id == null)
             {
-                return Json(new List<User>());
+                return Json(new List<Tag>());
             }
             var q = from t in _context.Tag
                     where t.Name.Contains(id)
