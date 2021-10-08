@@ -106,13 +106,16 @@ namespace InternetAppProject.Controllers
 
                 if (q.Count() > 0)
                 {
-                    image.DId = q.First(); // q.First() is the logged in user's drive
+                    image.DId = q.FirstOrDefault(); // q.First() is the logged in user's drive
                 }
                 else
                 {
-                    return NotFound();
+                    return NotFound(); // no such user
                 }
-
+                if (image.DId == null)
+                {
+                    return NotFound(); // user without drive trying to upload an image
+                }
                 image.DId.TypeId = _context.Drive.Include(d => d.TypeId)
                     .Where(d => d.Id == image.DId.Id).FirstOrDefault().TypeId;
 
@@ -124,10 +127,10 @@ namespace InternetAppProject.Controllers
 
                 //drive has free capcity left
                 image.DId.Current_usage++;
-                
+
                 _context.Update(image);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Drives", new { id = image.DId.Id});
             }
             return View(image);
         }
@@ -164,10 +167,10 @@ namespace InternetAppProject.Controllers
             {
                 try
                 {
-                    var existing_image = _context.Image.Where(img => img.Id == id).Include(x => x.DId).First();
+                    var existing_image = _context.Image.Where(img => img.Id == id).Include(x => x.DId).FirstOrDefault();
                     if (existing_image == null)
                     {
-                        return NotFound();
+                        return NotFound(); // image you are trying to edit does not exist
                     }
                     bool permissions = false;
                     var userDrive = User.Claims.Where(c => c.Type == "drive").FirstOrDefault();

@@ -149,7 +149,11 @@ namespace InternetAppProject.Controllers
                 try
                 {
                     // fetch old user data to keep the create_time correct
-                    var existing_Data = _context.User.Where(U => U.Id == id).First();
+                    var existing_Data = _context.User.Where(U => U.Id == id).FirstOrDefault();
+                    if(existing_Data == null)
+                    {
+                        return NotFound(); // user you are trying to edit does not exist
+                    }
                     user.Create_time = existing_Data.Create_time;
                     if(!isAdmin)
                     {

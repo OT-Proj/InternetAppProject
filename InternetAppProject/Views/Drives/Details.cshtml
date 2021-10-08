@@ -5,8 +5,8 @@
 }
 
 <p>
-    <h1>@Html.DisplayFor(model => model.UserId.Name)'s Drive</h1>
-    <h6>
+    <h1 class="text-center">@Html.DisplayFor(model => model.UserId.Name)'s Drive</h1>
+    <h6 class="text-center">
         @Html.DisplayFor(model => model.Description)
         @{
             bool owner = false;
@@ -23,28 +23,32 @@
     </h6>
     @if (owner)
     {
-        <div>Current usage:  @Html.DisplayFor(model => model.Current_usage) / @Html.DisplayFor(model => model.TypeId.Max_Capacity)</div>
-        <a asp-action="Upgrade" asp-route-id="@Model.Id">Upgrade now!</a>
+        <div class="text-center">
+            Current usage:  @Html.DisplayFor(model => model.Current_usage) / @Html.DisplayFor(model => model.TypeId.Max_Capacity)
+            | <a asp-action="Upgrade" asp-route-id="@Model.Id">Upgrade now!</a>
+        </div>
     }
 
 </p>
 @if (owner)
 {
     <form asp-action="Fill" method="post">
-        <input type="hidden" name="id" value="@Model.Id" class="form-control" />
-        Add up to 3 images from Webservice, Pixabay: <input name="word" class="form-control" />
-        <br />
-        <input type="submit" class="btn btn-primary" value="Fetch Images!" />
+        <div class="input-group mb-3">
+            <input type="hidden" name="id" value="@Model.Id" class="form-control" />
+            <input name="word" placeholder="Search and add up to 3 images from webservice, Pixabay" class="form-control" />
+            <input type="submit" class="btn btn-primary" value="Fetch Images!" />
+        </div>
     </form>
 }
 <div>
     <hr />
-    @if (owner) {
-            <p>
-                <a asp-controller="Images" asp-action="Create">Upload new image</a>
-            </p>
+    @if (owner)
+    {
+        <p>
+            <a asp-controller="Images" asp-action="Create"><input type="button" value="+ Upload new image" class="btn btn-primary btn-lg disabled"/> </a>
+        </p>
     }
-    <div class="row container">
+    <div class="row container align-self-center">
         @if (Model.Images != null)
         {
             @foreach (Image img in Model.Images)
@@ -68,7 +72,7 @@
                             }
                             @if (owner)
                             {
-                                <a asp-controller="Images" asp-action="Delete" asp-route-id="@img.Id"> Delete </a>
+                                <a asp-controller="Images" asp-action="Delete" asp-route-id="@img.Id" class="text-danger"> Delete </a>
                             }
                         </div>
                     </div>
@@ -77,8 +81,4 @@
             }
         }
     </div>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
 </div>

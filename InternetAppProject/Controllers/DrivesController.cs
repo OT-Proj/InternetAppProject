@@ -165,9 +165,20 @@ namespace InternetAppProject.Controllers
                               .Include(d => d.Images).ThenInclude(img => img.Tags)
                               .FirstOrDefaultAsync(m => m.Id == id);
 
+            var CookieDrive = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "drive");
             if (drive == null)
             {
-                return RedirectToAction("Create");
+                //drive not found, is it yours?
+                if(CookieDrive != null && Int32.Parse(CookieDrive.Value) == id)
+                {
+                    return RedirectToAction("Create");
+                }
+                if (CookieDrive != null && Int32.Parse(CookieDrive.Value) == -1)
+                {
+                    // user didn't have a drive when logging in
+                    return RedirectToAction("Create");
+                }
+                return NotFound(); // drive does not exist
             }
 
             if(drive.UserId == null)
@@ -220,12 +231,13 @@ namespace InternetAppProject.Controllers
                          where u.Id == UserID
                          select new { User = u, Drive = q.UserId.D};
 
-            Drive ExistingDrive = user_q.FirstOrDefault().Drive;
-
-            if(user_q.Count() < 1)
+            if (user_q.Count() < 1)
             {
                 return NotFound(); // redirect to whoops! user not found
             }
+
+            Drive ExistingDrive = user_q.FirstOrDefault().Drive;
+
             if(ExistingDrive != null)
             {
                 return NotFound(); // redirect to whoops! user already has a drive
@@ -285,6 +297,10 @@ namespace InternetAppProject.Controllers
                 try
                 {
                     Drive existing = _context.Drive.Where(d => d.Id == id).Include(d => d.UserId).FirstOrDefault();
+                    if(existing == null)
+                    {
+                        return NotFound(); // drive you are trying to edit does not exist
+                    }
                     var uID = User.Claims.FirstOrDefault(x => x.Type == "id");
                     var uType = User.Claims.FirstOrDefault(x => x.Type == "Type");
                     if (uID == null || uType == null)
@@ -386,7 +402,7 @@ namespace InternetAppProject.Controllers
             }
 
 
-            // fill drive with web service: Art Institute of Chicago API
+            // fill drive with web service: Pixabay API
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("https://pixabay.com/");
@@ -406,6 +422,8 @@ namespace InternetAppProject.Controllers
                     int freeSlots = drive.TypeId.Max_Capacity - drive.Current_usage; // if negative nothing will be added
                     freeSlots = Math.Min(freeSlots, parsed["hits"].Count()); // limit the number of images to the number of results
                     freeSlots = Math.Min(freeSlots, max_allowed);
+
+                    Tag pixabay_tag = _context.Tag.Where(t => t.Name.Equals("Pixabay")).FirstOrDefault();
                     for (int i = 0; i < freeSlots; i++) {
                         Image I = new Image() { DId = drive, UploadTime = DateTime.Now, IsPublic = true, EditTime = DateTime.Now };
                         using (WebClient c = new WebClient())
@@ -414,6 +432,11 @@ namespace InternetAppProject.Controllers
                             I.Data = image;
                         }
                         I.Description = "this image was originally uploaded by Pixabay/" + parsed["hits"][i]["user"].ToString();
+                        if (pixabay_tag != null)
+                        {
+                            I.Tags = new List<Tag>();
+                            ((List<Tag>)I.Tags).Add(pixabay_tag);
+                        }
                         _context.Image.Update(I);
                         drive.Current_usage++;
                     }

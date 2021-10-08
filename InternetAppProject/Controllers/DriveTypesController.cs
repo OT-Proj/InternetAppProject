@@ -80,7 +80,7 @@ namespace InternetAppProject.Controllers
             var driveType = await _context.DriveType.FindAsync(id);
             if (driveType == null)
             {
-                return NotFound();
+                return NotFound(); // drivetype does not exist
             }
             return View(driveType);
         }
