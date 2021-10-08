@@ -150,5 +150,30 @@ namespace InternetAppProject.Controllers
         {
             return _context.Tag.Any(e => e.Id == id);
         }
+
+        public async Task<IActionResult> Search(string id)
+        {
+            if (id == null)
+            {
+                return View();
+            }
+            var tags = await _context.Tag.Where(t => t.Name.Contains(id)).ToListAsync();
+            return View(tags);
+        }
+
+        public async Task<IActionResult> SearchJson(string id)
+        {
+            if (id == null)
+            {
+                return Json(new List<User>());
+            }
+            var q = from t in _context.Tag
+                    where t.Name.Contains(id)
+                    orderby t.Name ascending
+                    select new { Tag = t.Name};
+
+
+            return Json(await q.ToListAsync());
+        }
     }
 }

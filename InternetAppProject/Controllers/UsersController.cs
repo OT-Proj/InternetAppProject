@@ -351,7 +351,7 @@ namespace InternetAppProject.Controllers
                     join d in _context.Drive on u.D.Id equals d.Id
                     where u.Name.Contains(id)
                     orderby u.Name ascending
-                    select new { name = u.Name, drive = d.Id };
+                    select new { name = u.Name, drive = d.Id, zip = u.Zip };
                     
 
             return Json(await q.ToListAsync());
