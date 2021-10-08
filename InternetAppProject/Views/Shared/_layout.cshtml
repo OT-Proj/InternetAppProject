@@ -38,49 +38,110 @@
                             }
                         }
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Images" asp-action="Search">Image Search</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Drives" asp-action="Index">My drive</a>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Search
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Images" asp-action="Search">Image Search</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Search">Drive Search</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tags" asp-action="Search">Tag Search</a>
+                                </li>
+                                <!--<li class="nav-item">
+
+                    <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Search">Business plan search</a>
+                </li>-->
+                               
+                            </ul>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Search">Drive Search</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Edit">Edit user</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Tags" asp-action="Search">Tag Search</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Images" asp-action="Create">Image upload</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Tags" asp-action="Index">All Tags</a>
                         </li>
-                    </ul>
-                    @{
 
-                        @if (Context != null && Context.User != null && Context.User.Identity.Name != null)
-                        {
-                            <div>Hello @Context.User.Identity.Name, </div>
-                            <a class="nav-link text-dark" asp-controller="Users" asp-action="Logout">Logout</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                List
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 
-                        }
-                        else
-                        {
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">Already registered? click here to Login!</a>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">users</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Drives" asp-action="Index">drives</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Images" asp-action="Index">images</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Index">purchase</a>
+                                </li>
+                                <!--<li class="nav-item">>
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Tags" asp-action="Index">Business plan</a>
+                </li>-->
 
-                        }
-                    }
+                            </ul>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                analytics
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Graphs">Graphs</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Maps">Maps</a>
+                                </li>
+                            </ul>
+                            @{
+
+                                @if (Context != null && Context.User != null && Context.User.Identity.Name != null)
+                                {
+                                    <div>Hello @Context.User.Identity.Name, </div>
+                                    <a class="nav-link text-dark" asp-controller="Users" asp-action="Logout">Logout</a>
+
+                                }
+                                else
+                                {
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">Already registered? click here to Login!</a>
+
+                                }
+                            }
+</div>
                 </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-    <footer class="border-top footer text-muted">
+            </nav>
+        </header>
         <div class="container">
-            &copy; 2021 - InternetAppProject - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
         </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
-</html>
+        <footer class="border-top footer text-muted">
+            <div class="container">
+                &copy; 2021 - InternetAppProject - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </div>
+        </footer>
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        @await RenderSectionAsync("Scripts", required: false)
+    </body>
+    </html>
