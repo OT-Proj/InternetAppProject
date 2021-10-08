@@ -144,7 +144,10 @@ namespace InternetAppProject.Controllers
                 UserID = Owner,
                 Amount = Math.Max(dt.Price - UserPaid(Owner), 0),
             };
-            _context.PurchaseEvent.Add(pe);
+            if(pe.Amount > 0)
+            {
+                _context.PurchaseEvent.Add(pe);
+            }
             await _context.SaveChangesAsync();
             return View("Details", UserDrive);
         }
@@ -157,8 +160,10 @@ namespace InternetAppProject.Controllers
                 return NotFound();
             }
 
-            var drive = await _context.Drive.Include(d => d.TypeId).Include(d => d.UserId).Include(d => d.Images).ThenInclude(img => img.Tags)
-                 .FirstOrDefaultAsync(m => m.Id == id);
+            var drive = await _context.Drive.Include(d => d.TypeId)
+                              .Include(d => d.UserId)
+                              .Include(d => d.Images).ThenInclude(img => img.Tags)
+                              .FirstOrDefaultAsync(m => m.Id == id);
 
             if (drive == null)
             {
@@ -170,25 +175,21 @@ namespace InternetAppProject.Controllers
                 return NotFound(); // orphaned drive - error
             }
 
-            if (((ClaimsIdentity)User.Identity) != null)
+            var UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "id");
+            var UserType = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "Type");
+            if (UserId != null && UserType != null)
             {
-                var UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "id");
-                var UserType = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "Type");
-                if (UserId != null && UserType != null)
+                // user is logged in
+                if (drive.UserId.Id.ToString() != UserId.Value && UserType.Value != "Admin")
                 {
-                    // user is logged in
-                    if (drive.UserId.Id.ToString() != UserId.Value && UserType.Value != "Admin")
-                    {
-                        // user is neither owner nor an admin therefore not authorized to view private images
-                        drive.Images = drive.Images.ToList().FindAll(img => img.IsPublic);
-                    }
-                }
-                else
-                {
-                    // user is not logged in and therefore unautorized to view private images
+                    // user is neither owner nor an admin therefore not authorized to view private images
                     drive.Images = drive.Images.ToList().FindAll(img => img.IsPublic);
                 }
-                
+            }
+            else
+            {
+                // user is not logged in and therefore unautorized to view private images
+                drive.Images = drive.Images.ToList().FindAll(img => img.IsPublic);
             }
 
             return View(drive);
@@ -283,7 +284,17 @@ namespace InternetAppProject.Controllers
             {
                 try
                 {
-                    Drive existing = _context.Drive.Where(d => d.Id == id).FirstOrDefault();
+                    Drive existing = _context.Drive.Where(d => d.Id == id).Include(d => d.UserId).FirstOrDefault();
+                    var uID = User.Claims.FirstOrDefault(x => x.Type == "id");
+                    var uType = User.Claims.FirstOrDefault(x => x.Type == "Type");
+                    if (uID == null || uType == null)
+                    {
+                        return NotFound(); // user not logged in
+                    }
+                    if (Int32.Parse(uID.Value) != existing.UserId.Id && !uType.Value.Equals("Admin")) {
+                        return NotFound(); // user is not the owner of the drive and not admin
+                    }
+                    
                     existing.Description = drive.Description;
                     _context.Update(existing);
                     await _context.SaveChangesAsync();

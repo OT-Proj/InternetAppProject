@@ -37,13 +37,28 @@ namespace InternetAppProject.Controllers
             }
 
             var image = await _context.Image.Include(x => x.Tags)
+                .Include(x => x.DId).ThenInclude(x => x.UserId)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (image == null)
             {
                 return NotFound();
             }
 
-            return View(image);
+            var userDrive = User.Claims.Where(c => c.Type == "drive").FirstOrDefault();
+            var userType = User.Claims.Where(c => c.Type == "Type").FirstOrDefault();
+            if (image.IsPublic)
+            {
+                return View(image);
+            }
+            if (userDrive != null && Int32.Parse(userDrive.Value) == image.DId.Id) {
+                return View(image);
+            }
+            if (userType != null && userType.Value == "Admin")
+            {
+                return View(image);
+            }
+
+            return NotFound(); // not your image + not admin = no permissions to see image
         }
 
         // GET: Images/Create
@@ -60,6 +75,12 @@ namespace InternetAppProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ImageFile,IsPublic,Description")] Image image, int[] tags)
         {
+            if(image.ImageFile == null)
+            {
+                ViewData["imageError"] = "Please select a file.";
+                ViewData["Tags"] = new SelectList(_context.Tag, "Id", nameof(Tag.Name));
+                return View("Create");
+            }
             if (ModelState.IsValid)
             {
                 image.UploadTime = DateTime.Now;
@@ -143,12 +164,28 @@ namespace InternetAppProject.Controllers
             {
                 try
                 {
-                    var existing_image = _context.Image.Where(img => img.Id == id).First();
+                    var existing_image = _context.Image.Where(img => img.Id == id).Include(x => x.DId).First();
                     if (existing_image == null)
                     {
                         return NotFound();
                     }
-                    // first check if the user uploaded a new image to replace to old one
+                    bool permissions = false;
+                    var userDrive = User.Claims.Where(c => c.Type == "drive").FirstOrDefault();
+                    var userType = User.Claims.Where(c => c.Type == "Type").FirstOrDefault();
+                    if (userDrive != null && Int32.Parse(userDrive.Value) == existing_image.DId.Id)
+                    {
+                        permissions = true;
+                    }
+                    if (userType != null && userType.Value == "Admin")
+                    {
+                        permissions = true;
+                    }
+                    if(!permissions)
+                    {
+                        return NotFound(); // no permissions to edit this image
+                    }
+
+                    // check if the user uploaded a new image to replace to old one
                     if (image.ImageFile != null)
                     {
                         // converting image from user to format stored in the DB
@@ -216,8 +253,17 @@ namespace InternetAppProject.Controllers
             }
             if (image.DId != null)
             {
-                image.DId.Current_usage--;
-                image.DId.Current_usage = Math.Max(image.DId.Current_usage, 0); // prevent negatives
+                var userDrive = User.Claims.Where(c => c.Type == "drive").FirstOrDefault();
+                var userType = User.Claims.Where(c => c.Type == "Type").FirstOrDefault();
+                if (userDrive != null && (image.DId.Id == Int32.Parse(userDrive.Value) || userType.Value == "admin"))
+                {
+                    image.DId.Current_usage--;
+                    image.DId.Current_usage = Math.Max(image.DId.Current_usage, 0); // prevent negatives
+                }
+                else
+                {
+                    return NotFound(); // user is trying to delete image that's not theirs
+                }
             }
             int drive = image.DId.Id;
 
@@ -272,13 +318,14 @@ namespace InternetAppProject.Controllers
             if (((ClaimsIdentity)User.Identity) != null)
             {
                 var UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "id");
+                var UserDrive = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "drive");
                 var UserType = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "Type");
                 images = images.FindAll(img =>
                 {
                     Drive d = img.DId;
-                    if (UserId != null && UserType != null)
+                    if (UserId != null && UserType != null && UserDrive != null)
                     {
-                        if (UserId.Value != d.Id.ToString() && UserType.Value != "Admin" && !img.IsPublic)
+                        if (Int32.Parse(UserDrive.Value) != d.UserId.Id && UserType.Value != "Admin" && !img.IsPublic)
                         {
                             return false; // if user has no authority we remove the image
                         }
@@ -336,14 +383,15 @@ namespace InternetAppProject.Controllers
             if (((ClaimsIdentity)User.Identity) != null)
             {
                 var UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "id");
+                var UserDrive = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "drive");
                 var UserType = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "Type");
                 images = images.FindAll(img =>
                 {
                     //Drive d = _context.Image.Include(o => o.DId).Where(o => o.Id == img.Id).FirstOrDefault().DId;
                     Drive d = img.drive;
-                    if (UserId != null && UserType != null)
+                    if (UserId != null && UserType != null && UserDrive != null)
                     {
-                        if (UserId.Value != d.Id.ToString() && UserType.Value != "Admin" && !img.IsPublic)
+                        if (Int32.Parse(UserDrive.Value) != d.Id && UserType.Value != "Admin" && !img.IsPublic)
                         {
                             return false; // if user has no authority we remove the image
                         }

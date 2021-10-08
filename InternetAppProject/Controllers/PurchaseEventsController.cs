@@ -47,6 +47,7 @@ namespace InternetAppProject.Controllers
         // GET: PurchaseEvents/Create
         public IActionResult Create()
         {
+            ViewData["Users"] = new SelectList(_context.User, "Id", nameof(Models.User.Name));
             return View();
         }
 
@@ -55,10 +56,16 @@ namespace InternetAppProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Time,Amount")] PurchaseEvent purchaseEvent)
+        public async Task<IActionResult> Create([Bind("Id,Time,Amount")] PurchaseEvent purchaseEvent, int? UserID)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && UserID != null)
             {
+                User u = _context.User.Where(u => u.Id == UserID).FirstOrDefault();
+                if (u == null)
+                {
+                    return NotFound(); // user trying to select does not exist
+                }
+                purchaseEvent.UserID = u;
                 _context.Add(purchaseEvent);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -79,6 +86,7 @@ namespace InternetAppProject.Controllers
             {
                 return NotFound();
             }
+            ViewData["Users"] = new SelectList(_context.User, "Id", nameof(Models.User.Name));
             return View(purchaseEvent);
         }
 
@@ -87,7 +95,7 @@ namespace InternetAppProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Time,Amount")] PurchaseEvent purchaseEvent)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Time,Amount")] PurchaseEvent purchaseEvent, int? UserID)
         {
             if (id != purchaseEvent.Id)
             {
@@ -98,6 +106,12 @@ namespace InternetAppProject.Controllers
             {
                 try
                 {
+                    User u = _context.User.Where(u => u.Id == UserID).FirstOrDefault();
+                    if (u == null)
+                    {
+                        return NotFound(); // user trying to select does not exist
+                    }
+                    purchaseEvent.UserID = u;
                     _context.Update(purchaseEvent);
                     await _context.SaveChangesAsync();
                 }

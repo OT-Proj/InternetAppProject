@@ -19,6 +19,12 @@
         </div>
         <dl class="col-sm-5">
             <dt class="col-sm-2">
+                Owner
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.DId.UserId.Name)
+            </dd>
+            <dt class="col-sm-2">
                 @Html.DisplayNameFor(model => model.UploadTime)
             </dt>
             <dd class="col-sm-10">

@@ -24,7 +24,7 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: Users
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.User.ToListAsync());
@@ -128,6 +128,22 @@ namespace InternetAppProject.Controllers
                 return NotFound();
             }
 
+            var uID = User.Claims.FirstOrDefault(x => x.Type == "id");
+            var uType = User.Claims.FirstOrDefault(x => x.Type == "Type");
+            if (uID == null || uType == null)
+            {
+                return NotFound(); // user not logged in
+            }
+            bool isAdmin = false;
+            if(uType.Value.Equals("Admin"))
+            {
+                isAdmin = true;
+            }
+            if (Int32.Parse(uID.Value) != user.Id && !isAdmin)
+            {
+                return NotFound(); // someone who isn't the user or an admin trying to edit this account!
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -135,6 +151,11 @@ namespace InternetAppProject.Controllers
                     // fetch old user data to keep the create_time correct
                     var existing_Data = _context.User.Where(U => U.Id == id).First();
                     user.Create_time = existing_Data.Create_time;
+                    if(!isAdmin)
+                    {
+                        // user cannot edit roles unless they are admin
+                        user.Type = existing_Data.Type;
+                    }
                     _context.Remove(existing_Data);
                     _context.Update(user);
                     await _context.SaveChangesAsync();
@@ -188,19 +209,30 @@ namespace InternetAppProject.Controllers
             */
 
             var q = from u in _context.User
-                    join d in _context.Drive on u.D.Id equals d.Id
-                    join im in _context.Image on d.Id equals im.DId.Id into sub
-                    from subq in sub.DefaultIfEmpty() // left outer join (for empty drives)
+                    join d in _context.Drive on u.D.Id equals d.Id into sub1
+                    from s1 in sub1.DefaultIfEmpty()
+                    join im in _context.Image on u.D.Id equals im.DId.Id into sub2
+                    from s2 in sub2.DefaultIfEmpty() // left outer join (for empty drives)
                     where u.Id == id
-                    select new { userObj = u, driveObj = d, image = subq };
+                    select new { userObj = u, driveObj = u.D, imageObj = u.D.Images.ToList()};
 
             if (q.Count() < 1)
             {
                 return RedirectToAction(nameof(Index));
             }
+
+            if(q.First().driveObj != null)
+            {
+                _context.Drive.Remove(q.First().driveObj);
+                if (q.First().imageObj != null)
+                {
+                    ((List<Image>)q.First().imageObj).ForEach(i => _context.Image.Remove(i));
+                }
+            }
+            var purchases = await _context.PurchaseEvent.Where(p => p.UserID.Id == q.First().userObj.Id).ToListAsync();
+            _context.RemoveRange(purchases);
             _context.User.Remove(q.First().userObj);
-            _context.Drive.Remove(q.First().driveObj);
-            q.ToList().ForEach(i => { if (i.image != null) _context.Image.Remove(i.image); }); // iterate over results and delete each image
+            //q.ToList().ForEach(i => { if (i.image != null) _context.Image.Remove(i.image); }); // iterate over results and delete each image
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -210,7 +242,7 @@ namespace InternetAppProject.Controllers
             return _context.User.Any(e => e.Id == id);
         }
 
-        // GET: Users/Create
+        // GET: Users/Login
         public IActionResult Login()
         {
             return View();

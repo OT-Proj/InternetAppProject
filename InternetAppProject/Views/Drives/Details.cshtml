@@ -6,33 +6,44 @@
 
 <p>
     <h1>@Html.DisplayFor(model => model.UserId.Name)'s Drive</h1>
-    <h6>@Html.DisplayFor(model => model.Description) 
-    @{
-        var uID = Context.User.Claims.FirstOrDefault(x => x.Type == "id");
-        if (uID != null)
-        {
-            if (Model.UserId.Name == uID.Value)
+    <h6>
+        @Html.DisplayFor(model => model.Description)
+        @{
+            bool owner = false;
+            var uID = Context.User.Claims.FirstOrDefault(x => x.Type == "id");
+            if (uID != null)
+            {
+                if (Model.UserId.Id == Int32.Parse(uID.Value))
+                {
+                    owner = true;
+                    <a asp-action="Edit" asp-route-id="@Model.Id"> (edit)</a>
+                }
             }
+        }
+    </h6>
+    @if (owner)
+    {
+        <div>Current usage:  @Html.DisplayFor(model => model.Current_usage) / @Html.DisplayFor(model => model.TypeId.Max_Capacity)</div>
+        <a asp-action="Upgrade" asp-route-id="@Model.Id">Upgrade now!</a>
     }
 
-    <a asp-action="Edit" asp-route-id="@Model.Id">(edit)</a>
-    
-    </h6>
-    <div>Current usage:  @Html.DisplayFor(model => model.Current_usage) / @Html.DisplayFor(model => model.TypeId.Max_Capacity)</div>
-    <a asp-action="Upgrade" asp-route-id="@Model.Id">Upgrade now!</a>
-
 </p>
-<form asp-action="Fill" method="post">
-    <input type="hidden" name="id" value="@Model.Id" class="form-control" />
-    Add up to 3 images from Webservice, Pixabay: <input name="word" class="form-control" />
-    <br/>
-    <input type="submit" class="btn btn-primary" value="Fetch Images!" />
-</form>
+@if (owner)
+{
+    <form asp-action="Fill" method="post">
+        <input type="hidden" name="id" value="@Model.Id" class="form-control" />
+        Add up to 3 images from Webservice, Pixabay: <input name="word" class="form-control" />
+        <br />
+        <input type="submit" class="btn btn-primary" value="Fetch Images!" />
+    </form>
+}
 <div>
     <hr />
-    <p>
-        <a asp-controller="Images" asp-action="Create">Upload new image</a>
-    </p>
+    @if (owner) {
+            <p>
+                <a asp-controller="Images" asp-action="Create">Upload new image</a>
+            </p>
+    }
     <div class="row container">
         @if (Model.Images != null)
         {
@@ -55,7 +66,10 @@
                                     <span class="badge bg-primary image-tag gx-1">@t.Name</span>
                                 </a>
                             }
-                            <a asp-controller="Images" asp-action="Delete" asp-route-id="@img.Id"> Delete </a>
+                            @if (owner)
+                            {
+                                <a asp-controller="Images" asp-action="Delete" asp-route-id="@img.Id"> Delete </a>
+                            }
                         </div>
                     </div>
 
