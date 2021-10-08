@@ -1,9 +1,10 @@
 $(function () {
     $('.btnSearch').click(function () {
         var inpSearch = $('#inpSearch');//$('input', $(this).parent());//$(this).prev();
+        inpSearch.val("blabla");
         var loader = $(this).next();
         loader.removeClass('d-none');
-        $.ajax({
+        $.post({
             url: "/Tags/SearchJson",
             data: { id: inpSearch.val() }
         }).done(function (result) {
