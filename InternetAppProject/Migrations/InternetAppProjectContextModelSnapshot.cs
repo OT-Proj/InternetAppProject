@@ -44,6 +44,9 @@ namespace InternetAppProject.Migrations
                     b.Property<int>("Current_usage")
                         .HasColumnType("int");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("TypeIdId")
                         .HasColumnType("int");
 
