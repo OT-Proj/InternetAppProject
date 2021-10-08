@@ -1,7 +1,6 @@
 $(function () {
     $('.btnSearch').click(function () {
         var inpSearch = $('#inpSearch');//$('input', $(this).parent());//$(this).prev();
-        inpSearch.val("blabla");
         var loader = $(this).next();
         loader.removeClass('d-none');
         $.post({
