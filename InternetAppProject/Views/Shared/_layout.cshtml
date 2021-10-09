@@ -23,17 +23,18 @@
                     <ul class="navbar-nav flex-grow-1">
                         @if (Context != null && Context.User != null && Context.User.Claims.FirstOrDefault(x => x.Type == "drive") != null)
                         {
-            <li class="nav-item">
-                <a class="nav-link text-dark" asp-area="" asp-controller="Drives" asp-action="Details" asp-route-id="@Context.User.Claims.FirstOrDefault(x => x.Type == "drive").Value">My Drive</a>
-            </li>}
-
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Drives" asp-action="Details" asp-route-id="@Context.User.Claims.FirstOrDefault(x => x.Type == "drive").Value">My Drive</a>
+                            </li>
+                        }
                         @if (Context != null && Context.User != null && Context.User.Claims.FirstOrDefault(x => x.Type == "Type") != null)
                         {
                             if (Context.User.Claims.FirstOrDefault(x => x.Type == "Type").Value == "Admin")
                             {
-            <li class="nav-item">
-                <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Graphs">Graphs</a>
-            </li>}
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Graphs">Graphs</a>
+                                </li>
+                            }
                         }
 
                         <li class="nav-item">
@@ -58,8 +59,8 @@
                                 </li>
                                 <!--<li class="nav-item">
 
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Search">Business plan search</a>
-                                </li>-->
+                <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Search">Business plan search</a>
+            </li>-->
                             </ul>
                         </li>
                         <li class="nav-item">
@@ -92,8 +93,8 @@
                                     <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Index">purchase</a>
                                 </li>
                                 <!--<li class="nav-item">>
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tags" asp-action="Index">Business plan</a>
-                                </li>-->
+                <a class="nav-link text-dark" asp-area="" asp-controller="Tags" asp-action="Index">Business plan</a>
+            </li>-->
 
                             </ul>
                         </li>

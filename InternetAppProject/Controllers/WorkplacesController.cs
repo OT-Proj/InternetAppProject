@@ -149,5 +149,40 @@ namespace InternetAppProject.Controllers
         {
             return _context.Workplace.Any(e => e.Id == id);
         }
+
+        public async Task<IActionResult> Maps()
+        {
+            //var users = await _context.User.ToListAsync();
+            return View();
+        }
+
+        public async Task<IActionResult> FetchJson()
+        {
+            var q = from w in _context.Workplace
+                    select new { name = w.Name, p_lat = w.P_lat, p_long = w.P_long };
+            return Json(await q.ToListAsync());
+        }
+
+        public async Task<IActionResult> Search(string id)
+        {
+            if (id == null)
+            {
+                return View();
+            }
+            var places = await _context.Workplace.Where(p => p.Name.Contains(id)).ToListAsync();
+            return View(places);
+        }
+        public async Task<IActionResult> SearchJson(string id)
+        {
+            if (id == null)
+            {
+                return Json(new List<Workplace>());
+            }
+            var q = from w in _context.Workplace
+                    where w.Name.Contains(id)
+                    select new { name = w.Name, p_lat = w.P_lat, p_long = w.P_long};
+
+            return Json(await q.ToListAsync());
+        }
     }
 }

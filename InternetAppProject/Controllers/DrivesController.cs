@@ -501,5 +501,29 @@ namespace InternetAppProject.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
         }
+
+        public async Task<IActionResult> Search(string id)
+        {
+            if (id == null)
+            {
+                return View();
+            }
+            var drives = await _context.Drive.Include(d => d.UserId).Where(u => u.UserId.Name.Contains(id)).ToListAsync();
+            return View(drives);
+        }
+        public async Task<IActionResult> SearchJson(string id)
+        {
+            if (id == null)
+            {
+                return Json(new List<User>());
+            }
+            var q = from d in _context.Drive
+                    join u in _context.User on d.UserId.Id equals u.Id
+                    where d.UserId.Name.Contains(id)
+                    select new { id = d.Id, name = d.UserId.Name, usage = d.Current_usage };
+
+
+            return Json(await q.ToListAsync());
+        }
     }
 }

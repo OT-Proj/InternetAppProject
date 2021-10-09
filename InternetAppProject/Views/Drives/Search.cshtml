@@ -1,0 +1,64 @@
+﻿@model IEnumerable<InternetAppProject.Models.Drive>
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+<h1>Drive search</h1>
+<h6>Here you can search for a drive by it's owner's name.</h6>
+
+<div>
+    <input name="name" id="inpSearch" />
+    <button class="btnSearch btn btn-primary">Search</button>
+    <div class="spinner-grow text-success d-none" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.UserId.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Current_usage)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-controller="Drives" asp-action="Details" asp-route-id="@item.Id">
+                            @item.UserId.Name
+                        </a>
+                    </td>
+                    <td>
+                        @item.Current_usage
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<script type="text/template" id="template">
+    <tr>
+        <td>
+            <a href="/Drives/Details/${id}">
+                ${name}
+            </a>
+        </td>
+        <td>
+            ${usage}
+        </td>
+    </tr>
+</script>
+
+@section Scripts {
+    <script src="~/js/searchDrive.js"></script>
+}
