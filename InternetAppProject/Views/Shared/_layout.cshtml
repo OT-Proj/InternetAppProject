@@ -23,20 +23,17 @@
                     <ul class="navbar-nav flex-grow-1">
                         @if (Context != null && Context.User != null && Context.User.Claims.FirstOrDefault(x => x.Type == "drive") != null)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Drives" asp-action="Details" asp-route-id="@Context.User.Claims.FirstOrDefault(x => x.Type == "drive").Value">My Drive</a>
-                            </li>
-
-                        }
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Drives" asp-action="Details" asp-route-id="@Context.User.Claims.FirstOrDefault(x => x.Type == "drive").Value">My Drive</a>
+            </li>}
 
                         @if (Context != null && Context.User != null && Context.User.Claims.FirstOrDefault(x => x.Type == "Type") != null)
                         {
                             if (Context.User.Claims.FirstOrDefault(x => x.Type == "Type").Value == "Admin")
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Graphs">Graphs</a>
-                                </li>
-                            }
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Graphs">Graphs</a>
+            </li>}
                         }
 
                         <li class="nav-item">
@@ -61,8 +58,8 @@
                                 </li>
                                 <!--<li class="nav-item">
 
-                    <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Search">Business plan search</a>
-                </li>-->
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Search">Business plan search</a>
+                                </li>-->
                             </ul>
                         </li>
                         <li class="nav-item">
@@ -95,8 +92,8 @@
                                     <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Index">purchase</a>
                                 </li>
                                 <!--<li class="nav-item">>
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Tags" asp-action="Index">Business plan</a>
-                </li>-->
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tags" asp-action="Index">Business plan</a>
+                                </li>-->
 
                             </ul>
                         </li>
@@ -119,37 +116,31 @@
                     </ul>
                     @{
 
-                        @if (Context != null && Context.User != null && Context.User.Identity.Name != null)
-                        {
-                            <div>Hello @Context.User.Identity.Name, </div>
-                            <a class="nav-link text-dark" asp-controller="Users" asp-action="Logout">Logout</a>
-
-                        }
-                        else
-                        {
-                            <!--<button class=" btn btn-primary">Search</button>-->
-                            <a class="nav-link btn btn-primary text-light" asp-area="" asp-controller="Users" asp-action="Login">Already registered? click here to Login!</a>
-
-                        }
-                    }
+                                    @if (Context != null && Context.User != null && Context.User.Identity.Name != null)
+                                    {
+                        <div>Hello @Context.User.Identity.Name, </div>
+                                        <a class="nav-link text-dark" asp-controller="Users" asp-action="Logout">Logout</a> }
+                                                    else
+                                                    { <!--<button class=" btn btn-primary">Search</button>-->
+                                                        <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">Already registered? click here to Login!</a>} }
 
                 </div>
             </div>
-            </nav>
-        </header>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    <footer class="border-top footer text-muted">
         <div class="container">
-            <main role="main" class="pb-3">
-                @RenderBody()
-            </main> 
+            &copy; 2021 - InternetAppProject - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
-        <footer class="border-top footer text-muted">
-            <div class="container">
-                &copy; 2021 - InternetAppProject - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-            </div>
-        </footer>
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-        @await RenderSectionAsync("Scripts", required: false)
-    </body>
-    </html>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
