@@ -170,7 +170,7 @@ namespace InternetAppProject.Controllers
             var q = from t in _context.Tag
                     where t.Name.Contains(id)
                     orderby t.Name ascending
-                    select new { name = t.Name };
+                    select new { id = t.Id, name = t.Name };
 
 
             return Json(await q.ToListAsync());
