@@ -28,6 +28,7 @@
                             </li>
 
                         }
+
                         @if (Context != null && Context.User != null && Context.User.Claims.FirstOrDefault(x => x.Type == "Type") != null)
                         {
                             if (Context.User.Claims.FirstOrDefault(x => x.Type == "Type").Value == "Admin")
@@ -37,14 +38,16 @@
                                 </li>
                             }
                         }
+
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Drives" asp-action="Index">My drive</a>
                         </li>
 
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Search
                             </a>
+
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 
                                 <li class="nav-item">
@@ -60,7 +63,6 @@
 
                     <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Search">Business plan search</a>
                 </li>-->
-                               
                             </ul>
                         </li>
                         <li class="nav-item">
@@ -74,9 +76,10 @@
                         </li>
 
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 List
                             </a>
+
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 
                                 <li class="nav-item">
@@ -98,8 +101,9 @@
                             </ul>
                         </li>
 
+
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 analytics
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -110,29 +114,33 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Maps">Maps</a>
                                 </li>
+
                             </ul>
-                            @{
+                    </ul>
+                    @{
 
-                                @if (Context != null && Context.User != null && Context.User.Identity.Name != null)
-                                {
-                                    <div>Hello @Context.User.Identity.Name, </div>
-                                    <a class="nav-link text-dark" asp-controller="Users" asp-action="Logout">Logout</a>
+                        @if (Context != null && Context.User != null && Context.User.Identity.Name != null)
+                        {
+                            <div>Hello @Context.User.Identity.Name, </div>
+                            <a class="nav-link text-dark" asp-controller="Users" asp-action="Logout">Logout</a>
 
-                                }
-                                else
-                                {
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">Already registered? click here to Login!</a>
+                        }
+                        else
+                        {
+                            <!--<button class=" btn btn-primary">Search</button>-->
+                            <a class="nav-link btn btn-primary text-light" asp-area="" asp-controller="Users" asp-action="Login">Already registered? click here to Login!</a>
 
-                                }
-                            }
-</div>
+                        }
+                    }
+
                 </div>
+            </div>
             </nav>
         </header>
         <div class="container">
             <main role="main" class="pb-3">
                 @RenderBody()
-            </main>
+            </main> 
         </div>
         <footer class="border-top footer text-muted">
             <div class="container">
