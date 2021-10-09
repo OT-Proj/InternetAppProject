@@ -211,5 +211,29 @@ namespace InternetAppProject.Controllers
             q2.Sort((x, y) => x.date_fixed.CompareTo(y.date_fixed));
             return Json(q2);
         }
+        public async Task<IActionResult> Search(string id)
+        {
+            if (id == null)
+            {
+                return View(new List<PurchaseEvent>());
+            }
+            var q = _context.PurchaseEvent.Include(p => p.UserID)
+                .Where(p => p.UserID.Name.Contains(id));
+
+            return View(await q.ToListAsync());
+        }
+        public async Task<IActionResult> SearchJson(string id)
+        {
+            if (id == null)
+            {
+                return Json(new List<PurchaseEvent>());
+            }
+            var q = from p in _context.PurchaseEvent
+                    join u in _context.User on p.UserID.Id equals u.Id
+                    where u.Name.Contains(id)
+                    select new { user = u.Name, time = p.Time.ToString("MM/dd/yyyy HH:mm"), amount = p.Amount };
+
+            return Json(await q.ToListAsync());
+        }
     }
 }

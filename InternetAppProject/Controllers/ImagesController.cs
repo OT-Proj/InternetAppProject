@@ -143,11 +143,23 @@ namespace InternetAppProject.Controllers
                 return NotFound();
             }
 
-            var image = await _context.Image.FindAsync(id);
+            var image = _context.Image.Include(i => i.Tags).Where(i => i.Id == id).FirstOrDefault();
             if (image == null)
             {
                 return NotFound();
             }
+            var selectList = new SelectList(_context.Tag, "Id", nameof(Tag.Name));
+            selectList.Select(x =>
+            {
+                foreach (Tag t in image.Tags)
+                {
+                    if (t.Id == Int32.Parse(x.Value))
+                        return true;
+                }
+                return false;
+
+            });
+            ViewData["Tags"] = selectList; 
             return View(image);
         }
 
@@ -156,7 +168,7 @@ namespace InternetAppProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ImageFile,IsPublic,Description")] Image image)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ImageFile,IsPublic,Description")] Image image, int[] tags)
         {
             if (id != image.Id)
             {
@@ -167,7 +179,8 @@ namespace InternetAppProject.Controllers
             {
                 try
                 {
-                    var existing_image = _context.Image.Where(img => img.Id == id).Include(x => x.DId).FirstOrDefault();
+                    var existing_image = _context.Image.Where(img => img.Id == id).Include(x => x.DId)
+                        .Include(x=>x.Tags).FirstOrDefault();
                     if (existing_image == null)
                     {
                         return NotFound(); // image you are trying to edit does not exist
@@ -195,19 +208,20 @@ namespace InternetAppProject.Controllers
                         using (MemoryStream ms = new MemoryStream())
                         {
                             image.ImageFile.CopyTo(ms);
-                            image.Data = ms.ToArray();
+                            existing_image.Data = ms.ToArray();
                         }
                     }
-                    else
-                    {
-                        // user did not update the image file, save the old one instead
-                        image.ImageFile = existing_image.ImageFile;
-                        image.Data = existing_image.Data;
-                    }
-                    image.EditTime = DateTime.Now;
-                    image.UploadTime = existing_image.UploadTime;
-                    _context.Remove(existing_image);
-                    _context.Update(image);
+
+                    // add selected tags: get tag objects from DB than add to the new image
+                    var t = _context.Tag.Where(tag => tags.Contains(tag.Id));
+                    List<Tag> tags_list = new List<Tag>();
+                    tags_list.AddRange(t.ToList());
+                    existing_image.Tags = tags_list; // casting IEnumerable as list
+                    existing_image.EditTime = DateTime.Now;
+                    existing_image.UploadTime = existing_image.UploadTime;
+                    
+                    //_context.Remove(existing_image);
+                    _context.Update(existing_image);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -250,6 +264,7 @@ namespace InternetAppProject.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var image = _context.Image.Include(i => i.DId).Where(i => i.Id == id).FirstOrDefault();
+            int drive = -1;
             if(image == null)
             {
                 return NotFound();
@@ -262,13 +277,13 @@ namespace InternetAppProject.Controllers
                 {
                     image.DId.Current_usage--;
                     image.DId.Current_usage = Math.Max(image.DId.Current_usage, 0); // prevent negatives
+                    drive = image.DId.Id;
                 }
                 else
                 {
                     return NotFound(); // user is trying to delete image that's not theirs
                 }
             }
-            int drive = image.DId.Id;
 
             _context.Image.Remove(image);
             await _context.SaveChangesAsync();

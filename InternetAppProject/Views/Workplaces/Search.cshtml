@@ -1,14 +1,14 @@
-﻿@model IEnumerable<InternetAppProject.Models.User>
+﻿@model IEnumerable<InternetAppProject.Models.Workplace>
 
 @{
     ViewData["Title"] = "Search";
 }
 
-<h1>User/Drive search</h1>
-<h6>Here you can search for a drive by username.</h6>
+<h1>Workplace search</h1>
+<h6>Here you can search for a workplace by name.</h6>
 
 <div>
-    <input name="Name" id="inpSearch" />
+    <input name="name" id="inpSearch" />
     <button class="btnSearch btn btn-primary">Search</button>
     <div class="spinner-grow text-success d-none" role="status">
         <span class="visually-hidden">Loading...</span>
@@ -22,10 +22,10 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Zip)
+                @Html.DisplayNameFor(model => model.P_lat)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.D)
+                @Html.DisplayNameFor(model => model.P_long)
             </th>
         </tr>
     </thead>
@@ -36,16 +36,17 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Name)
+                        @item.Name
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Zip)
+                        @item.P_lat
                     </td>
                     <td>
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Drives" asp-action="Details" asp-route-id="@item.D.Id.ToString()">@Html.DisplayFor(modelItem => item.Name)'s Drive</a>
+                        @item.P_long
                     </td>
                 </tr>
-            }}
+            }
+        }
     </tbody>
 </table>
 
@@ -55,14 +56,14 @@
             ${name}
         </td>
         <td>
-            ${zip}
+            ${p_lat}
         </td>
         <td>
-            <a class="nav-link text-dark" href="\drives\details\${drive}">${name}'s Drive</a>
+            ${p_long}
         </td>
     </tr>
 </script>
 
-@section Scripts{
-    <script src="~/js/searchUser.js"></script>
+@section Scripts {
+    <script src="~/js/searchWorkplace.js"></script>
 }
