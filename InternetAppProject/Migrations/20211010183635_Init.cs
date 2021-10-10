@@ -37,6 +37,21 @@ namespace InternetAppProject.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Workplace",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    P_lat = table.Column<float>(type: "real", nullable: false),
+                    P_long = table.Column<float>(type: "real", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Workplace", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Drive",
                 columns: table => new
                 {
@@ -187,6 +202,9 @@ namespace InternetAppProject.Migrations
 
             migrationBuilder.DropTable(
                 name: "PurchaseEvent");
+
+            migrationBuilder.DropTable(
+                name: "Workplace");
 
             migrationBuilder.DropTable(
                 name: "Image");
