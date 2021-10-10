@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace InternetAppProject.Migrations
 {
-    public partial class init5 : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -102,11 +102,11 @@ namespace InternetAppProject.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     Zip = table.Column<int>(type: "int", nullable: false),
-                    Credit_card = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Credit_card = table.Column<string>(type: "nvarchar(16)", maxLength: 16, nullable: true),
                     Visual_mode = table.Column<bool>(type: "bit", nullable: false),
                     Create_time = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DId = table.Column<int>(type: "int", nullable: true)
