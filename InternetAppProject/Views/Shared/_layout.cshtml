@@ -52,6 +52,12 @@
                                 <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="Users" asp-action="Login">Image upload</a>
                             </li>
                         }
+                        @if (IsLogin)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="Users" asp-action="Edit" asp-route-id="@Context.User.Claims.FirstOrDefault(x => x.Type == "id").Value">Edit user</a>
+                            </li>
+                        }
 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-dark dropdown-item" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -70,16 +76,23 @@
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Tags" asp-action="Search">Tag search</a>
                                 </li>
                                 <li class="nav-item dropdown-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="DriveTypes" asp-action="Search">Drive type search</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="DriveTypes" asp-action="Search">Business plans search</a>
                                 </li>
+                                <li class="nav-item dropdown-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Drives" asp-action="Search">Drive search</a>
+                                </li>
+                                @if (IsAdmin)
+                                {
+                                <li class="nav-item dropdown-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Search">Purchases search</a>
+                                </li>
+                                <li class="nav-item dropdown-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Workplaces" asp-action="Search">Workplaces search</a>
+                                </li>
+                                }
                             </ul>
                         </li>
-                        @if (IsLogin)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="Users" asp-action="Edit" asp-route-id="@Context.User.Claims.FirstOrDefault(x => x.Type == "id").Value">Edit user</a>
-                            </li>
-                        }
+
 
                         @if (IsAdmin)
                         {
@@ -128,9 +141,11 @@
                                             <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="PurchaseEvents" asp-action="Graphs">Graphs</a>
                                         </li>
                                         <li class="nav-item dropdown-item">
-                                            <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="Users" asp-action="Maps">Maps</a>
+                                            <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="Workplaces" asp-action="Maps">Maps</a>
                                         </li>
-
+                                        <li class="nav-item dropdown-item">
+                                            <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="Users" asp-action="Facebook">Facebook</a>
+                                        </li>
                                     </ul>
                                 </li>
                             }
@@ -141,10 +156,9 @@
 
                         @if (Context != null && Context.User != null && Context.User.Identity.Name != null)
                         {
-                            <div>
-                                Hello @Context.User.Identity.Name,
-                                <a class="nav-link text-dark" asp-controller="Users" asp-action="Logout">Logout</a>
-                            </div>
+                <div>
+                    <a class="nav-link text-dark" asp-controller="Users" asp-action="Logout">Hello @Context.User.Identity.Name ,Logout</a>
+                </div>
                         }
                         else
                         {
