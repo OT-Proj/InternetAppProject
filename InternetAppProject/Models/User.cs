@@ -31,7 +31,7 @@ namespace InternetAppProject.Models
         public UserType Type { get; set; }
 
         [DataType(DataType.PostalCode)]
-        [StringLength(8, ErrorMessage = "Zip code contains 7 digits", MinimumLength = 7)]
+        [RegularExpression(@"^([0-9]{7})$", ErrorMessage = "Invalid Zip Code")]
         public int Zip { get; set; }
 
         [DataType(DataType.CreditCard)]
