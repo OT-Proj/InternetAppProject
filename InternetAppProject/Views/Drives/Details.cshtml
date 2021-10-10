@@ -10,12 +10,21 @@
         @Html.DisplayFor(model => model.Description)
         @{
             bool owner = false;
+            bool admin = false;
             var uID = Context.User.Claims.FirstOrDefault(x => x.Type == "id");
+            var uType = Context.User.Claims.FirstOrDefault(x => x.Type == "Type");
             if (uID != null)
             {
                 if (Model.UserId.Id == Int32.Parse(uID.Value))
                 {
                     owner = true;
+                }
+                if (uType.Value != null)
+                {
+                    admin = true;
+                }
+                if (owner || admin)
+                {
                     <a asp-action="Edit" asp-route-id="@Model.Id"> (edit)</a>
                 }
             }
@@ -30,7 +39,7 @@
     }
 
 </p>
-@if (owner)
+@if (owner || admin)
 {
     <form asp-action="Fill" method="post">
         <div class="input-group mb-3">
@@ -42,7 +51,7 @@
 }
 <div>
     <hr />
-    @if (owner)
+    @if (owner || admin)
     {
         <p>
             <a asp-controller="Images" asp-action="Create"><input type="button" value="+ Upload new image" class="btn btn-primary btn-lg disabled"/> </a>
@@ -70,9 +79,12 @@
                                     <span class="badge bg-primary image-tag gx-1">@t.Name</span>
                                 </a>
                             }
-                            @if (owner)
+                            @if (owner || admin)
                             {
-                                <a asp-controller="Images" asp-action="Delete" asp-route-id="@img.Id" class="text-danger"> Delete </a>
+                                <br/>
+                                <a asp-controller="Images" asp-action="Edit" asp-route-id="@img.Id" class="text-primary">Edit</a>
+                                <a asp-controller="Images" asp-action="Delete" asp-route-id="@img.Id" class="text-danger">Delete</a>
+
                             }
                         </div>
                     </div>

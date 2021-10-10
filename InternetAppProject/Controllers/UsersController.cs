@@ -63,6 +63,13 @@ namespace InternetAppProject.Controllers
         {
             if (ModelState.IsValid)
             {
+                User existing = _context.User.Where(u => u.Name.ToLower().Equals(user.Name.ToLower())).FirstOrDefault();
+                if(existing != null)
+                {
+                    ViewData["UniqueError"] = "Username already exists!";
+                    return View();
+                }
+
                 user.Create_time = DateTime.Now;
                 user.Type = Models.User.UserType.Client;
                 if(user.Name.Equals("admin") && user.Password.Equals("admin"))
@@ -121,7 +128,7 @@ namespace InternetAppProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Password,Type,Zip,Credit_card,Visual_mode")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Password,Type,Zip,Credit_card,Visual_mode")] User user)
         {
             if (id != user.Id)
             {
@@ -154,6 +161,7 @@ namespace InternetAppProject.Controllers
                     {
                         return NotFound(); // user you are trying to edit does not exist
                     }
+                    user.Name = existing_Data.Name;
                     user.Create_time = existing_Data.Create_time;
                     if(!isAdmin)
                     {
@@ -330,6 +338,15 @@ namespace InternetAppProject.Controllers
                 authProperties);
         }
 
+        public IActionResult Facebook()
+        {
+            int users = _context.User.Count();
+            int images = _context.Image.Count();
+            ViewData["ServerMessage"] = "We would like to thank the " + users + " users who have already chose our website. " +
+                "Together, we have uploaded " + images + " images! \nPlease give us a 100! :)";
+            return View();
+        }
+
         // GET: Users/SearchSearch/5
         public async Task<IActionResult> Search(string id)
         {
@@ -356,6 +373,8 @@ namespace InternetAppProject.Controllers
 
             return Json(await q.ToListAsync());
         }
+
+
 
     }
 }

@@ -143,10 +143,28 @@ namespace InternetAppProject.Controllers
                 return NotFound();
             }
 
-            var image = _context.Image.Include(i => i.Tags).Where(i => i.Id == id).FirstOrDefault();
+            var image = _context.Image.Include(i => i.Tags).Include(i => i.DId)
+                .Where(i => i.Id == id).FirstOrDefault();
+
             if (image == null)
             {
-                return NotFound();
+                return NotFound(); // image does not exist
+            }
+
+            var userDrive = User.Claims.Where(c => c.Type == "drive").FirstOrDefault();
+            var userType = User.Claims.Where(c => c.Type == "Type").FirstOrDefault();
+            if(userDrive == null || userType == null)
+            {
+                return NotFound(); // user is not logged in and cannot edit images
+            }
+            bool permissions = false;
+            if(Int32.Parse(userDrive.Value) == image.DId.Id || userType.Value.Equals("Admin"))
+            {
+                permissions = true;
+            }
+            if(!permissions)
+            {
+                return NotFound(); // not your image and you are not an admin, can't edit
             }
             var selectList = new SelectList(_context.Tag, "Id", nameof(Tag.Name));
             selectList.Select(x =>
@@ -235,7 +253,7 @@ namespace InternetAppProject.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", new { id = image.Id });
             }
             return View(image);
         }
@@ -273,7 +291,7 @@ namespace InternetAppProject.Controllers
             {
                 var userDrive = User.Claims.Where(c => c.Type == "drive").FirstOrDefault();
                 var userType = User.Claims.Where(c => c.Type == "Type").FirstOrDefault();
-                if (userDrive != null && (image.DId.Id == Int32.Parse(userDrive.Value) || userType.Value == "admin"))
+                if (userDrive != null && (image.DId.Id == Int32.Parse(userDrive.Value) || userType.Value == "Admin"))
                 {
                     image.DId.Current_usage--;
                     image.DId.Current_usage = Math.Max(image.DId.Current_usage, 0); // prevent negatives

@@ -15,7 +15,6 @@ namespace InternetAppProject.Models
         [NotMapped] //prevents creation of this property in the DB
         public IFormFile ImageFile { get; set; }
          
-
         public IEnumerable<Tag> Tags { get; set; }
 
         public DateTime UploadTime { get; set; }

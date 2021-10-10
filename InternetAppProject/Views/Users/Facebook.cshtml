@@ -1,0 +1,25 @@
+﻿@model InternetAppProject.Models.User
+
+@{
+    ViewData["Title"] = "Post on Facebook";
+}
+
+<div class="text-center border bg-light">
+    <h1>Make a Facebook post!</h1>
+    <p>
+        To visit the news feed on facebook.com click
+        <a href="https://www.facebook.com/Project-Updates-112283481226370/news_feed" target="_blank">here.</a>
+    </p>
+    <div>
+        <textarea id="postText" type="text" cols="40" rows="5">@ViewBag.ServerMessage</textarea> <br />
+        <button class="btnPost btn btn-primary">Search</button>
+    </div>
+    <div>
+        <div class="response text-success" id="response"></div>
+        <div class="error text-danger" id="error"></div>
+    </div>
+</div>
+@section Scripts {
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+    <script src="~/js/facebook.js"></script>
+}
