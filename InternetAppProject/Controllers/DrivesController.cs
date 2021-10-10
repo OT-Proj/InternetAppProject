@@ -259,7 +259,7 @@ namespace InternetAppProject.Controllers
                 // update cookies to include current drive id
                 updateCookies(drive.UserId.Name, drive.UserId.Type, drive.UserId.Id, drive.Id);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", new { id = drive.Id });
             }
             return View(drive);
         }
@@ -521,7 +521,6 @@ namespace InternetAppProject.Controllers
                     join u in _context.User on d.UserId.Id equals u.Id
                     where d.UserId.Name.Contains(id)
                     select new { id = d.Id, name = d.UserId.Name, usage = d.Current_usage };
-
 
             return Json(await q.ToListAsync());
         }

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InternetAppProject.Migrations
 {
     [DbContext(typeof(InternetAppProjectContext))]
-    [Migration("20211008191709_workplace")]
-    partial class workplace
+    [Migration("20211010192210_init5")]
+    partial class init5
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -203,11 +203,11 @@ namespace InternetAppProject.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("P_lat")
-                        .HasColumnType("int");
+                    b.Property<float>("P_lat")
+                        .HasColumnType("real");
 
-                    b.Property<int>("P_long")
-                        .HasColumnType("int");
+                    b.Property<float>("P_long")
+                        .HasColumnType("real");
 
                     b.HasKey("Id");
 

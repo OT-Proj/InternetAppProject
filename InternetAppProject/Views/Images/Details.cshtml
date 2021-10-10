@@ -1,32 +1,12 @@
 ﻿@model InternetAppProject.Models.Image
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Image Details";
 }
 
-<h1>Details</h1>
-
+<h1>Image Details</h1>
 <div>
     <h4>Image</h4>
-    <div>
-        @{
-            var userDrive = Context.User.Claims.Where(c => c.Type == "drive").FirstOrDefault();
-            var userType = Context.User.Claims.Where(c => c.Type == "Type").FirstOrDefault();
-            if (userDrive != null || userType != null)
-            {
-                bool permissions = false;
-                if (Int32.Parse(userDrive.Value) == Model.DId.Id || userType.Value.Equals("Admin"))
-                {
-                    permissions = true;
-                }
-                if (permissions)
-                {
-                    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
-                }
-            }
-        }
-    </div>
-
     <hr />
     <div class="row">
         <div class="col-sm-7">
@@ -83,4 +63,25 @@
         @Html.DisplayFor(model => model.Description)
     </div>
     <hr />
+    <div class="col-sm-2">
+        @{
+            var userDrive = Context.User.Claims.Where(c => c.Type == "drive").FirstOrDefault();
+            var userType = Context.User.Claims.Where(c => c.Type == "Type").FirstOrDefault();
+            if (userDrive != null || userType != null)
+            {
+                bool permissions = false;
+                if (Int32.Parse(userDrive.Value) == Model.DId.Id || userType.Value.Equals("Admin"))
+                {
+                    permissions = true;
+                }
+                if (permissions)
+                {
+                <div>
+                    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+                </div>
+                }
+            }
+        }
+    </div>
 </div>

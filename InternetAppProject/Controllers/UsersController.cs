@@ -24,7 +24,7 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: Users
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.User.ToListAsync());
