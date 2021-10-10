@@ -274,34 +274,31 @@ namespace InternetAppProject.Controllers
         public async Task<IActionResult> Login([Bind("Name,Password")] User user)
         {
             LogoutUser();
-            if (ModelState.IsValid)
+            // need do join users and drives in order to fetch drive.Id. 
+            var q = from u in _context.User
+                    join d in _context.Drive on u.D.Id equals d.Id into subq
+                    from sub in subq.DefaultIfEmpty()
+                    where u.Name == user.Name &&
+                            u.Password == user.Password
+                    select new { userObj = u, driveObj = u.D };
+
+            if (q.Count() > 0)
             {
-                // need do join users and drives in order to fetch drive.Id. 
-                var q = from u in _context.User
-                        join d in _context.Drive on u.D.Id equals d.Id into subq
-                        from sub in subq.DefaultIfEmpty()
-                        where u.Name == user.Name &&
-                                u.Password == user.Password
-                        select new { userObj = u, driveObj = u.D};
-
-                if (q.Count() > 0)
+                // user is found
+                if (q.First().driveObj != null)
                 {
-                    // user is found
-                    if(q.First().driveObj != null)
-                    {
-                        LoginUser(q.First().userObj.Name, q.First().userObj.Type, q.First().userObj.Id, q.First().driveObj.Id);
-                        return RedirectToAction("Details", "Drives", new { id = q.First().driveObj.Id });
-                    }
-
-                    LoginUser(q.First().userObj.Name, q.First().userObj.Type, q.First().userObj.Id, -1); //user has no drive!
-                    return RedirectToAction("Create", "Drives");
-
-                    //return View("Index",await _context.User.ToListAsync());
+                    LoginUser(q.First().userObj.Name, q.First().userObj.Type, q.First().userObj.Id, q.First().driveObj.Id);
+                    return RedirectToAction("Details", "Drives", new { id = q.First().driveObj.Id });
                 }
-                else
-                {
-                    ViewData["Error"] = "Username/password is incorrect.";
-                }
+
+                LoginUser(q.First().userObj.Name, q.First().userObj.Type, q.First().userObj.Id, -1); //user has no drive!
+                return RedirectToAction("Create", "Drives");
+
+                //return View("Index",await _context.User.ToListAsync());
+            }
+            else
+            {
+                ViewData["Error"] = "Username/password is incorrect.";
             }
             return View(user);
         }

@@ -83,12 +83,12 @@
                                 </li>
                                 @if (IsAdmin)
                                 {
-                                <li class="nav-item dropdown-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Search">Purchases search</a>
-                                </li>
-                                <li class="nav-item dropdown-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Workplaces" asp-action="Search">Workplaces search</a>
-                                </li>
+                                    <li class="nav-item dropdown-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Search">Purchases search</a>
+                                    </li>
+                                    <li class="nav-item dropdown-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Workplaces" asp-action="Search">Workplaces search</a>
+                                    </li>
                                 }
                             </ul>
                         </li>
@@ -154,19 +154,19 @@
                     </ul>
 
 
-                        @if (Context != null && Context.User != null && Context.User.Identity.Name != null)
-                        {
-                <div>
-                    <a class="nav-link text-dark" asp-controller="Users" asp-action="Logout">Hello @Context.User.Identity.Name ,Logout</a>
-                </div>
-                        }
-                        else
-                        {
-                            <div>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">Already registered? click here to Login!</a>
-                            </div>
-                        }
-                    
+                    @if (Context != null && Context.User != null && Context.User.Identity.Name != null)
+                    {
+                        <span>
+                            Hello @Context.User.Identity.Name ,<a class="nav-link text-dark" asp-controller="Users" asp-action="Logout">Logout</a>
+                        </span>
+                    }
+                    else
+                    {
+                        <div>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">Already registered? click here to Login!</a>
+                        </div>
+                    }
+
                 </div>
             </div>
         </nav>
