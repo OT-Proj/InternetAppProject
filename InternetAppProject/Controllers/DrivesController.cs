@@ -59,11 +59,16 @@ namespace InternetAppProject.Controllers
 
             // calculate initial payment amount for the first option presented to the user
             ViewData["Amount"] = 0;
+            ViewData["Images"] = "N/A";
             if (lst.FirstOrDefault() != null)
             {
                 ViewData["Amount"] = Math.Max(lst.FirstOrDefault().Price - UserPaid(d.UserId), 0);
+                ViewData["Images"] = lst.FirstOrDefault().Max_Capacity;
             }
-
+            else
+            {
+                return NotFound(); // no better business plan exists! congratulations, you already enjoy our best service!
+            }
             return View();
         }
 
@@ -96,7 +101,7 @@ namespace InternetAppProject.Controllers
             int debt = Math.Max(dt.Price - UserPaid(user), 0);
 
             // return valid Json
-            var result = new PriceResult{ amount = debt };
+            var result = new PriceResult{ amount = debt, images = dt.Max_Capacity};
             List<PriceResult> resultList = new List<PriceResult>();
             resultList.Add(result);
 

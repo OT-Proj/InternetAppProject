@@ -12,20 +12,22 @@
         {
             string temp = Convert.ToBase64String(img.Data);
             // show image card
-            <div class="card col-md-4" style="width: 18rem;">
-                <a asp-controller="Images" asp-action="Details" asp-route-id="@img.Id">
-                    <img class="card-img-top" alt="Card image cap" src="data:image/png;base64,@temp" />
-                </a>
-                <div class="card-body">
-                    <p class="card-text">@img.Description</p>
-                    @foreach (Tag t in img.Tags)
-                    {
-                        <a asp-controller="Tags" asp-action="Details" asp-route-id="@t.Id">
-                            <span class="badge bg-primary"><span class="image-tag">@t.Name</span></span>
-                        </a>
-                    }
-                </div>
+    <div class="col-md-3 gy-5">
+        <div class="card" style="width: 18rem;">
+            <a asp-controller="Images" asp-action="Details" asp-route-id="@img.Id">
+                <img class="card-img-top" alt="Card image cap" src="data:image/png;base64,@temp" />
+            </a>
+            <div class="card-body">
+                <p class="card-text">@img.Description</p>
+                @foreach (Tag t in img.Tags)
+                {
+                    <a asp-controller="Tags" asp-action="Details" asp-route-id="@t.Id">
+                        <span class="badge bg-primary"><span class="image-tag">@t.Name</span></span>
+                    </a>
+                }
             </div>
+        </div>
+    </div>
             
         }
     }

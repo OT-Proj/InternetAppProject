@@ -57,16 +57,17 @@
             <a asp-controller="Images" asp-action="Create"><input type="button" value="+ Upload new image" class="btn btn-primary btn-lg disabled"/> </a>
         </p>
     }
-    <div class="row container align-self-center">
-        @if (Model.Images != null)
+<div class="row container align-self-center">
+    @if (Model.Images != null)
+    {
+        @foreach (Image img in Model.Images)
         {
-            @foreach (Image img in Model.Images)
-            {
+            <div class="col-sm-12 col-md-4 gy-5">
                 @if (img.Data != null)
                 {
                     string temp = Convert.ToBase64String(img.Data);
                     // show image card
-                    <div class="card col-md-4 gy-1 gx-0">
+                    <div class="card">
                         <a asp-controller="Images" asp-action="Details" asp-route-id="@img.Id">
                             <img class="card-img-top" alt="Card image cap" src="data:image/png;base64,@temp" />
                         </a>
@@ -90,7 +91,8 @@
                     </div>
 
                 }
-            }
+            </div>
         }
-    </div>
+    }
+</div>
 </div>

@@ -19,12 +19,11 @@
                 <tbody>
                     <tr>
                         <td>Amount to Pay:</td>
-                        <td>@ViewBag.amount</td>
-   
-                       </tr>
-   
+                        <td>@ViewBag.Amount&nbsp;|&nbsp;</td> 
+                        <td>Number of Images:</td>
+                        <td>@ViewBag.Images</td>
+                    </tr>
                  </tbody>
-   
              </table>
    
              <br />
@@ -38,7 +37,9 @@
 <script type="text/template" id="template">
     <tr>
         <td>Amount to Pay:</td>
-        <td>${amount}</td>
+        <td>${amount}&nbsp;|&nbsp;</td> 
+        <td>Number of Images:</td>
+        <td>${images}</td>
     </tr>
 </script>
 
