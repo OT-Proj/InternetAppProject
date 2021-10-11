@@ -11,9 +11,9 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
             <div class="container">
-                <img src="https://wwwi.colman.ac.il/info/images/CollegeLogo.png" class="img-fluid" alt="Responsive image" width="75" height="75" />
+                <img src="/Images/MainImage.png" class="img-fluid" alt="Responsive image" width="75" height="75" />
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">&nbsp; MoodleDrive</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -31,72 +31,66 @@
                         @if (Context != null && Context.User != null && Context.User.Claims.FirstOrDefault(x => x.Type == "drive") != null)
                         {
                             IsLogin = true;
-                            <li class="nav-item">
-                                <a class="nav-link text-dark nav-link dropdown-item" asp-area="" asp-controller="Drives" asp-action="Details" asp-route-id="@Context.User.Claims.FirstOrDefault(x => x.Type == "drive").Value">My Drive</a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark nav-link dropdown-item " asp-area="" asp-controller="Users" asp-action="Login">My Drive</a>
-                            </li>
-                        }
+                <li class="nav-item">
+                    <a class="nav-link text-dark nav-link dropdown-item" asp-area="" asp-controller="Drives" asp-action="Details" asp-route-id="@Context.User.Claims.FirstOrDefault(x => x.Type == "drive").Value">My Drive</a>
+                </li> }
+                            else
+                            {
+                <li class="nav-item">
+                    <a class="nav-link text-dark nav-link dropdown-item " asp-area="" asp-controller="Users" asp-action="Login">My Drive</a>
+                </li>}
 
 
 
                         @if (IsLogin)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="Images" asp-action="Create">Image upload</a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="Users" asp-action="Login">Image upload</a>
-                            </li>
-                        }
+                <li class="nav-item">
+                    <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="Images" asp-action="Create">Image upload</a>
+                </li> }
+                            else
+                            {
+                <li class="nav-item">
+                    <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="Users" asp-action="Login">Image upload</a>
+                </li>}
                         @if (IsLogin)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="Users" asp-action="Edit" asp-route-id="@Context.User.Claims.FirstOrDefault(x => x.Type == "id").Value">Edit user</a>
-                            </li>
-                        }
+                <li class="nav-item">
+                    <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="Users" asp-action="Edit" asp-route-id="@Context.User.Claims.FirstOrDefault(x => x.Type == "id").Value">Edit user</a>
+                </li>}
 
                         @if (IsAdmin)
                         {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-dark dropdown-item" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    List
-                                </a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-dark dropdown-item" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        List
+                    </a>
 
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 
-                                    <li class="nav-item dropdown-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
-                                    </li>
-                                    <li class="nav-item dropdown-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Drives" asp-action="Index">Drives</a>
-                                    </li>
-                                    <li class="nav-item dropdown-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Images" asp-action="Index">Images</a>
-                                    </li>
-                                    <li class="nav-item dropdown-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Index">Purchases</a>
-                                    </li>
-                                    <li class="nav-item dropdown-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Tags" asp-action="Index">Tags</a>
-                                    </li>
-                                    <li class="nav-item dropdown-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="DriveTypes" asp-action="Index">Business plans</a>
-                                    </li>
-                                    <li class="nav-item dropdown-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Workplaces" asp-action="Index">Work places</a>
-                                    </li>
+                        <li class="nav-item dropdown-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
+                        </li>
+                        <li class="nav-item dropdown-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Drives" asp-action="Index">Drives</a>
+                        </li>
+                        <li class="nav-item dropdown-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Images" asp-action="Index">Images</a>
+                        </li>
+                        <li class="nav-item dropdown-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Index">Purchases</a>
+                        </li>
+                        <li class="nav-item dropdown-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Tags" asp-action="Index">Tags</a>
+                        </li>
+                        <li class="nav-item dropdown-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="DriveTypes" asp-action="Index">Business plans</a>
+                        </li>
+                        <li class="nav-item dropdown-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Workplaces" asp-action="Index">Work places</a>
+                        </li>
 
-                                </ul>
-                            </li>
-                        }
+                    </ul>
+                </li>}
 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-dark dropdown-item" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -123,13 +117,12 @@
 
                                 @if (IsAdmin)
                                 {
-                                    <li class="nav-item dropdown-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Search">Purchases search</a>
-                                    </li>
+                    <li class="nav-item dropdown-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="PurchaseEvents" asp-action="Search">Purchases search</a>
+                    </li>
                                     <li class="nav-item dropdown-item">
                                         <a class="nav-link text-dark" asp-area="" asp-controller="Workplaces" asp-action="Search">Workplaces search</a>
-                                    </li>
-                                }
+                                    </li>}
 
                             </ul>
                         </li>
@@ -139,24 +132,23 @@
 
                         @if (IsAdmin)
                         {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-dark dropdown-item" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Analytics
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-dark dropdown-item" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Analytics
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 
-                                    <li class="nav-item dropdown-item">
-                                        <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="PurchaseEvents" asp-action="Graphs">Graphs</a>
-                                    </li>
-                                    <li class="nav-item dropdown-item">
-                                        <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="Workplaces" asp-action="Maps">Maps</a>
-                                    </li>
-                                    <li class="nav-item dropdown-item">
-                                        <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="Users" asp-action="Facebook">Facebook</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        }
+                        <li class="nav-item dropdown-item">
+                            <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="PurchaseEvents" asp-action="Graphs">Graphs</a>
+                        </li>
+                        <li class="nav-item dropdown-item">
+                            <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="Workplaces" asp-action="Maps">Maps</a>
+                        </li>
+                        <li class="nav-item dropdown-item">
+                            <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="Users" asp-action="Facebook">Facebook</a>
+                        </li>
+                    </ul>
+                </li>}
 
 
                     </ul>
@@ -164,22 +156,21 @@
 
                     @if (Context != null && Context.User != null && Context.User.Identity.Name != null)
                     {
-                        <div>
-                            Hello @Context.User.Identity.Name <a class="nav-link text-dark" asp-controller="Users" asp-action="Logout"> ,Logout</a>
-                        </div>
-                    }
+                <div>
+                    <a class="nav-link text-dark" asp-controller="Users" asp-action="Logout">Hello @Context.User.Identity.Name, Logout</a>
+                </div> }
                     else
                     {
-                        <div>
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">Already registered? click here to Login!</a>
-                        </div>
+                    <div>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">Already registered? click here to Login!</a>
+                    </div>
                     }
 
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container site-bg">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

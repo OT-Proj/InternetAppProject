@@ -183,7 +183,8 @@ namespace InternetAppProject.Controllers
 
             if(drive.UserId == null)
             {
-                return NotFound(); // orphaned drive - error
+                ViewData["ErrorMsg"] = " Oops! There is no mom and dad for this drive. Please create a new drive.";
+                return View("~/Views/Home/ShowError.cshtml"); // orphaned drive - error
             }
 
             var UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "id");
@@ -233,14 +234,16 @@ namespace InternetAppProject.Controllers
 
             if (user_q.Count() < 1)
             {
-                return NotFound(); // redirect to whoops! user not found
+                ViewData["ErrorMsg"] = "Oops! user not found.";
+                return View("~/Views/Home/ShowError.cshtml"); // redirect to whoops! user not found
             }
 
             Drive ExistingDrive = user_q.FirstOrDefault().Drive;
 
             if(ExistingDrive != null)
             {
-                return NotFound(); // redirect to whoops! user already has a drive
+                ViewData["ErrorMsg"] = "Oops! user already has a drive.";
+                return View("~/Views/Home/ShowError.cshtml"); // redirect to whoops! user already has a drive
             }
 
             if (ModelState.IsValid)
@@ -299,16 +302,19 @@ namespace InternetAppProject.Controllers
                     Drive existing = _context.Drive.Where(d => d.Id == id).Include(d => d.UserId).FirstOrDefault();
                     if(existing == null)
                     {
-                        return NotFound(); // drive you are trying to edit does not exist
+                        ViewData["ErrorMsg"] = "Oops! Drive you are trying to edit does not exist";
+                        return View("~/Views/Home/ShowError.cshtml"); // drive you are trying to edit does not exist
                     }
                     var uID = User.Claims.FirstOrDefault(x => x.Type == "id");
                     var uType = User.Claims.FirstOrDefault(x => x.Type == "Type");
                     if (uID == null || uType == null)
                     {
-                        return NotFound(); // user not logged in
+                        ViewData["ErrorMsg"] = "Oops! You are not login. Please login.";
+                        return View("~/Views/Home/ShowError.cshtml"); // user not logged in
                     }
                     if (Int32.Parse(uID.Value) != existing.UserId.Id && !uType.Value.Equals("Admin")) {
-                        return NotFound(); // user is not the owner of the drive and not admin
+                        ViewData["ErrorMsg"] = "You are not the owner of the drive and not admin!";
+                        return View("~/Views/Home/ShowError.cshtml"); // user is not the owner of the drive and not admin
                     }
                     
                     existing.Description = drive.Description;
@@ -364,7 +370,8 @@ namespace InternetAppProject.Controllers
             
             if(q.Count() < 1)
             {
-                return NotFound(); // drive does not exist. can't delete
+                ViewData["ErrorMsg"] = "Oops! You can not delete because the drive does not exist. Please create drive.";
+                return View("~/Views/Home/ShowError.cshtml"); // drive does not exist. can't delete
             }
             _context.Drive.Remove(q.First().driveObj);
             q.ToList().ForEach(i =>{ if (i.image != null) _context.Image.Remove(i.image); }); // iterate over results and delete each image
@@ -394,11 +401,13 @@ namespace InternetAppProject.Controllers
             var UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "id");
             if(UserId == null)
             {
-                return NotFound(); // user not logged in.
+                ViewData["ErrorMsg"] = "Oops! You are not login. Please login.";
+                return View("~/Views/Home/ShowError.cshtml"); // user not logged in.
             }
             if (drive.UserId.Id != Int32.Parse(UserId.Value))
             {
-                return NotFound(); // no permission
+                ViewData["ErrorMsg"] = "Oops! You do not have a permission!.";
+                return View("~/Views/Home/ShowError.cshtml");// no permission
             }
 
 

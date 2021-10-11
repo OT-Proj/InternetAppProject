@@ -139,7 +139,8 @@ namespace InternetAppProject.Controllers
             var uType = User.Claims.FirstOrDefault(x => x.Type == "Type");
             if (uID == null || uType == null)
             {
-                return NotFound(); // user not logged in
+                ViewData["ErrorMsg"] = " Oops! User not loogged in. Please login.";
+                return View("~/Views/Home/ShowError.cshtml"); // user not logged in
             }
             bool isAdmin = false;
             if(uType.Value.Equals("Admin"))
@@ -148,7 +149,8 @@ namespace InternetAppProject.Controllers
             }
             if (Int32.Parse(uID.Value) != user.Id && !isAdmin)
             {
-                return NotFound(); // someone who isn't the user or an admin trying to edit this account!
+                ViewData["ErrorMsg"] = " Oops! You are not allowed to edit this account! .";
+                return View("~/Views/Home/ShowError.cshtml"); // someone who isn't the user or an admin trying to edit this account!
             }
 
             if (ModelState.IsValid)
@@ -159,7 +161,8 @@ namespace InternetAppProject.Controllers
                     var existing_Data = _context.User.Where(U => U.Id == id).FirstOrDefault();
                     if(existing_Data == null)
                     {
-                        return NotFound(); // user you are trying to edit does not exist
+                        ViewData["ErrorMsg"] = " Oops! User you are trying to edit does not exist .";
+                        return View("~/Views/Home/ShowError.cshtml");// user you are trying to edit does not exist
                     }
                     user.Name = existing_Data.Name;
                     user.Create_time = existing_Data.Create_time;
