@@ -57,8 +57,8 @@ namespace InternetAppProject.Controllers
             {
                 return View(image);
             }
-
-            return NotFound(); // not your image + not admin = no permissions to see image
+            ViewData["ErrorMsg"] = "You do not have premissions to see this image.";
+            return View("~/Views/Home/ShowError.cshtml"); // not your image + not admin = no permissions to see image
         }
 
         // GET: Images/Create
@@ -110,11 +110,13 @@ namespace InternetAppProject.Controllers
                 }
                 else
                 {
-                    return NotFound(); // no such user
+                    ViewData["ErrorMsg"] = "Oops! We could not find your account (maybe it was deleted?). Please try to logout and then login again.";
+                    return View("~/Views/Home/ShowError.cshtml");// no such user
                 }
                 if (image.DId == null)
                 {
-                    return NotFound(); // user without drive trying to upload an image
+                    ViewData["ErrorMsg"] = "Oops! It seems that you do not have a drive (maybe it was deleted?).";
+                    return View("~/Views/Home/ShowError.cshtml"); // user without drive trying to upload an image
                 }
                 image.DId.TypeId = _context.Drive.Include(d => d.TypeId)
                     .Where(d => d.Id == image.DId.Id).FirstOrDefault().TypeId;
@@ -140,7 +142,8 @@ namespace InternetAppProject.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                ViewData["ErrorMsg"] = "Oops! The page you are looking for is not found.";
+                return View("~/Views/Home/ShowError.cshtml");
             }
 
             var image = _context.Image.Include(i => i.Tags).Include(i => i.DId)
@@ -148,14 +151,16 @@ namespace InternetAppProject.Controllers
 
             if (image == null)
             {
-                return NotFound(); // image does not exist
+                ViewData["ErrorMsg"] = "Oops! Image not found (maybe it was deleted?).";
+                return View("~/Views/Home/ShowError.cshtml"); // image does not exist
             }
 
             var userDrive = User.Claims.Where(c => c.Type == "drive").FirstOrDefault();
             var userType = User.Claims.Where(c => c.Type == "Type").FirstOrDefault();
             if(userDrive == null || userType == null)
             {
-                return NotFound(); // user is not logged in and cannot edit images
+                ViewData["ErrorMsg"] = "Oops! You are not logged in. Please login and try again.";
+                return View("~/Views/Home/ShowError.cshtml"); // user is not logged in and cannot edit images
             }
             bool permissions = false;
             if(Int32.Parse(userDrive.Value) == image.DId.Id || userType.Value.Equals("Admin"))
@@ -164,19 +169,20 @@ namespace InternetAppProject.Controllers
             }
             if(!permissions)
             {
-                return NotFound(); // not your image and you are not an admin, can't edit
+                ViewData["ErrorMsg"] = "Oops! You do not have permissions to edit this image.";
+                return View("~/Views/Home/ShowError.cshtml"); // not your image and you are not an admin, can't edit
             }
             var selectList = new SelectList(_context.Tag, "Id", nameof(Tag.Name));
-            selectList.Select(x =>
+            foreach(var s in selectList)
             {
-                foreach (Tag t in image.Tags)
+                foreach(Tag t in image.Tags)
                 {
-                    if (t.Id == Int32.Parse(x.Value))
-                        return true;
+                    if(t.Name.Equals(s.Text))
+                    {
+                        s.Selected = true;
+                    }
                 }
-                return false;
-
-            });
+            }
             ViewData["Tags"] = selectList; 
             return View(image);
         }
@@ -201,7 +207,8 @@ namespace InternetAppProject.Controllers
                         .Include(x=>x.Tags).FirstOrDefault();
                     if (existing_image == null)
                     {
-                        return NotFound(); // image you are trying to edit does not exist
+                        ViewData["ErrorMsg"] = "Oops! The image you are trying to edit does not exist (maybe it was deleted?).";
+                        return View("~/Views/Home/ShowError.cshtml"); // image you are trying to edit does not exist
                     }
                     bool permissions = false;
                     var userDrive = User.Claims.Where(c => c.Type == "drive").FirstOrDefault();
@@ -216,7 +223,8 @@ namespace InternetAppProject.Controllers
                     }
                     if(!permissions)
                     {
-                        return NotFound(); // no permissions to edit this image
+                        ViewData["ErrorMsg"] = "Oops! You do not have permissions to edit this image.";
+                        return View("~/Views/Home/ShowError.cshtml"); // no permissions to edit this image
                     }
 
                     // check if the user uploaded a new image to replace to old one
@@ -237,6 +245,8 @@ namespace InternetAppProject.Controllers
                     existing_image.Tags = tags_list; // casting IEnumerable as list
                     existing_image.EditTime = DateTime.Now;
                     existing_image.UploadTime = existing_image.UploadTime;
+                    existing_image.IsPublic = image.IsPublic;
+                    existing_image.Description = image.Description;
                     
                     //_context.Remove(existing_image);
                     _context.Update(existing_image);
@@ -299,7 +309,8 @@ namespace InternetAppProject.Controllers
                 }
                 else
                 {
-                    return NotFound(); // user is trying to delete image that's not theirs
+                    ViewData["ErrorMsg"] = "Oops! You do not have permissions to delete this image.";
+                    return View("~/Views/Home/ShowError.cshtml"); // user is trying to delete image that's not theirs
                 }
             }
 

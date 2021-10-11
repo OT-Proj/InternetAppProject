@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace InternetAppProject.Migrations
 {
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -34,6 +34,21 @@ namespace InternetAppProject.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tag", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Workplace",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    P_lat = table.Column<float>(type: "real", nullable: false),
+                    P_long = table.Column<float>(type: "real", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Workplace", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -87,8 +102,8 @@ namespace InternetAppProject.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     Zip = table.Column<int>(type: "int", nullable: false),
                     Credit_card = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -187,6 +202,9 @@ namespace InternetAppProject.Migrations
 
             migrationBuilder.DropTable(
                 name: "PurchaseEvent");
+
+            migrationBuilder.DropTable(
+                name: "Workplace");
 
             migrationBuilder.DropTable(
                 name: "Image");

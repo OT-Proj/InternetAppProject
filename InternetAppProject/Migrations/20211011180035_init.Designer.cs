@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InternetAppProject.Migrations
 {
     [DbContext(typeof(InternetAppProjectContext))]
-    [Migration("20211008191709_workplace")]
-    partial class workplace
+    [Migration("20211011180035_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -170,9 +170,12 @@ namespace InternetAppProject.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("Password")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Type")
@@ -203,11 +206,11 @@ namespace InternetAppProject.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("P_lat")
-                        .HasColumnType("int");
+                    b.Property<float>("P_lat")
+                        .HasColumnType("real");
 
-                    b.Property<int>("P_long")
-                        .HasColumnType("int");
+                    b.Property<float>("P_long")
+                        .HasColumnType("real");
 
                     b.HasKey("Id");
 

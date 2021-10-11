@@ -24,7 +24,7 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: Users
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.User.ToListAsync());
@@ -90,7 +90,7 @@ namespace InternetAppProject.Controllers
                 _context.Add(d);
 
                 await _context.SaveChangesAsync();
-                LoginUser(user.Name.ToString(), user.Type, user.Id, user.D.Id);
+                LoginUser(user.Name.ToString(), user.Type, user.Id, user.D.Id, user.Visual_mode);
 
                 if (user.Type == Models.User.UserType.Client)
                     return RedirectToAction("Details","Drives", new { id = user.D.Id });
@@ -274,34 +274,31 @@ namespace InternetAppProject.Controllers
         public async Task<IActionResult> Login([Bind("Name,Password")] User user)
         {
             LogoutUser();
-            if (ModelState.IsValid)
+            // need do join users and drives in order to fetch drive.Id. 
+            var q = from u in _context.User
+                    join d in _context.Drive on u.D.Id equals d.Id into subq
+                    from sub in subq.DefaultIfEmpty()
+                    where u.Name == user.Name &&
+                            u.Password == user.Password
+                    select new { userObj = u, driveObj = u.D };
+
+            if (q.Count() > 0)
             {
-                // need do join users and drives in order to fetch drive.Id. 
-                var q = from u in _context.User
-                        join d in _context.Drive on u.D.Id equals d.Id into subq
-                        from sub in subq.DefaultIfEmpty()
-                        where u.Name == user.Name &&
-                                u.Password == user.Password
-                        select new { userObj = u, driveObj = u.D};
-
-                if (q.Count() > 0)
+                // user is found
+                if (q.First().driveObj != null)
                 {
-                    // user is found
-                    if(q.First().driveObj != null)
-                    {
-                        LoginUser(q.First().userObj.Name, q.First().userObj.Type, q.First().userObj.Id, q.First().driveObj.Id);
-                        return RedirectToAction("Details", "Drives", new { id = q.First().driveObj.Id });
-                    }
-
-                    LoginUser(q.First().userObj.Name, q.First().userObj.Type, q.First().userObj.Id, -1); //user has no drive!
-                    return RedirectToAction("Create", "Drives");
-
-                    //return View("Index",await _context.User.ToListAsync());
+                    LoginUser(q.First().userObj.Name, q.First().userObj.Type, q.First().userObj.Id, q.First().driveObj.Id, q.First().userObj.Visual_mode);
+                    return RedirectToAction("Details", "Drives", new { id = q.First().driveObj.Id });
                 }
-                else
-                {
-                    ViewData["Error"] = "Username/password is incorrect.";
-                }
+
+                LoginUser(q.First().userObj.Name, q.First().userObj.Type, q.First().userObj.Id, -1, q.First().userObj.Visual_mode); //user has no drive!
+                return RedirectToAction("Create", "Drives");
+
+                //return View("Index",await _context.User.ToListAsync());
+            }
+            else
+            {
+                ViewData["Error"] = "Username/password is incorrect.";
             }
             return View(user);
         }
@@ -310,7 +307,7 @@ namespace InternetAppProject.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
-        public async void LoginUser(string userName, InternetAppProject.Models.User.UserType userType, int id, int drive)
+        public async void LoginUser(string userName, InternetAppProject.Models.User.UserType userType, int id, int drive, bool mode)
         {
             string type = Enum.GetName(typeof(InternetAppProject.Models.User.UserType),userType);
             string sid = id.ToString();
@@ -322,6 +319,7 @@ namespace InternetAppProject.Controllers
                     new Claim("Type", type),
                     new Claim("id", sid), // user.Id
                     new Claim("drive", did), // user.D.Id
+                    new Claim("nightMode", mode.ToString())
                 };
 
             var claimsIdentity = new ClaimsIdentity(

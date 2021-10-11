@@ -1,4 +1,5 @@
 ﻿using InternetAppProject.Models;
+using InternetAppProject.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,15 +14,16 @@ namespace InternetAppProject.Controllers
     // good luck, test push!
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly StartupService _startup;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(StartupService startup)
         {
-            _logger = logger;
+            _startup = startup;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            await _startup.InitDB();
             return View();
         }
 
@@ -34,6 +36,13 @@ namespace InternetAppProject.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public IActionResult ShowError(string id)
+        {
+            ViewData["ErrorMsg"] = id;
+            return View();
+
         }
     }
 }

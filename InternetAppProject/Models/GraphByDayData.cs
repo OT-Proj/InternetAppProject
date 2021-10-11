@@ -10,7 +10,6 @@ namespace InternetAppProject.Models
     public class GraphByDayData
     {
         public String date { get; set; }
-
         public int userID { get; set; }
         public DateTime date_fixed { get; set; }
         public int value { get; set; }

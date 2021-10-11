@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using InternetAppProject.Data;
+using InternetAppProject.Services;
 
 namespace InternetAppProject
 {
@@ -27,6 +28,8 @@ namespace InternetAppProject
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddTransient<StartupService>();
 
             services.AddDbContext<InternetAppProjectContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("InternetAppProjectContext")));
