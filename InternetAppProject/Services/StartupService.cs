@@ -46,6 +46,7 @@ namespace InternetAppProject.Services
                 admin.D.Current_usage = 0;
                 admin.D.Description = "Welcome to MoodleDrive! This is the Admin's drive.";
                 admin.D.TypeId = typeQuery.FirstOrDefault();
+                //_context.Add(admin.D);
                 _context.Add(admin);
                 await _context.SaveChangesAsync();
             }

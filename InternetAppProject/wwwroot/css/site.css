@@ -76,7 +76,7 @@ body {
 }
 
 .site-bg {
-    background-image: url(".../Images/Background2.jpg");
+    background-image: url("../Images/Background2.jpg");
     background-repeat: no-repeat;
     background-size: cover;
 }
