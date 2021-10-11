@@ -3,49 +3,52 @@
 @{
     ViewData["Title"] = "Search";
 }
+<section>
+    <h1>Drive search</h1>
+    <aside>
+        <h3>Here you can search for a drive by it's owner's name.</h3>
+    </aside>
 
-<h1>Drive search</h1>
-<h6>Here you can search for a drive by it's owner's name.</h6>
-
-<div>
-    <input name="name" id="inpSearch" />
-    <button class="btnSearch btn btn-primary">Search</button>
-    <div class="spinner-grow text-success d-none" role="status">
-        <span class="visually-hidden">Loading...</span>
+    <div>
+        <input name="name" id="inpSearch" />
+        <button class="btnSearch btn btn-primary">Search</button>
+        <div class="spinner-grow text-success d-none" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
     </div>
-</div>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.UserId.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Current_usage)
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model != null)
-        {
-            @foreach (var item in Model)
+</section>
+<section>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.UserId.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Current_usage)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
             {
-                <tr>
-                    <td>
-                        <a asp-controller="Drives" asp-action="Details" asp-route-id="@item.Id">
-                            @item.UserId.Name
-                        </a>
-                    </td>
-                    <td>
-                        @item.Current_usage
-                    </td>
-                </tr>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <a asp-controller="Drives" asp-action="Details" asp-route-id="@item.Id">
+                                @item.UserId.Name
+                            </a>
+                        </td>
+                        <td>
+                            @item.Current_usage
+                        </td>
+                    </tr>
+                }
             }
-        }
-    </tbody>
-</table>
-
+        </tbody>
+    </table>
+</section>
 <script type="text/template" id="template">
     <tr>
         <td>

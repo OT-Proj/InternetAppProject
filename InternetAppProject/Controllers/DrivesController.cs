@@ -149,7 +149,7 @@ namespace InternetAppProject.Controllers
                 _context.PurchaseEvent.Add(pe);
             }
             await _context.SaveChangesAsync();
-            return View("Details", UserDrive);
+            return RedirectToAction("Details", new { id = UserDrive.Id });
         }
 
         // GET: Drives/Details/5

@@ -5,7 +5,7 @@
 }
 
 <p>
-    <h1 class="text-center">@Html.DisplayFor(model => model.UserId.Name)'s Drive</h1>
+    <h1 class="text-center fw-bold">@Html.DisplayFor(model => model.UserId.Name)'s Drive</h1>
     <h6 class="text-center">
         @Html.DisplayFor(model => model.Description)
         @{
@@ -66,24 +66,24 @@
                 {
                     string temp = Convert.ToBase64String(img.Data);
                     // show image card
-                    <div class="card col-md-4 gy-3 px-3">
+                    <div class="card col-md-4 gy-1 gx-0">
                         <a asp-controller="Images" asp-action="Details" asp-route-id="@img.Id">
                             <img class="card-img-top" alt="Card image cap" src="data:image/png;base64,@temp" />
                         </a>
                         <div class="card-body">
                             <p class="card-text">@img.Description</p>
-                            <br />
                             @foreach (Tag t in img.Tags)
                             {
                                 <a asp-controller="Tags" asp-action="Details" asp-route-id="@t.Id">
                                     <span class="badge bg-primary image-tag gx-1">@t.Name</span>
                                 </a>
                             }
+                            <br />
                             @if (owner || admin)
                             {
-                                <br/>
-                                <a asp-controller="Images" asp-action="Edit" asp-route-id="@img.Id" class="text-primary">Edit</a>
-                                <a asp-controller="Images" asp-action="Delete" asp-route-id="@img.Id" class="text-danger">Delete</a>
+                                <br />
+                                <a asp-controller="Images" asp-action="Edit" asp-route-id="@img.Id" class="btn btn-primary">Edit</a>
+                                <a asp-controller="Images" asp-action="Delete" asp-route-id="@img.Id" class="btn btn-danger">Delete</a>
 
                             }
                         </div>

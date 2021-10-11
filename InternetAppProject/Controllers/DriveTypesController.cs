@@ -61,6 +61,10 @@ namespace InternetAppProject.Controllers
         {
             if (ModelState.IsValid)
             {
+                if(driveType.Name.Equals("Free"))
+                {
+                    return NotFound(); // The free drive type should only be created automatically by the startup service.
+                }
                 driveType.Last_change = DateTime.Now;
                 _context.Add(driveType);
                 await _context.SaveChangesAsync();
@@ -101,9 +105,24 @@ namespace InternetAppProject.Controllers
             {
                 try
                 {
-                    driveType.Last_change = DateTime.Now;
-                    _context.Update(driveType);
-                    await _context.SaveChangesAsync();
+                    DriveType existing = _context.DriveType.Where(t => t.Id == id).FirstOrDefault();
+                    if(existing != null)
+                    {
+                        if(existing.Name.Equals("Free"))
+                        {
+                            return NotFound(); // you cannot change the names of "Free" business plan
+                        }
+                        existing.Last_change = DateTime.Now;
+                        existing.Name = driveType.Name;
+                        existing.Max_Capacity = driveType.Max_Capacity;
+                        existing.Price = driveType.Price;
+                        _context.Update(existing);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        return NotFound(); // the business plan you are trying to edit does not exist.
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
