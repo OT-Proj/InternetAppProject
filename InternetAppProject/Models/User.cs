@@ -22,14 +22,18 @@ namespace InternetAppProject.Models
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Password is required")]
+        [StringLength(32, ErrorMessage = "Must be between 3 and 32 characters", MinimumLength = 3)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
         public UserType Type { get; set; }
 
+        [DataType(DataType.PostalCode)]
         [RegularExpression(@"^([0-9]{7})$", ErrorMessage = "Invalid Zip Code")]
         public int Zip { get; set; }
 
+        [DataType(DataType.CreditCard)]
+        [StringLength(16, ErrorMessage = "Please enter vaild credit card", MinimumLength = 8)]
         public string Credit_card { get; set; }
 
         public bool Visual_mode { get; set; }
