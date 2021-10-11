@@ -257,7 +257,7 @@ namespace InternetAppProject.Controllers
                 await _context.SaveChangesAsync();
 
                 // update cookies to include current drive id
-                updateCookies(drive.UserId.Name, drive.UserId.Type, drive.UserId.Id, drive.Id);
+                updateCookies(drive.UserId.Name, drive.UserId.Type, drive.UserId.Id, drive.Id, drive.UserId.Visual_mode);
 
                 return RedirectToAction("Details", new { id = drive.Id });
             }
@@ -473,7 +473,7 @@ namespace InternetAppProject.Controllers
             }
             return 0;
         }
-        public async void updateCookies(string userName, InternetAppProject.Models.User.UserType userType, int id, int drive)
+        public async void updateCookies(string userName, InternetAppProject.Models.User.UserType userType, int id, int drive, bool mode)
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             string type = Enum.GetName(typeof(InternetAppProject.Models.User.UserType), userType);
@@ -486,6 +486,7 @@ namespace InternetAppProject.Controllers
                     new Claim("Type", type),
                     new Claim("id", sid), // user.Id
                     new Claim("drive", did), // user.D.Id
+                    new Claim("nightMode", mode.ToString())
                 };
 
             var claimsIdentity = new ClaimsIdentity(
