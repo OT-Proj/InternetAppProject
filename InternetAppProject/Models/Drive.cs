@@ -19,14 +19,12 @@ namespace InternetAppProject.Models
 
         public IEnumerable<Image> Images { get; set; }
 
-        [Required(ErrorMessage = "Please enter usage"), MaxLength(30)]
         [Range(0, 9999, ErrorMessage = "Invalid Current usage - must be between 0 and 9999")]
         public int Current_usage { get; set; }
 
-        ///[Required(ErrorMessage = "Please enter type id"), MaxLength(30)]
         public DriveType TypeId { get; set; }
 
-        ///[StringLength(50, ErrorMessage = "Must be between under 50 charcters", MinimumLength = 0)]
+        [StringLength(60, ErrorMessage = "Must be between under 50 charcters", MinimumLength = 0)]
         public string Description { get; set; }
     }
 }

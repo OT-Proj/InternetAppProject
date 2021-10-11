@@ -28,10 +28,10 @@ namespace InternetAppProject.Models
 
         public UserType Type { get; set; }
 
-        [DataType(DataType.PostalCode)]
         [RegularExpression(@"^([0-9]{7})$", ErrorMessage = "Invalid Zip Code")]
         public int Zip { get; set; }
 
+        [Required(ErrorMessage = "Credit card is required")]
         [DataType(DataType.CreditCard)]
         [StringLength(16, ErrorMessage = "Please enter vaild credit card", MinimumLength = 8)]
         public string Credit_card { get; set; }
