@@ -110,7 +110,7 @@ namespace InternetAppProject.Controllers
                 }
                 else
                 {
-                    ViewData["ErrorMsg"] = "Oops! We can not find your account (maybe it was deleted?). Please try to logout and login again.";
+                    ViewData["ErrorMsg"] = "Oops! We could not find your account (maybe it was deleted?). Please try to logout and then login again.";
                     return View("~/Views/Home/ShowError.cshtml");// no such user
                 }
                 if (image.DId == null)
@@ -142,7 +142,7 @@ namespace InternetAppProject.Controllers
         {
             if (id == null)
             {
-                ViewData["ErrorMsg"] = "Oops! Image not found.";
+                ViewData["ErrorMsg"] = "Oops! The page you are looking for is not found.";
                 return View("~/Views/Home/ShowError.cshtml");
             }
 
@@ -159,7 +159,7 @@ namespace InternetAppProject.Controllers
             var userType = User.Claims.Where(c => c.Type == "Type").FirstOrDefault();
             if(userDrive == null || userType == null)
             {
-                ViewData["ErrorMsg"] = "Oops! You are not logged in. Please login.";
+                ViewData["ErrorMsg"] = "Oops! You are not logged in. Please login and try again.";
                 return View("~/Views/Home/ShowError.cshtml"); // user is not logged in and cannot edit images
             }
             bool permissions = false;
@@ -173,16 +173,16 @@ namespace InternetAppProject.Controllers
                 return View("~/Views/Home/ShowError.cshtml"); // not your image and you are not an admin, can't edit
             }
             var selectList = new SelectList(_context.Tag, "Id", nameof(Tag.Name));
-            selectList.Select(x =>
+            foreach(var s in selectList)
             {
-                foreach (Tag t in image.Tags)
+                foreach(Tag t in image.Tags)
                 {
-                    if (t.Id == Int32.Parse(x.Value))
-                        return true;
+                    if(t.Name.Equals(s.Text))
+                    {
+                        s.Selected = true;
+                    }
                 }
-                return false;
-
-            });
+            }
             ViewData["Tags"] = selectList; 
             return View(image);
         }
@@ -207,7 +207,7 @@ namespace InternetAppProject.Controllers
                         .Include(x=>x.Tags).FirstOrDefault();
                     if (existing_image == null)
                     {
-                        ViewData["ErrorMsg"] = "Oops! There is no image that you try to edit (maybe it was deleted?).";
+                        ViewData["ErrorMsg"] = "Oops! The image you are trying to edit does not exist (maybe it was deleted?).";
                         return View("~/Views/Home/ShowError.cshtml"); // image you are trying to edit does not exist
                     }
                     bool permissions = false;
@@ -245,6 +245,8 @@ namespace InternetAppProject.Controllers
                     existing_image.Tags = tags_list; // casting IEnumerable as list
                     existing_image.EditTime = DateTime.Now;
                     existing_image.UploadTime = existing_image.UploadTime;
+                    existing_image.IsPublic = image.IsPublic;
+                    existing_image.Description = image.Description;
                     
                     //_context.Remove(existing_image);
                     _context.Update(existing_image);

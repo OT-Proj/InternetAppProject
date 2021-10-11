@@ -3,53 +3,55 @@
 @{
     ViewData["Title"] = "Search";
 }
-
-<h1>Purchase search</h1>
-<h6 class="font-weight-normal">Here you can look for past purchases.</h6>
-
-<div>
-    User: &nbsp;
-    <input name="desc" id="desc" /> &nbsp;
-    <button class="btnSearch btn btn-primary">Search</button>
-    <div class="spinner-grow text-success d-none" role="status">
-        <span class="visually-hidden">Searching...</span>
+<section>
+    <h1>Purchase search</h1>
+    <aside>
+        <h3 class="font-weight-normal">Here you can look for past purchases.</h3>
+    </aside>
+    <div>
+        User: &nbsp;
+        <input name="desc" id="desc" /> &nbsp;
+        <button class="btnSearch btn btn-primary">Search</button>
+        <div class="spinner-grow text-success d-none" role="status">
+            <span class="visually-hidden">Searching...</span>
+        </div>
     </div>
-</div>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.UserID.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Time)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Amount)
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model != null)
-        {
-            @foreach (var item in Model)
+</section>
+<section>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.UserID.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Time)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Amount)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
             {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserID.Name)
-            </td>
-            <td>
-                @item.Time.ToString("MM/dd/yyyy HH:mm")
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Amount)
-            </td>
-        </tr>
-            }}
-    </tbody>
-</table>
-
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserID.Name)
+                        </td>
+                        <td>
+                            @item.Time.ToString("MM/dd/yyyy HH:mm")
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Amount)
+                        </td>
+                    </tr>
+                }}
+        </tbody>
+    </table>
+</section>
 <script type="text/template" id="template">
     <tr>
         <td>

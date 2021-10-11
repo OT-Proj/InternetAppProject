@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,6 +26,8 @@ namespace InternetAppProject.Models
 
         //one to many(Image->Drive)
         public Drive DId { get; set; }
+
+        [StringLength(50, ErrorMessage = "Must be between under 50 charcters", MinimumLength = 0)]
         public string Description { get; set; }
     }
 }

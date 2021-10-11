@@ -18,7 +18,7 @@ namespace InternetAppProject.Services
         {
             int DrivetypeID;
             var typeQuery = _context.DriveType.Where(dt => dt.Name.Equals("Free"));
-            if(typeQuery.Count() < 1)
+            if (typeQuery.Count() < 1)
             {
                 Models.DriveType free = new Models.DriveType();
                 free.Name = "Free";
@@ -40,12 +40,21 @@ namespace InternetAppProject.Services
                 admin.Password = "Admin";
                 admin.Type = Models.User.UserType.Admin;
                 admin.Visual_mode = false;
-                admin.Zip = 00000;
+                admin.Zip = 1234567;
+                admin.Credit_card = "12345678";
                 admin.D = new Models.Drive();
                 admin.D.Current_usage = 0;
                 admin.D.Description = "Welcome to MoodleDrive! This is the Admin's drive.";
                 admin.D.TypeId = typeQuery.FirstOrDefault();
+                //_context.Add(admin.D);
                 _context.Add(admin);
+                await _context.SaveChangesAsync();
+            }
+            if (_context.Tag.Where(u => u.Name.Equals("Pixabay")).Count() < 1)
+            {
+                Models.Tag pixabay = new Models.Tag();
+                pixabay.Name = "Pixabay";
+                _context.Add(pixabay);
                 await _context.SaveChangesAsync();
             }
         }

@@ -10,5 +10,6 @@ namespace InternetAppProject.Models
     public class PriceResult
     {
         public int amount { get; set; }
+        public int images { get; set; }
     }
 }

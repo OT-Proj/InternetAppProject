@@ -3,53 +3,55 @@
 @{
     ViewData["Title"] = "Search";
 }
-
-<h1>Workplace search</h1>
-<h6>Here you can search for a workplace by name.</h6>
-
-<div>
-    <input name="name" id="inpSearch" />
-    <button class="btnSearch btn btn-primary">Search</button>
-    <div class="spinner-grow text-success d-none" role="status">
-        <span class="visually-hidden">Loading...</span>
+<seciton>
+    <h1>Workplace search</h1>
+    <aside>
+        <h3>Here you can search for a workplace by name.</h3>
+    </aside>
+    <div>
+        Name: <input name="name" id="inpSearch" />
+        <button class="btnSearch btn btn-primary">Search</button>
+        <div class="spinner-grow text-success d-none" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
     </div>
-</div>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.P_lat)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.P_long)
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model != null)
-        {
-            @foreach (var item in Model)
+</seciton>
+<section>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.P_lat)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.P_long)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
             {
-                <tr>
-                    <td>
-                        @item.Name
-                    </td>
-                    <td>
-                        @item.P_lat
-                    </td>
-                    <td>
-                        @item.P_long
-                    </td>
-                </tr>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @item.Name
+                        </td>
+                        <td>
+                            @item.P_lat
+                        </td>
+                        <td>
+                            @item.P_long
+                        </td>
+                    </tr>
+                }
             }
-        }
-    </tbody>
-</table>
-
+        </tbody>
+    </table>
+</section>
 <script type="text/template" id="template">
     <tr>
         <td>
