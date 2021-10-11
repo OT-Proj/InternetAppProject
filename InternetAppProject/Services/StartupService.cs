@@ -40,7 +40,8 @@ namespace InternetAppProject.Services
                 admin.Password = "Admin";
                 admin.Type = Models.User.UserType.Admin;
                 admin.Visual_mode = false;
-                admin.Zip = 00000;
+                admin.Zip = 1234567;
+                admin.Credit_card = "12345678";
                 admin.D = new Models.Drive();
                 admin.D.Current_usage = 0;
                 admin.D.Description = "Welcome to MoodleDrive! This is the Admin's drive.";
