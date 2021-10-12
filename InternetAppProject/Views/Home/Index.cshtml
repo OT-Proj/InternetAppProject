@@ -3,7 +3,30 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+    <canvas id="myCanvas" width="300" height="70"></canvas>
+
+    <br />
+
+    <p>
+        <h5>
+            to our website!!!
+            <br />
+            <br />
+            Here you can store your images or import from Pixabay.com.
+            <br />
+            You can also upgrade your business plan to upload more images!
+            <br />
+            Enjoy our project!
+        </h5>
+    </p>
+
+    <br />
+
+    <video id="videoplayer" src="@Url.Content("~/video/Welcome - 8479.mp4")" controls width="640" height="360" loop />
+
 </div>
 
+@section Scripts {
+    <script src="~/js/canvas.js"></script>
+}
