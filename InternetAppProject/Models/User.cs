@@ -18,6 +18,7 @@ namespace InternetAppProject.Models
         public int Id { get; set; }
 
         [DataType(DataType.Text)]
+        [Display(Name = "Username")]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Password is required")]
@@ -25,6 +26,7 @@ namespace InternetAppProject.Models
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
+        [Display(Name = "Role")]
         public UserType Type { get; set; }
 
         [RegularExpression(@"^([0-9]{7})$", ErrorMessage = "Invalid Zip Code")]
@@ -33,16 +35,20 @@ namespace InternetAppProject.Models
         [Required(ErrorMessage = "Credit card is required")]
         [DataType(DataType.CreditCard)]
         [StringLength(16, ErrorMessage = "Please enter vaild credit card", MinimumLength = 8)]
+        [Display(Name = "Credit card")]
         public string Credit_card { get; set; }
 
+        [Display(Name = "Night mode")]
         public bool Visual_mode { get; set; }
 
+        [Display(Name = "Created")]
         public DateTime Create_time { get; set; }
 
         [Display(Name = "Drive")]
         [ForeignKey("DId")]
         public Drive D { get; set; }
 
+        [Display(Name = "Purchases")]
         //one to many
         public IEnumerable<PurchaseEvent> PurchaseEvents  { get; set; }
     }

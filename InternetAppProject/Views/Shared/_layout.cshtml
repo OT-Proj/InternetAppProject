@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/css/site.css" />
     <link rel="stylesheet" href="/css/drive.css" />
+    @if (Context != null && Context.User != null && Context.User.Claims.FirstOrDefault(x => x.Type == "nightMode") != null)
+    {
+        if (Context.User.Claims.FirstOrDefault(x => x.Type == "nightMode").Value.Equals(true.ToString()))
+        {
+            <link rel="stylesheet" href="/css/night.css" />
+        }
+    }
 
 </head>
 <body class="site-bg">
