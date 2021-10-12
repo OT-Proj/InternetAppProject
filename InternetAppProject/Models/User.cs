@@ -40,6 +40,7 @@ namespace InternetAppProject.Models
 
         public DateTime Create_time { get; set; }
 
+        [Display(Name = "Drive")]
         [ForeignKey("DId")]
         public Drive D { get; set; }
 
