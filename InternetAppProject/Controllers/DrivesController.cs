@@ -17,6 +17,7 @@ using DriveType = InternetAppProject.Models.DriveType;
 using System.Net;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InternetAppProject.Controllers
 {
@@ -30,6 +31,7 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: Drives
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var data = _context.Drive.Include(x => x.UserId);
@@ -162,7 +164,8 @@ namespace InternetAppProject.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                ViewData["ErrorMsg"] = "The drive you are trying to view is not found.";
+                return View("~/Views/Home/ShowError.cshtml"); // orphaned drive - error
             }
 
             var drive = await _context.Drive.Include(d => d.TypeId)
@@ -176,14 +179,15 @@ namespace InternetAppProject.Controllers
                 //drive not found, is it yours?
                 if(CookieDrive != null && Int32.Parse(CookieDrive.Value) == id)
                 {
-                    return RedirectToAction("Create");
+                    return RedirectToAction("Create", null);
                 }
                 if (CookieDrive != null && Int32.Parse(CookieDrive.Value) == -1)
                 {
                     // user didn't have a drive when logging in
-                    return RedirectToAction("Create");
+                    return RedirectToAction("Create", null);
                 }
-                return NotFound(); // drive does not exist
+                ViewData["ErrorMsg"] = "The Drive you are trying to view is not found.";
+                return View("~/Views/Home/ShowError.cshtml"); // orphaned drive - error
             }
 
             if(drive.UserId == null)
@@ -280,11 +284,20 @@ namespace InternetAppProject.Controllers
                 return NotFound();
             }
 
-            var drive = await _context.Drive.FindAsync(id);
+            var drive = _context.Drive.Include(d => d.TypeId).Where(d => d.Id == id).FirstOrDefault();
             if (drive == null)
             {
                 return NotFound();
             }
+            SelectList typeSelectList = new SelectList(_context.DriveType, "Id", nameof(DriveType.Name));
+            foreach (var s in typeSelectList)
+            {
+                if (Int32.Parse(s.Value) == drive.TypeId.Id)
+                {
+                    s.Selected = true;
+                }
+            }
+            ViewData["Types"] = typeSelectList;
             return View(drive);
         }
 
@@ -293,7 +306,7 @@ namespace InternetAppProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Description")] Drive drive)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Description")] Drive drive, int? Types)
         {
             if (id != drive.Id)
             {
@@ -321,6 +334,14 @@ namespace InternetAppProject.Controllers
                         ViewData["ErrorMsg"] = "Oops! You are not the owner of the drive and not admin!";
                         return View("~/Views/Home/ShowError.cshtml"); // user is not the owner of the drive and not admin
                     }
+                    if(uType.Value.Equals("Admin") && Types != null)
+                    {
+                        DriveType t = _context.DriveType.Where(dt => dt.Id == Types).FirstOrDefault();
+                        if(t != null)
+                        {
+                            existing.TypeId = t;
+                        }
+                    }
                     
                     existing.Description = drive.Description;
                     _context.Update(existing);
@@ -343,6 +364,7 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: Drives/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -363,6 +385,7 @@ namespace InternetAppProject.Controllers
         // POST: Drives/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var q = from d in _context.Drive

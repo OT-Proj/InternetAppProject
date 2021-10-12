@@ -27,7 +27,7 @@ namespace InternetAppProject.Models
         //one to many(Image->Drive)
         public Drive DId { get; set; }
 
-        [StringLength(50, ErrorMessage = "Must be between under 50 charcters", MinimumLength = 0)]
+        [StringLength(75, ErrorMessage = "Must be between under 75 charcters", MinimumLength = 0)]
         public string Description { get; set; }
     }
 }

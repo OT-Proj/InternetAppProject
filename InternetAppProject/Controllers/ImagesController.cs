@@ -9,6 +9,7 @@ using InternetAppProject.Data;
 using InternetAppProject.Models;
 using System.IO;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InternetAppProject.Controllers
 {
@@ -22,6 +23,7 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: Images
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var images = _context.Image.Include(x => x.Tags);
@@ -41,7 +43,8 @@ namespace InternetAppProject.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (image == null)
             {
-                return NotFound();
+                ViewData["ErrorMsg"] = "The Image you are trying to view is not found.";
+                return View("~/Views/Home/ShowError.cshtml"); // orphaned drive - error
             }
 
             var userDrive = User.Claims.Where(c => c.Type == "drive").FirstOrDefault();
@@ -172,8 +175,8 @@ namespace InternetAppProject.Controllers
                 ViewData["ErrorMsg"] = "Oops! You do not have permissions to edit this image.";
                 return View("~/Views/Home/ShowError.cshtml"); // not your image and you are not an admin, can't edit
             }
-            var selectList = new SelectList(_context.Tag, "Id", nameof(Tag.Name));
-            foreach(var s in selectList)
+            var tagSelectList = new SelectList(_context.Tag, "Id", nameof(Tag.Name));
+            foreach(var s in tagSelectList)
             {
                 foreach(Tag t in image.Tags)
                 {
@@ -183,7 +186,24 @@ namespace InternetAppProject.Controllers
                     }
                 }
             }
-            ViewData["Tags"] = selectList; 
+            ViewData["Tags"] = tagSelectList;
+
+            var freeDrives = from d in _context.Drive
+                          join t in _context.DriveType on d.TypeId.Id equals t.Id
+                          join u in _context.User on d.UserId.Id equals u.Id
+                          where d.Current_usage < d.TypeId.Max_Capacity
+                          select new { Id = d.Id, name = d.UserId.Name };
+
+            SelectList driveSelectList = new SelectList(freeDrives, "Id", "name");
+            foreach (var s in driveSelectList)
+            {
+                if(Int32.Parse(s.Value) == image.DId.Id)
+                {
+                    s.Selected = true;
+                }
+            }
+            ViewData["Drives"] = driveSelectList;
+
             return View(image);
         }
 
@@ -192,7 +212,7 @@ namespace InternetAppProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ImageFile,IsPublic,Description")] Image image, int[] tags)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ImageFile,IsPublic,Description")] Image image, int[] tags, int? Drive)
         {
             if (id != image.Id)
             {
@@ -211,6 +231,7 @@ namespace InternetAppProject.Controllers
                         return View("~/Views/Home/ShowError.cshtml"); // image you are trying to edit does not exist
                     }
                     bool permissions = false;
+                    bool isAdmin = false;
                     var userDrive = User.Claims.Where(c => c.Type == "drive").FirstOrDefault();
                     var userType = User.Claims.Where(c => c.Type == "Type").FirstOrDefault();
                     if (userDrive != null && Int32.Parse(userDrive.Value) == existing_image.DId.Id)
@@ -219,6 +240,7 @@ namespace InternetAppProject.Controllers
                     }
                     if (userType != null && userType.Value == "Admin")
                     {
+                        isAdmin = true;
                         permissions = true;
                     }
                     if(!permissions)
@@ -248,6 +270,15 @@ namespace InternetAppProject.Controllers
                     existing_image.IsPublic = image.IsPublic;
                     existing_image.Description = image.Description;
                     
+                    if(Drive != null && isAdmin)
+                    {
+                        Drive targetDrive = _context.Drive.Where(d => d.Id == Drive).FirstOrDefault();
+                        if(targetDrive != null)
+                        {
+                            existing_image.DId = targetDrive;
+                        }
+                    }
+
                     //_context.Remove(existing_image);
                     _context.Update(existing_image);
                     await _context.SaveChangesAsync();
@@ -276,13 +307,30 @@ namespace InternetAppProject.Controllers
                 return NotFound();
             }
 
-            var image = await _context.Image
+            var image = await _context.Image.Include(d => d.DId)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (image == null)
             {
                 return NotFound();
             }
 
+            var userDrive = User.Claims.Where(c => c.Type == "drive").FirstOrDefault();
+            var userType = User.Claims.Where(c => c.Type == "Type").FirstOrDefault();
+            if (userDrive == null || userType == null)
+            {
+                ViewData["ErrorMsg"] = "Oops! You are not logged in. Please login and try again.";
+                return View("~/Views/Home/ShowError.cshtml"); // user is not logged in and cannot edit images
+            }
+            bool permissions = false;
+            if (Int32.Parse(userDrive.Value) == image.DId.Id || userType.Value.Equals("Admin"))
+            {
+                permissions = true;
+            }
+            if (!permissions)
+            {
+                ViewData["ErrorMsg"] = "Oops! You do not have permissions to delete this image.";
+                return View("~/Views/Home/ShowError.cshtml"); // not your image and you are not an admin, can't edit
+            }
             return View(image);
         }
 

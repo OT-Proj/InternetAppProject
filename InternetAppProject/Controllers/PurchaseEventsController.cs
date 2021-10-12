@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using InternetAppProject.Data;
 using InternetAppProject.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InternetAppProject.Controllers
 {
@@ -20,6 +21,7 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: PurchaseEvents
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var events = await _context.PurchaseEvent.Include(e => e.UserID).ToListAsync();
@@ -27,6 +29,7 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: PurchaseEvents/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -45,6 +48,7 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: PurchaseEvents/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["Users"] = new SelectList(_context.User, "Id", nameof(Models.User.Name));
@@ -56,6 +60,7 @@ namespace InternetAppProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Id,Time,Amount")] PurchaseEvent purchaseEvent, int? UserID)
         {
             if (ModelState.IsValid && UserID != null)
@@ -74,6 +79,7 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: PurchaseEvents/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -86,7 +92,15 @@ namespace InternetAppProject.Controllers
             {
                 return NotFound();
             }
-            ViewData["Users"] = new SelectList(_context.User, "Id", nameof(Models.User.Name));
+            var userSelect = new SelectList(_context.User, "Id", nameof(Models.User.Name));
+            foreach(var s in userSelect)
+            {
+                if(Int32.Parse(s.Value) == purchaseEvent.UserID.Id)
+                {
+                    s.Selected = true;
+                }
+            }
+            ViewData["Users"] = userSelect;
             return View(purchaseEvent);
         }
 
@@ -95,6 +109,7 @@ namespace InternetAppProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Time,Amount")] PurchaseEvent purchaseEvent, int? UserID)
         {
             if (id != purchaseEvent.Id)
@@ -132,6 +147,7 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: PurchaseEvents/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -152,6 +168,7 @@ namespace InternetAppProject.Controllers
         // POST: PurchaseEvents/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var purchaseEvent = await _context.PurchaseEvent.FindAsync(id);
@@ -165,11 +182,13 @@ namespace InternetAppProject.Controllers
             return _context.PurchaseEvent.Any(e => e.Id == id);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Graphs()
         {
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ByDayJson(int? id)
         {
             if(id == null)
@@ -189,7 +208,7 @@ namespace InternetAppProject.Controllers
             return Json(q2);
         }
 
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CountByDayJson(int? id)
         {
             if (id == null)
@@ -211,6 +230,8 @@ namespace InternetAppProject.Controllers
             q2.Sort((x, y) => x.date_fixed.CompareTo(y.date_fixed));
             return Json(q2);
         }
+
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Search(string id)
         {
             if (id == null)
@@ -222,6 +243,8 @@ namespace InternetAppProject.Controllers
 
             return View(await q.ToListAsync());
         }
+
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SearchJson(string id)
         {
             if (id == null)

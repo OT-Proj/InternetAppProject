@@ -4,9 +4,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - InternetAppProject</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" type="text/css" />
-    <link rel="stylesheet" href="~/css/drive.css" type="text/css" />
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/site.css" />
+    <link rel="stylesheet" href="/css/drive.css" />
 
 </head>
 <body class="site-bg">
@@ -157,7 +157,7 @@
                     @if (Context != null && Context.User != null && Context.User.Identity.Name != null)
                     {
                 <div>
-                    <a class="nav-link text-dark" asp-controller="Users" asp-action="Logout">Hello @Context.User.Identity.Name, Logout</a>
+                    <a class="nav-link text-dark" asp-controller="Users" asp-action="Logout">Hello <b>@Context.User.Identity.Name</b>, Logout</a>
                 </div> }
                     else
                     {

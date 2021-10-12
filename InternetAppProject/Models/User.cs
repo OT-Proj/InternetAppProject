@@ -17,7 +17,6 @@ namespace InternetAppProject.Models
         }
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Please enter name"), MaxLength(30)]
         [DataType(DataType.Text)]
         public string Name { get; set; }
 
@@ -40,6 +39,7 @@ namespace InternetAppProject.Models
 
         public DateTime Create_time { get; set; }
 
+        [Display(Name = "Drive")]
         [ForeignKey("DId")]
         public Drive D { get; set; }
 
