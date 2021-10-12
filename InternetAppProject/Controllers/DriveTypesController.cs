@@ -84,7 +84,7 @@ namespace InternetAppProject.Controllers
             var driveType = await _context.DriveType.FindAsync(id);
             if (driveType == null)
             {
-                ViewData["ErrorMsg"] = " Oops! The drive is not exist. Please create a new drive.";
+                ViewData["ErrorMsg"] = " Oops! The business plan does not exist.";
                 return View("~/Views/Home/ShowError.cshtml"); // drivetype does not exist
             }
             return View(driveType);
@@ -171,13 +171,13 @@ namespace InternetAppProject.Controllers
             }
             if(driveType.Name.Equals("Free"))
             {
-                ViewData["ErrorMsg"] = " Oops!  Cannot delete free drivetype, it is required to stay.";
+                ViewData["ErrorMsg"] = " Oops!  Cannot delete free business plan, it is required to stay.";
                 return View("~/Views/Home/ShowError.cshtml"); // cannot delete "free" drivetype, it is required to stay
             }
             var drives = await _context.Drive.Include(d => d.TypeId).Where(d => d.TypeId.Id == id).ToListAsync();
             if(drives.Count() > 0)
             {
-                ViewData["ErrorMsg"] = " Oops!  Cannot delete drivetype, drives are depending on it.";
+                ViewData["ErrorMsg"] = " Oops!  Cannot delete business plan, drives are depending on it.";
                 return View("~/Views/Home/ShowError.cshtml"); // cannot delete drivetype, drives are depending on it.
             }
             _context.DriveType.Remove(driveType);
