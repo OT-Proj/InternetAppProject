@@ -21,7 +21,10 @@
                 }
                 if (uType.Value != null)
                 {
-                    admin = true;
+                    if(uType.Value.Equals("Admin"))
+                    {
+                        admin = true;
+                    }
                 }
                 if (owner || admin)
                 {
