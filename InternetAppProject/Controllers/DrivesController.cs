@@ -192,7 +192,7 @@ namespace InternetAppProject.Controllers
 
             if(drive.UserId == null)
             {
-                ViewData["ErrorMsg"] = " Oops! There is no mom and dad for this drive. Please create a new drive.";
+                ViewData["ErrorMsg"] = " Oops! This device has no owner. Please create a new drive.";
                 return View("~/Views/Home/ShowError.cshtml"); // orphaned drive - error
             }
 
@@ -327,11 +327,11 @@ namespace InternetAppProject.Controllers
                     var uType = User.Claims.FirstOrDefault(x => x.Type == "Type");
                     if (uID == null || uType == null)
                     {
-                        ViewData["ErrorMsg"] = "Oops! You are not login. Please login.";
+                        ViewData["ErrorMsg"] = "Oops! You are not logged in. Please login.";
                         return View("~/Views/Home/ShowError.cshtml"); // user not logged in
                     }
                     if (Int32.Parse(uID.Value) != existing.UserId.Id && !uType.Value.Equals("Admin")) {
-                        ViewData["ErrorMsg"] = "You are not the owner of the drive and not admin!";
+                        ViewData["ErrorMsg"] = "Oops! You are not the owner of the drive and not admin!";
                         return View("~/Views/Home/ShowError.cshtml"); // user is not the owner of the drive and not admin
                     }
                     if(uType.Value.Equals("Admin") && Types != null)
@@ -398,7 +398,7 @@ namespace InternetAppProject.Controllers
             
             if(q.Count() < 1)
             {
-                ViewData["ErrorMsg"] = "Oops! You can not delete because the drive does not exist. Please create drive.";
+                ViewData["ErrorMsg"] = "Oops! You cannot delete because the drive does not exist.";
                 return View("~/Views/Home/ShowError.cshtml"); // drive does not exist. can't delete
             }
             _context.Drive.Remove(q.First().driveObj);
@@ -429,7 +429,7 @@ namespace InternetAppProject.Controllers
             var UserId = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "id");
             if(UserId == null)
             {
-                ViewData["ErrorMsg"] = "Oops! You are not login. Please login.";
+                ViewData["ErrorMsg"] = "Oops! You are not logged in. Please login.";
                 return View("~/Views/Home/ShowError.cshtml"); // user not logged in.
             }
             if (drive.UserId.Id != Int32.Parse(UserId.Value))
