@@ -1,12 +1,11 @@
 ﻿@model InternetAppProject.Models.Image
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Image upload ";
 }
 
-<h1>Create</h1>
+<h1>Image upload</h1>
 
-<h4>Image</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -37,6 +36,7 @@
                 <label class="control-label">Tags</label>
                 <select name="Tags" class="form-control" asp-items="ViewBag.Tags" multiple></select>
             </div>
+            <br />
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
