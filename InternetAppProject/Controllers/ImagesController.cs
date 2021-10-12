@@ -60,7 +60,7 @@ namespace InternetAppProject.Controllers
             {
                 return View(image);
             }
-            ViewData["ErrorMsg"] = "You do not have premissions to see this image.";
+            ViewData["ErrorMsg"] = "You do not have permissions to see this image.";
             return View("~/Views/Home/ShowError.cshtml"); // not your image + not admin = no permissions to see image
         }
 
