@@ -12,7 +12,7 @@ $(document).ready(function () {
         // Now I can use this dataset:
         function (lineData) {
 
-            var parser = d3.timeParse("%Y-%m-%d")
+            var parser = d3.timeParse("%Y-%M-%d")
 
             lineData.forEach(function (d) {
                 console.log(d.date);

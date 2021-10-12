@@ -17,7 +17,6 @@ namespace InternetAppProject.Models
         }
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Please enter name"), MaxLength(30)]
         [DataType(DataType.Text)]
         public string Name { get; set; }
 

@@ -31,6 +31,7 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: Users/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -112,6 +113,24 @@ namespace InternetAppProject.Controllers
             {
                 return NotFound();
             }
+            var uID = User.Claims.FirstOrDefault(x => x.Type == "id");
+            var uType = User.Claims.FirstOrDefault(x => x.Type == "Type");
+            if (uID == null || uType == null)
+            {
+                ViewData["ErrorMsg"] = " Oops! You are not logged in. Please login.";
+                return View("~/Views/Home/ShowError.cshtml"); // user not logged in
+            }
+            bool isAdmin = false;
+            if (uType.Value.Equals("Admin"))
+            {
+                isAdmin = true;
+            }
+            if (Int32.Parse(uID.Value) != user.Id && !isAdmin)
+            {
+                ViewData["ErrorMsg"] = " Oops! You are not allowed to edit this account.";
+                return View("~/Views/Home/ShowError.cshtml"); // someone who isn't the user or an admin trying to edit this account!
+            }
+
 
             // make select list out of the user types enum
             var types = Enum.GetValues(typeof(InternetAppProject.Models.User.UserType)).Cast<InternetAppProject.Models.User.UserType>().Select(v => new SelectListItem
@@ -139,7 +158,7 @@ namespace InternetAppProject.Controllers
             var uType = User.Claims.FirstOrDefault(x => x.Type == "Type");
             if (uID == null || uType == null)
             {
-                ViewData["ErrorMsg"] = " Oops! User not loogged in. Please login.";
+                ViewData["ErrorMsg"] = " Oops! You are not logged in. Please login.";
                 return View("~/Views/Home/ShowError.cshtml"); // user not logged in
             }
             bool isAdmin = false;
@@ -149,7 +168,7 @@ namespace InternetAppProject.Controllers
             }
             if (Int32.Parse(uID.Value) != user.Id && !isAdmin)
             {
-                ViewData["ErrorMsg"] = " Oops! You are not allowed to edit this account! .";
+                ViewData["ErrorMsg"] = " Oops! You are not allowed to edit this account.";
                 return View("~/Views/Home/ShowError.cshtml"); // someone who isn't the user or an admin trying to edit this account!
             }
 
@@ -188,10 +207,11 @@ namespace InternetAppProject.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
+            return RedirectToAction("Edit", new { id = id });
         }
 
         // GET: Users/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -212,6 +232,7 @@ namespace InternetAppProject.Controllers
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             /*  //previous version: worse beacuse 3 seperate queries are slower
@@ -338,7 +359,7 @@ namespace InternetAppProject.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
         }
-
+        [Authorize(Roles = "Admin")]
         public IActionResult Facebook()
         {
             int users = _context.User.Count();
