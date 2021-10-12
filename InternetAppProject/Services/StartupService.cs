@@ -33,7 +33,8 @@ namespace InternetAppProject.Services
             {
                 DrivetypeID = typeQuery.FirstOrDefault().Id;
             }
-            if (_context.User.Where(u => u.Name.Equals("Admin")).Count() < 1)
+            var adminq = _context.User.Where(u => u.Name.Equals("Admin"));
+            if (adminq.Count() < 1)
             {
                 Models.User admin = new Models.User();
                 admin.Name = "Admin";
@@ -50,6 +51,16 @@ namespace InternetAppProject.Services
                 //_context.Add(admin.D);
                 _context.Add(admin);
                 await _context.SaveChangesAsync();
+            }
+            else
+            {
+                Models.User admin = adminq.FirstOrDefault();
+                if(admin != null && admin.Type != Models.User.UserType.Admin)
+                {
+                    admin.Type = Models.User.UserType.Admin;
+                    _context.Update(admin);
+                    await _context.SaveChangesAsync();
+                }
             }
             if (_context.Tag.Where(u => u.Name.Equals("Pixabay")).Count() < 1)
             {
