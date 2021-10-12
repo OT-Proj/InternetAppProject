@@ -76,7 +76,7 @@ body {
 }
 
 .site-bg {
-    background-image: url("../Images/Background2.jpg");
+    background-image: url("../Images/Background5.jpg");
     background-repeat: no-repeat;
     background-size: cover;
 }
@@ -88,27 +88,113 @@ body {
 }
 
 nav {
-    background-color: whitesmoke;
+    background-color: #0d0d0e;
+    color: #F9F7F5;
 }
 
-body {
-    column-gap: 1em;
+html {
+    color: #F9F7F5;
 }
 
-@font-face {
-    font-style: normal;
+.navbar-collapse {
+    color: #F9F7F5;
 }
 
-.navbar-brand:hover {
-    text-shadow: 0px 0px #828382 !important;
-    transition: width 2s, height 4s;
-    font-size: 25px;
-    transition-property: font-size;
-    transition-duration: 0.5s;
-    transition-delay: 0.5s;
+h1 {
+    color: #F9F7F5;
 }
 
-.main-image {
-    border: 2px solid #0d0d0e;
-    border-radius: 50px 20px;
+.card {
+    background-color: #0d0d0e;
+    color: #F9F7F5;
+}
+
+div {
+    color: #F9F7F5;
+}
+
+.text-dark, .navbar-brand {
+    color: #F9F7F5 !important;
+}
+
+.dropdown-item {
+    color: #F9F7F5 !important;
+    background-color: #0d0d0e;
+}
+
+.nav-link {
+    color: #F9F7F5;
+}
+
+.nav-item, .dropdown-menu, .show {
+    color: #F9F7F5;
+    background-color: #0d0d0e;
+}
+
+table {
+    color: #F9F7F5;
+}
+
+tr {
+    color: #F9F7F5;
+}
+
+th {
+    color: #F9F7F5;
+}
+
+td {
+    color: #F9F7F5;
+}
+
+li {
+    color: #F9F7F5!important;
+}
+
+flex-grow-1 {
+    color: #F9F7F5!important;
+}
+
+navbar-nav {
+    color: #F9F7F5!important;
+}
+
+dropdown {
+    color: #F9F7F5!important;
+}
+
+.line {
+    fill: none;
+    stroke: #ffab00;
+    stroke-width: 3;
+    color: #F9F7F5;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #F9F7F5;
+    shape-rendering: crispEdges;
+    color: #F9F7F5;
+}
+
+.axis text {
+    font-size: 10px;
+    color: #F9F7F5;
+}
+
+.svg {
+    text-align: center;
+    color: #F9F7F5;
+}
+
+navbar-collapse, collapse, d-sm-inline-flex, justify-content-between, nav-item {
+    color: #F9F7F5 !important;
+}
+header {
+    color: #F9F7F5 !important;
+}
+
+a {
+    color: cornflowerblue;
 }

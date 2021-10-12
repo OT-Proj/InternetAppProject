@@ -24,7 +24,7 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: Users
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.User.ToListAsync());
@@ -143,7 +143,20 @@ namespace InternetAppProject.Controllers
                 Text = v.ToString(),
                 Value = ((int)v).ToString()
             }).ToList();
-            ViewData["Types"] = new SelectList(types, "Value", "Text");
+            var typeSelect = new SelectList(types, "Value", "Text");
+            foreach (var s in typeSelect)
+            {
+                s.Selected = false;
+                if(s.Text.Equals("Admin") && user.Type == Models.User.UserType.Admin)
+                {
+                    s.Selected = true;
+                }
+                if(s.Text.Equals("Client") && user.Type == Models.User.UserType.Client)
+                {
+                    s.Selected = true;
+                }
+            }
+            ViewData["Types"] = typeSelect;
             return View(user);
         }
 
@@ -182,7 +195,7 @@ namespace InternetAppProject.Controllers
                 try
                 {
                     // fetch old user data to keep the create_time correct
-                    var existing_Data = _context.User.Where(U => U.Id == id).FirstOrDefault();
+                    var existing_Data = _context.User.Include(u => u.D).Where(U => U.Id == id).FirstOrDefault();
                     if(existing_Data == null)
                     {
                         ViewData["ErrorMsg"] = " Oops! User you are trying to edit does not exist .";
@@ -197,6 +210,11 @@ namespace InternetAppProject.Controllers
                     }
                     _context.Remove(existing_Data);
                     _context.Update(user);
+                    if(Int32.Parse(uID.Value) == user.Id)
+                    {
+                        LogoutUser();
+                        LoginUser(existing_Data.Name, existing_Data.Type, existing_Data.Id, existing_Data.D.Id, user.Visual_mode);
+                    }
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
