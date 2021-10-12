@@ -10,6 +10,7 @@ using InternetAppProject.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InternetAppProject.Controllers
 {
@@ -23,12 +24,14 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: DriveTypes
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.DriveType.ToListAsync());
         }
 
         // GET: DriveTypes/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -47,6 +50,7 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: DriveTypes/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -57,6 +61,7 @@ namespace InternetAppProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Id,Level,Name,Max_Capacity,Price")] DriveType driveType)
         {
             if (ModelState.IsValid)
@@ -74,6 +79,7 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: DriveTypes/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -95,6 +101,7 @@ namespace InternetAppProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Level,Name,Max_Capacity,Price")] DriveType driveType)
         {
             if (id != driveType.Id)
@@ -111,10 +118,17 @@ namespace InternetAppProject.Controllers
                     {
                         if(existing.Name.Equals("Free"))
                         {
-                            return NotFound(); // you cannot change the names of "Free" business plan
+                            if(!driveType.Name.Equals("Free"))
+                            {
+                                ViewData["ErrorMsg"] = "You cannot change the name of the 'Free' business plan, it is required.";
+                                return View("~/Views/Home/ShowError.cshtml");
+                            }
+                        }
+                        else
+                        {
+                            existing.Name = driveType.Name;
                         }
                         existing.Last_change = DateTime.Now;
-                        existing.Name = driveType.Name;
                         existing.Max_Capacity = driveType.Max_Capacity;
                         existing.Price = driveType.Price;
                         _context.Update(existing);
@@ -142,6 +156,7 @@ namespace InternetAppProject.Controllers
         }
 
         // GET: DriveTypes/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -162,6 +177,7 @@ namespace InternetAppProject.Controllers
         // POST: DriveTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var driveType = await _context.DriveType.FindAsync(id);

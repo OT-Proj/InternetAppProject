@@ -31,6 +31,17 @@
                 <label class="control-label">Tags</label>
                 <select name="Tags" class="form-control" asp-items="ViewBag.Tags" multiple></select>
             </div>
+            @if (Context != null && Context.User != null && Context.User.Claims.FirstOrDefault(x => x.Type == "Type") != null)
+            {
+                if (Context.User.Claims.FirstOrDefault(x => x.Type == "Type").Value == "Admin")
+                {
+                    <div class="form-group">
+                        <label class="control-label">Send image to:</label>
+                        <select name="Drive" class="form-control" asp-items="ViewBag.Drives"></select>
+                    </div>
+                }
+            }
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

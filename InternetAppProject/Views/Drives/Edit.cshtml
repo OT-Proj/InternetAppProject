@@ -13,6 +13,16 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            @if (Context != null && Context.User != null && Context.User.Claims.FirstOrDefault(x => x.Type == "Type") != null)
+            {
+                if (Context.User.Claims.FirstOrDefault(x => x.Type == "Type").Value == "Admin")
+                {
+                    <div class="form-group">
+                        <label class="control-label">Business plan:</label>
+                        <select name="Types" class="form-control" asp-items="ViewBag.Types"></select>
+                    </div>
+                }
+            }
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
                 <input asp-for="Description" class="form-control" />

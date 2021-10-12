@@ -21,7 +21,10 @@
                 }
                 if (uType.Value != null)
                 {
-                    admin = true;
+                    if(uType.Value.Equals("Admin"))
+                    {
+                        admin = true;
+                    }
                 }
                 if (owner || admin)
                 {
@@ -30,11 +33,15 @@
             }
         }
     </h6>
-    @if (owner)
+    @if (owner || admin)
     {
         <div class="text-center">
             Current usage:  @Html.DisplayFor(model => model.Current_usage) / @Html.DisplayFor(model => model.TypeId.Max_Capacity)
-            | <a asp-action="Upgrade" asp-route-id="@Model.Id">Upgrade now!</a>
+
+            @if (owner)
+            {   <span>|</span>
+                <a asp-action="Upgrade" asp-route-id="@Model.Id">Upgrade now!</a>
+            }
         </div>
     }
 
