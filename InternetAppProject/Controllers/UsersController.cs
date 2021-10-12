@@ -62,6 +62,11 @@ namespace InternetAppProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Password,Zip,Credit_card,Visual_mode,Create_time")] User user)
         {
+            if(user.Name == null || user.Name.Equals(""))
+            {
+                ViewData["UniqueError"] = "Please select a username.";
+                return View();
+            }
             if (ModelState.IsValid)
             {
                 User existing = _context.User.Where(u => u.Name.ToLower().Equals(user.Name.ToLower())).FirstOrDefault();
