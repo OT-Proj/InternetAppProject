@@ -110,5 +110,15 @@ body {
 
 .main-image {
     border: 2px solid #0d0d0e;
-    border-radius: 50px 20px;
+    border-radius: 20px 20px;
+}
+
+.navbar {
+    margin: 0px !important;
+    padding-right: 10px !important;
+    padding-left: 10px !important;
+}
+
+.navbar-brand {
+    white-space: nowrap;
 }

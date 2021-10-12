@@ -22,10 +22,9 @@
     </p>
 
     <br />
-
-    <video id="videoplayer" src="@Url.Content("~/video/Welcome - 8479.mp4")" controls width="640" height="360" loop />
-
-</div>
+    <div class="embed-responsive embed-responsive-16by9">
+        <video id="videoplayer" class="embed-responsive-item" src="@Url.Content("~/video/Welcome - 8479.mp4")" controls loop />
+    </div>
 
 @section Scripts {
     <script src="~/js/canvas.js"></script>

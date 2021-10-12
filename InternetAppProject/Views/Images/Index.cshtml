@@ -9,66 +9,69 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Data)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UploadTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EditTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsPublic)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Tags)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @if (item.Data != null)
-                {
-                    string img = Convert.ToBase64String(item.Data);
-                    <img src="data:image/png;base64,@img" width="50" height="50" />
-                }
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UploadTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EditTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsPublic)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @foreach (Tag tag in item.Tags)
-                {
-                <a asp-controller="Tags" asp-action="Details" asp-route-id="@tag.Id">
-                    <span class="badge bg-primary"><span class="image-tag">@tag.Name</span></span>
-                </a>
-                }
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Data)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.UploadTime)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.EditTime)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IsPublic)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Tags)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @if (item.Data != null)
+                        {
+                            string img = Convert.ToBase64String(item.Data);
+                            <img src="data:image/png;base64,@img" width="50" height="50" />
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UploadTime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EditTime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsPublic)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @foreach (Tag tag in item.Tags)
+                        {
+                            <a asp-controller="Tags" asp-action="Details" asp-route-id="@tag.Id">
+                                <span class="badge bg-primary"><span class="image-tag">@tag.Name</span></span>
+                            </a>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
