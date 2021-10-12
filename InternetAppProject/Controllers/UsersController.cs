@@ -143,7 +143,20 @@ namespace InternetAppProject.Controllers
                 Text = v.ToString(),
                 Value = ((int)v).ToString()
             }).ToList();
-            ViewData["Types"] = new SelectList(types, "Value", "Text");
+            var typeSelect = new SelectList(types, "Value", "Text");
+            foreach (var s in typeSelect)
+            {
+                s.Selected = false;
+                if(s.Text.Equals("Admin") && user.Type == Models.User.UserType.Admin)
+                {
+                    s.Selected = true;
+                }
+                if(s.Text.Equals("Client") && user.Type == Models.User.UserType.Client)
+                {
+                    s.Selected = true;
+                }
+            }
+            ViewData["Types"] = typeSelect;
             return View(user);
         }
 
@@ -200,7 +213,7 @@ namespace InternetAppProject.Controllers
                     if(Int32.Parse(uID.Value) == user.Id)
                     {
                         LogoutUser();
-                        LoginUser(existing_Data.Name, existing_Data.Type, existing_Data.Id, existing_Data.D.Id, existing_Data.Visual_mode);
+                        LoginUser(existing_Data.Name, existing_Data.Type, existing_Data.Id, existing_Data.D.Id, user.Visual_mode);
                     }
                     await _context.SaveChangesAsync();
                 }
