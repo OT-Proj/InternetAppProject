@@ -60,7 +60,7 @@ namespace InternetAppProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Password,Zip,Credit_card,Visual_mode,Create_time")] User user)
+        public async Task<IActionResult> Create([Bind("Id,Name,Password,ConfirmPassword,Zip,Credit_card,Visual_mode,Create_time")] User user)
         {
             if(user.Name == null || user.Name.Equals(""))
             {
@@ -165,7 +165,7 @@ namespace InternetAppProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Password,Type,Zip,Credit_card,Visual_mode")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Password,ConfirmPassword,Type,Zip,Credit_card,Visual_mode")] User user)
         {
             if (id != user.Id)
             {

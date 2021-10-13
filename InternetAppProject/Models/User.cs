@@ -26,6 +26,13 @@ namespace InternetAppProject.Models
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
+        [NotMapped]
+        [Display(Name = "Confirm password")]
+        [Required(ErrorMessage = "Please enter confirm password")]
+        [Compare("Password", ErrorMessage = "Confirm password doesn't match, Type again !")]
+        [DataType(DataType.Password)]
+        public string ConfirmPassword { get; set; }
+
         [Display(Name = "Role")]
         public UserType Type { get; set; }
 
