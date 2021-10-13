@@ -434,7 +434,7 @@ namespace InternetAppProject.Controllers
             }
             if (drive.UserId.Id != Int32.Parse(UserId.Value))
             {
-                ViewData["ErrorMsg"] = "Oops! You do not have a permission!.";
+                ViewData["ErrorMsg"] = "Oops! You do not have permissions to fill this drive!";
                 return View("~/Views/Home/ShowError.cshtml");// no permission
             }
 

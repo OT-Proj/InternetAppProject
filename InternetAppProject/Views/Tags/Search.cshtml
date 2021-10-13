@@ -18,31 +18,33 @@
     </div>
 </section>
 <section>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
 
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model != null)
-            {
-                @foreach (var item in Model)
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
                 {
-                    <tr>
-                        <td>
-                            <a asp-controller="Tags" asp-action="Details" asp-route-id="@item.Id">
-                                <span class="badge bg-primary"><span class="image-tag">@item.Name</span></span>
-                            </a>
-                        </td>
-                    </tr>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-controller="Tags" asp-action="Details" asp-route-id="@item.Id">
+                                    <span class="badge bg-primary"><span class="image-tag">@item.Name</span></span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
                 }
-            }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 </section>
 <script type="text/template" id="template">
     <tr>

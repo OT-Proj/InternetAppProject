@@ -11,9 +11,9 @@
     </aside>
 
     <div>
-        Name: <input name="name" id="name" /> &nbsp;
-        Min. Images: <input name="minCapacity" id="minCapacity" /> &nbsp;
-        Max. Price: <input name="maxPrice" id="maxPrice" />
+        Name: <input name="name" id="name" /> &nbsp; <br class="d-sm-none"/>
+        Min. Images: <input name="minCapacity" id="minCapacity" /> &nbsp; <br class="d-sm-none" />
+        Max. Price: <input name="maxPrice" id="maxPrice" /> <br class="d-sm-none" />
         <button class="btnSearch btn btn-primary">Search</button>
         <div class="spinner-grow text-success d-none" role="status">
             <span class="visually-hidden">Loading...</span>
@@ -21,43 +21,45 @@
     </div>
 </section>
 <section>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Max_Capacity)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Price)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Last_change)
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Max_Capacity) Images
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Price) NIS
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Last_change)
-                    </td>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Max_Capacity)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Price)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Last_change)
+                    </th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Max_Capacity) Images
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Price) NIS
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Last_change)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </section>
 <script type="text/template" id="template">
     <tr>

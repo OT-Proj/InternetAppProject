@@ -1,105 +1,110 @@
 ﻿@model InternetAppProject.Models.Drive
 
 @{
-    ViewData["Title"] = "User Drive";
+    ViewData["Title"] =  @Model.UserId.Name + "'s Drive";
 }
-
-<p>
-    <h1 class="text-center fw-bold">@Html.DisplayFor(model => model.UserId.Name)'s Drive</h1>
-    <h6 class="text-center">
-        @Html.DisplayFor(model => model.Description)
-        @{
-            bool owner = false;
-            bool admin = false;
-            var uID = Context.User.Claims.FirstOrDefault(x => x.Type == "id");
-            var uType = Context.User.Claims.FirstOrDefault(x => x.Type == "Type");
-            if (uID != null)
-            {
-                if (Model.UserId.Id == Int32.Parse(uID.Value))
+<section>
+    <p>
+        <h1 class="text-center fw-bold">@Html.DisplayFor(model => model.UserId.Name)'s Drive</h1>
+        <h6 class="text-center">
+            @Html.DisplayFor(model => model.Description)
+            @{
+                bool owner = false;
+                bool admin = false;
+                var uID = Context.User.Claims.FirstOrDefault(x => x.Type == "id");
+                var uType = Context.User.Claims.FirstOrDefault(x => x.Type == "Type");
+                if (uID != null)
                 {
-                    owner = true;
-                }
-                if (uType.Value != null)
-                {
-                    if(uType.Value.Equals("Admin"))
+                    if (Model.UserId.Id == Int32.Parse(uID.Value))
                     {
-                        admin = true;
+                        owner = true;
+                    }
+                    if (uType.Value != null)
+                    {
+                        if (uType.Value.Equals("Admin"))
+                        {
+                            admin = true;
+                        }
+                    }
+                    if (owner || admin)
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id"> (edit)</a>
                     }
                 }
-                if (owner || admin)
-                {
-                    <a asp-action="Edit" asp-route-id="@Model.Id"> (edit)</a>
-                }
             }
-        }
-    </h6>
-    @if (owner || admin)
-    {
-        <div class="text-center">
-            Current usage:  @Html.DisplayFor(model => model.Current_usage) / @Html.DisplayFor(model => model.TypeId.Max_Capacity)
-
-            @if (owner)
-            {   <span>|</span>
-                <a asp-action="Upgrade" asp-route-id="@Model.Id">Upgrade now!</a>
-            }
-        </div>
-    }
-
-</p>
-@if (owner || admin)
-{
-    <form asp-action="Fill" method="post">
-        <div class="input-group mb-3">
-            <input type="hidden" name="id" value="@Model.Id" class="form-control" />
-            <input name="word" placeholder="Search and add up to 3 images from webservice, Pixabay" class="form-control" />
-            <input type="submit" class="btn btn-primary" value="Fetch Images!" />
-        </div>
-    </form>
-}
-<div>
-    <hr />
-    @if (owner || admin)
-    {
-        <p>
-            <a asp-controller="Images" asp-action="Create"><input type="button" value="+ Upload new image" class="btn btn-primary btn-lg disabled"/> </a>
-        </p>
-    }
-<div class="row container align-self-center">
-    @if (Model.Images != null)
-    {
-        @foreach (Image img in Model.Images)
+        </h6>
+        @if (owner || admin)
         {
-            <div class="col-sm-12 col-md-4 gy-5">
-                @if (img.Data != null)
-                {
-                    string temp = Convert.ToBase64String(img.Data);
-                    // show image card
-                    <div class="card">
-                        <a asp-controller="Images" asp-action="Details" asp-route-id="@img.Id">
-                            <img class="card-img-top" alt="Card image cap" src="data:image/png;base64,@temp" />
-                        </a>
-                        <div class="card-body">
-                            <p class="card-text">@img.Description</p>
-                            @foreach (Tag t in img.Tags)
-                            {
-                                <a asp-controller="Tags" asp-action="Details" asp-route-id="@t.Id">
-                                    <span class="badge bg-primary image-tag gx-1">@t.Name</span>
-                                </a>
-                            }
-                            <br />
-                            @if (owner || admin)
-                            {
-                                <br />
-                                <a asp-controller="Images" asp-action="Edit" asp-route-id="@img.Id" class="btn btn-primary">Edit</a>
-                                <a asp-controller="Images" asp-action="Delete" asp-route-id="@img.Id" class="btn btn-danger">Delete</a>
+            <div class="text-center">
+                Current usage:  @Html.DisplayFor(model => model.Current_usage) / @Html.DisplayFor(model => model.TypeId.Max_Capacity)
 
-                            }
-                        </div>
-                    </div>
-
+                @if (owner)
+                {<span>|</span>
+                    <a asp-action="Upgrade" asp-route-id="@Model.Id">Upgrade now!</a>
                 }
             </div>
         }
+
+    </p>
+    @if (owner)
+    {
+        <form asp-action="Fill" method="post">
+            <div class="input-group mb-3">
+                <input type="hidden" name="id" value="@Model.Id" class="form-control" />
+                <input name="word" placeholder="Search and add up to 3 images from webservice, Pixabay" class="form-control" />
+                <input type="submit" class="btn btn-primary" value="Fetch Images!" />
+            </div>
+        </form>
     }
-</div>
-</div>
+    <div>
+        <hr />
+        @if (owner)
+        {
+            <p>
+                <a asp-controller="Images" asp-action="Create"><input type="button" value="+ Upload new image" class="btn btn-primary btn-lg disabled" /> </a>
+            </p>
+        }
+    </div>
+</section>
+<section>
+    <div class="container">
+        <div class="row align-self-center">
+            @if (Model.Images != null)
+            {
+                @foreach (Image img in Model.Images)
+                {
+                    <div class="col-sm-12 col-md-4 gy-5">
+                        @if (img.Data != null)
+                        {
+                            string temp = Convert.ToBase64String(img.Data);
+                            // show image card
+                            <div class="card">
+                                <a asp-controller="Images" asp-action="Details" asp-route-id="@img.Id">
+                                    <img class="card-img-top" alt="Card image cap" src="data:image/png;base64,@temp" />
+                                </a>
+                                <div class="card-body">
+                                    <p class="card-text">@img.Description</p>
+                                    @foreach (Tag t in img.Tags)
+                                    {
+                                        <a asp-controller="Tags" asp-action="Details" asp-route-id="@t.Id">
+                                            <span class="badge bg-primary image-tag gx-1">@t.Name</span>
+                                        </a>
+                                    }
+                                    <br />
+                                    @if (owner || admin)
+                                    {
+                                        <br />
+                                        <a asp-controller="Images" asp-action="Edit" asp-route-id="@img.Id" class="btn btn-primary">Edit</a>
+                                        <a asp-controller="Images" asp-action="Delete" asp-route-id="@img.Id" class="btn btn-danger">Delete</a>
+
+                                    }
+                                </div>
+                            </div>
+
+                        }
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>

@@ -29,12 +29,13 @@ namespace InternetAppProject.Models
         [Display(Name = "Role")]
         public UserType Type { get; set; }
 
-        [RegularExpression(@"^([0-9]{7})$", ErrorMessage = "Invalid Zip Code")]
+        [RegularExpression(@"^([0-9]{7})$", ErrorMessage = "Invalid Zip Code, must be exactly 7 digits.")]
         public int Zip { get; set; }
 
         [Required(ErrorMessage = "Credit card is required")]
         [DataType(DataType.CreditCard)]
-        [StringLength(16, ErrorMessage = "Please enter vaild credit card", MinimumLength = 8)]
+        [StringLength(16, ErrorMessage = "Invaild credit card, must be 8-16 characters.", MinimumLength = 8)]
+        [RegularExpression("^[a-zA-Z0-9]*$", ErrorMessage = "Only Alphabets and Numbers allowed.")]
         [Display(Name = "Credit card")]
         public string Credit_card { get; set; }
 

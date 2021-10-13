@@ -9,7 +9,7 @@
         <h3>Here you can search for a drive by it's owner's name.</h3>
     </aside>
 
-    <div>
+    <div class="col-sm-12">
         Name: <input name="name" id="inpSearch" />
         <button class="btnSearch btn btn-primary">Search</button>
         <div class="spinner-grow text-success d-none" role="status">
@@ -18,36 +18,38 @@
     </div>
 </section>
 <section>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.UserId.Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Current_usage)
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model != null)
-            {
-                @foreach (var item in Model)
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.UserId.Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Current_usage)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
                 {
-                    <tr>
-                        <td>
-                            <a asp-controller="Drives" asp-action="Details" asp-route-id="@item.Id">
-                                @item.UserId.Name
-                            </a>
-                        </td>
-                        <td>
-                            @item.Current_usage
-                        </td>
-                    </tr>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-controller="Drives" asp-action="Details" asp-route-id="@item.Id">
+                                    @item.UserId.Name
+                                </a>
+                            </td>
+                            <td>
+                                @item.Current_usage
+                            </td>
+                        </tr>
+                    }
                 }
-            }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 </section>
 <script type="text/template" id="template">
     <tr>

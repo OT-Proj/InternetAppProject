@@ -10,11 +10,11 @@
     </aside>
     <div>
         Description includes: &nbsp;
-        <input name="desc" id="desc" /> &nbsp;
+        <input name="desc" id="desc" /> &nbsp; <br class="d-sm-none" />
         Uploaded after:&nbsp;
-        <input name="start" type="date" id="start">&nbsp;
+        <input name="start" type="date" id="start">&nbsp; <br class="d-sm-none" />
         Uploaded before:&nbsp;
-        <input name="end" type="date" id="end">&nbsp;
+        <input name="end" type="date" id="end">&nbsp; <br class="d-sm-none" />
         <button class="btnSearch btn btn-primary">Search</button>
         <div class="spinner-grow text-success d-none" role="status">
             <span class="visually-hidden">Searching...</span>
@@ -22,45 +22,47 @@
     </div>
 </section>
 <section>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Data)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Description)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.UploadTime)
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model != null)
-            {
-                @foreach (var item in Model)
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Data)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Description)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.UploadTime)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
                 {
-                    <tr>
-                        <td>
-                            @if (item.Data != null)
-                            {
-                                string img = Convert.ToBase64String(item.Data);
-                                <a asp-action="Details" asp-route-id="@item.Id.ToString()">
-                                    <img src="data:image/png;base64,@img" width="50" height="50" />
-                                </a>
-                            }
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Description)
-                        </td>
-                        <td>
-                            @item.UploadTime.ToString("MM/dd/yyyy HH:mm")
-                        </td>
-                    </tr>
-                }}
-        </tbody>
-    </table>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (item.Data != null)
+                                {
+                                    string img = Convert.ToBase64String(item.Data);
+                                    <a asp-action="Details" asp-route-id="@item.Id.ToString()">
+                                        <img src="data:image/png;base64,@img" width="50" height="50" />
+                                    </a>
+                                }
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Description)
+                            </td>
+                            <td>
+                                @item.UploadTime.ToString("MM/dd/yyyy HH:mm")
+                            </td>
+                        </tr>
+                    }}
+            </tbody>
+        </table>
+    </div>
 </section>
 <script type="text/template" id="template">
     <tr>
