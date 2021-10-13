@@ -122,3 +122,13 @@ body {
 .navbar-brand {
     white-space: nowrap;
 }
+
+video {
+    width: 60%;
+    height: 40%;
+}
+
+canvas {
+    width: 25%;
+    height: 25%;
+}
