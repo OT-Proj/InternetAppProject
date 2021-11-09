@@ -168,17 +168,20 @@ namespace InternetAppProject.Controllers
                 return View("~/Views/Home/ShowError.cshtml"); // orphaned drive - error
             }
 
+            // fetch drive from DB
             var drive = await _context.Drive.Include(d => d.TypeId)
                               .Include(d => d.UserId)
                               .Include(d => d.Images).ThenInclude(img => img.Tags)
                               .FirstOrDefaultAsync(m => m.Id == id);
 
+            // verify user's permissions to view the images on this page
             var CookieDrive = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "drive");
             if (drive == null)
             {
                 //drive not found, is it yours?
                 if(CookieDrive != null && Int32.Parse(CookieDrive.Value) == id)
                 {
+                    // user has no drive, suggest making a new one
                     return RedirectToAction("Create", null);
                 }
                 if (CookieDrive != null && Int32.Parse(CookieDrive.Value) == -1)
@@ -420,8 +423,11 @@ namespace InternetAppProject.Controllers
             {
                 word = "Technology";
             }
+
+            // Fetch drive (including user to verify permissions, and images to count current capacity)
             var drive = await _context.Drive.Include(d => d.UserId).Include(d => d.TypeId).Include(d => d.Images)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (drive == null)
             {
                 return NotFound();
@@ -432,6 +438,8 @@ namespace InternetAppProject.Controllers
                 ViewData["ErrorMsg"] = "Oops! You are not logged in. Please login.";
                 return View("~/Views/Home/ShowError.cshtml"); // user not logged in.
             }
+
+            // convert id string to int and compare drive's owner to the current user
             if (drive.UserId.Id != Int32.Parse(UserId.Value))
             {
                 ViewData["ErrorMsg"] = "Oops! You do not have permissions to fill this drive!";
@@ -451,6 +459,7 @@ namespace InternetAppProject.Controllers
                 HttpResponseMessage Res = await client.GetAsync("api/?key=" + key + "&q=" + word + "&image_type=photo&pretty=true");
                 if (Res.IsSuccessStatusCode)
                 {
+                    // parse response text into JSON
                     var Response = Res.Content.ReadAsStringAsync().Result;
                     JObject parsed = JObject.Parse(Response);
 
