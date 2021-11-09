@@ -411,6 +411,7 @@ namespace InternetAppProject.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Fill(int? id, string word)
         {
             int max_allowed = 3;
