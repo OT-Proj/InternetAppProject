@@ -1,4 +1,5 @@
 ﻿function ShowGraph(page_url, graph_id) {
+
     console.log(graph_id);
     //Read the data
     $(document).ready(function () {
@@ -33,7 +34,7 @@
                 width = width - margin.left - margin.right;
                 height = height - margin.top - margin.bottom;
 
-                var svg = d3.select('body').append("svg" + graph_id)
+                var svg = d3.select('.svg' + graph_id).append("svg")
                     .attr("width", width + margin.left + margin.right)
                     .attr("height", height + margin.top + margin.bottom)
                     .append("g")
