@@ -48,13 +48,14 @@
     </p>
     @if (owner)
     {
-        <form asp-action="Fill" method="post">
-            <div class="input-group mb-3">
-                <input type="hidden" name="id" value="@Model.Id" class="form-control" />
-                <input name="word" placeholder="Search and add up to 3 images from webservice, Pixabay" class="form-control" />
-                <input type="submit" class="btn btn-primary" value="Fetch Images!" />
-            </div>
-        </form>
+<form asp-action="Fill" method="post">
+    @Html.AntiForgeryToken()
+    <div class="input-group mb-3">
+        <input type="hidden" name="id" value="@Model.Id" class="form-control" />
+        <input name="word" placeholder="Search and add up to 3 images from webservice, Pixabay" class="form-control" />
+        <input type="submit" class="btn btn-primary" value="Fetch Images!" />
+    </div>
+</form>
     }
     <div>
         <hr />

@@ -193,6 +193,14 @@ namespace InternetAppProject.Controllers
                 return View("~/Views/Home/ShowError.cshtml"); // orphaned drive - error
             }
 
+            // dynamically fix counting errors with number of images
+            if(drive.Current_usage != drive.Images.Count())
+            {
+                drive.Current_usage = drive.Images.Count();
+                _context.Update(drive);
+                await _context.SaveChangesAsync();
+            }
+
             if(drive.UserId == null)
             {
                 ViewData["ErrorMsg"] = " Oops! This device has no owner. Please create a new drive.";
@@ -487,6 +495,7 @@ namespace InternetAppProject.Controllers
                         _context.Image.Update(I);
                         drive.Current_usage++;
                     }
+                    drive.Current_usage = drive.Images.Count();
                     _context.Drive.Update(drive);
                     await _context.SaveChangesAsync();
                 }
