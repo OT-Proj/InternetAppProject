@@ -3,7 +3,7 @@ $(document).ready(function () {
 
     var json_result = $.ajax({
         type: "GET",
-        url: "/PurchaseEvents/CountByDayJson",
+        url: "/PurchaseEvents/",
         contentType: "application/json; charset=utf-8",
         dataType: "json",
     });
