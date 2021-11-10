@@ -424,6 +424,8 @@ namespace InternetAppProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Fill(int? id, string word)
         {
+            // example: https://pixabay.com/api/?key=23510481-c5bf39e0b210f2fe4301098dd&q=israel&image_type=photo&pretty=true
+           
             int max_allowed = 3;
 
             if (id == null)
@@ -496,14 +498,14 @@ namespace InternetAppProject.Controllers
                         Tag temp;
                         for(int j = 0; j < allTags.Length; j++)
                         {
-                            temp = _context.Tag.Where(t => t.Name.Equals(allTags[j])).FirstOrDefault();
+                            temp = _context.Tag.Where(t => t.Name.ToLower().Replace(" ", "").Equals(allTags[j].ToLower().Replace(" ", ""))).FirstOrDefault();
                             if(temp == null)
                             {
-                                temp = new Tag { Name = allTags[j] };
+                                temp = new Tag { Name = allTags[j].ToLower().Replace(" ", "") };
                                 _context.Tag.Add(temp);
                                 await _context.SaveChangesAsync();
-                                ((List<Tag>)I.Tags).Add(temp);
                             }
+                            ((List<Tag>)I.Tags).Add(temp);
                         }
                         if (pixabay_tag != null)
                         {
