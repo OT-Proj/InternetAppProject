@@ -23,9 +23,11 @@
                                 <p class="card-text">@img.Description</p>
                                 @foreach (Tag t in img.Tags)
                                 {
-                                    <a asp-controller="Tags" asp-action="Details" asp-route-id="@t.Id">
-                                        <span class="badge bg-primary"><span class="image-tag">@t.Name</span></span>
-                                    </a>
+                                    <span class="badge bg-primary image-tag gx-1">
+                                        <a class="text-white text-decoration-none" asp-controller="Tags" asp-action="Details" asp-route-id="@t.Id">
+                                            @t.Name
+                                        </a>
+                                    </span>
                                 }
                             </div>
                         </div>

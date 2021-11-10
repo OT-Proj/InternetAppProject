@@ -69,7 +69,9 @@ namespace InternetAppProject.Controllers
             }
             else
             {
-                return NotFound(); // no better business plan exists! congratulations, you already enjoy our best service!
+                // no better business plan exists! congratulations, you already enjoy our best service!
+                ViewData["ErrorMsg"] = "No better business plan is found at this time. Congratulations! This is the best service we can provide at the moment!";
+                return View("~/Views/Home/ShowError.cshtml"); // orphaned drive - error 
             }
             return View();
         }
@@ -486,10 +488,25 @@ namespace InternetAppProject.Controllers
                             byte[] image = c.DownloadData(parsed["hits"][i]["webformatURL"].ToString());
                             I.Data = image;
                         }
+
+                        // add tags to the new image
                         I.Description = "this image was originally uploaded by Pixabay/" + parsed["hits"][i]["user"].ToString();
+                        I.Tags = new List<Tag>();
+                        string[] allTags = parsed["hits"][i]["tags"].ToString().Split(",");
+                        Tag temp;
+                        for(int j = 0; j < allTags.Length; j++)
+                        {
+                            temp = _context.Tag.Where(t => t.Name.Equals(allTags[j])).FirstOrDefault();
+                            if(temp == null)
+                            {
+                                temp = new Tag { Name = allTags[j] };
+                                _context.Tag.Add(temp);
+                                await _context.SaveChangesAsync();
+                                ((List<Tag>)I.Tags).Add(temp);
+                            }
+                        }
                         if (pixabay_tag != null)
                         {
-                            I.Tags = new List<Tag>();
                             ((List<Tag>)I.Tags).Add(pixabay_tag);
                         }
                         _context.Image.Update(I);

@@ -36,7 +36,7 @@ namespace InternetAppProject.Controllers
                 return NotFound();
             }
 
-            var tag = await _context.Tag.Include(x => x.Images)
+            var tag = await _context.Tag.Include(x => x.Images).ThenInclude(i => i.Tags)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (tag == null)
             {

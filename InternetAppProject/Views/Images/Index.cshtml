@@ -60,9 +60,11 @@
                     <td>
                         @foreach (Tag tag in item.Tags)
                         {
-                            <a asp-controller="Tags" asp-action="Details" asp-route-id="@tag.Id">
-                                <span class="badge bg-primary"><span class="image-tag">@tag.Name</span></span>
-                            </a>
+                            <span class="badge bg-primary image-tag gx-1">
+                                <a class="text-white text-decoration-none" asp-controller="Tags" asp-action="Details" asp-route-id="@tag.Id">
+                                    @tag.Name
+                                </a>
+                            </span>
                         }
                     </td>
                     <td>
