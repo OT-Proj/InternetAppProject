@@ -4,6 +4,7 @@
     //Read the data
     $(document).ready(function () {
 
+        // get data from server (points for the graph)
         var json_result = $.ajax({
             type: "GET",
             url: "/PurchaseEvents/" + page_url,
@@ -11,8 +12,11 @@
             dataType: "json",
         });
 
+        // draw the graph on the screen
         json_result.done(
             // Now I can use this dataset:
+
+            // converts date from the server into presentable format
             function (lineData) {
                 var parser;
 
@@ -29,7 +33,7 @@
                 })
                 //********
 
-
+                // define graph properties (size, axis scale, etc.)
                 var height = 200;
                 var width = 650;
                 var hEach = 40;
@@ -39,28 +43,32 @@
                 width = width - margin.left - margin.right;
                 height = height - margin.top - margin.bottom;
 
+                // add graph component into the html document
                 var svg = d3.select('.svg' + graph_id).append("svg")
                     .attr("width", width + margin.left + margin.right)
                     .attr("height", height + margin.top + margin.bottom)
                     .append("g")
                     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-                // set the ranges
+                // set the ranges for both axes
                 var x = d3.scaleTime().range([0, width]);
 
+                // x is dates, ranges between earliest to latest date
                 x.domain(d3.extent(lineData, function (d) { return d.date_fixed; }));
 
 
                 var y = d3.scaleLinear().range([height, 0]);
 
-
+                // y is the depanding variable, sclaes from 0 to the maximum of the recieved data
                 y.domain([0, d3.max(lineData, function (d) { return d.value; })]);
 
+                // put data points on the screen
                 var valueline = d3.line()
                     .x(function (d) { return x(d.date_fixed); })
                     .y(function (d) { return y(d.value); })
                     .curve(d3.curveMonotoneX);
 
+                // add the line wetween the points
                 svg.append("path")
                     .data([lineData])
                     .attr("class", "line")
@@ -86,7 +94,7 @@
                     .attr("cy", function (d) { return y(d.value) })
                     .attr("r", 5);
 
-
+                // draw point text next the point
                 svg.selectAll(".text")
                     .data(lineData)
                     .enter()
