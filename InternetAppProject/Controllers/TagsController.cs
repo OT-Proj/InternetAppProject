@@ -149,6 +149,10 @@ namespace InternetAppProject.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var tag = await _context.Tag.FindAsync(id);
+            if(tag == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
             _context.Tag.Remove(tag);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
