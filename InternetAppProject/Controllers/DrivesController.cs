@@ -530,6 +530,7 @@ namespace InternetAppProject.Controllers
 
         private int UserPaid(User user)
         {
+            // returns how much a certain user has paid to us until now (in total)
             if(user == null)
             {
                 return 0;

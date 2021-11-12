@@ -14,11 +14,16 @@
         json_result.done(
             // Now I can use this dataset:
             function (lineData) {
-
-                var parser = d3.timeParse("%Y/%m/%d")
+                var parser;
 
                 lineData.forEach(function (d) {
                     console.log(d.date);
+                    if (d.date.includes("/")) {
+                        parser = d3.timeParse("%Y/%m/%d");
+                    }
+                    else {
+                        parser = d3.timeParse("%Y-%m-%d");
+                    }
                     d.date_fixed = new Date(parser(d.date));
                     console.log(d.date_fixed);
                 })
