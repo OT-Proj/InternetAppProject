@@ -1,4 +1,4 @@
-﻿function ShowGraph(page_url, graph_id) {
+﻿function ShowGraph(page_url, graph_id, description) {
 
     console.log(graph_id);
     //Read the data
@@ -108,7 +108,7 @@
                 svg.append('text')
                     .attr('x', -30)
                     .attr('y', -5)
-                    .text('Profits per Day');
+                    .text(description);
 
 
 
@@ -117,5 +117,5 @@
  
 }
 
-ShowGraph("ByDayJson", "1");
-ShowGraph("CountByDayJson", "2");
+ShowGraph("ByDayJson", "1", "Profits per Day");
+ShowGraph("CountByDayJson", "2", "Purchases per unique users");
