@@ -24,7 +24,11 @@ namespace InternetAppProject.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
-            var tags = _context.Tag.Include(x => x.Images);
+            var tags = _context.Tag;
+            if(tags == null)
+            {
+                return View(new List<Tag>()); 
+            }
             return View(await tags.ToListAsync());
         }
 
