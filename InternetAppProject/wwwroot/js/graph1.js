@@ -15,7 +15,7 @@
             // Now I can use this dataset:
             function (lineData) {
 
-                var parser = d3.timeParse("%Y-%m-%d")
+                var parser = d3.timeParse("%Y/%m/%d")
 
                 lineData.forEach(function (d) {
                     console.log(d.date);
