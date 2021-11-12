@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using InternetAppProject.Data;
 using InternetAppProject.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace InternetAppProject
 {

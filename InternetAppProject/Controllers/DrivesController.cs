@@ -69,7 +69,9 @@ namespace InternetAppProject.Controllers
             }
             else
             {
-                return NotFound(); // no better business plan exists! congratulations, you already enjoy our best service!
+                // no better business plan exists! congratulations, you already enjoy our best service!
+                ViewData["ErrorMsg"] = "No better business plan is found at this time. Congratulations! This is the best service we can provide at the moment!";
+                return View("~/Views/Home/ShowError.cshtml"); // orphaned drive - error 
             }
             return View();
         }
@@ -168,17 +170,20 @@ namespace InternetAppProject.Controllers
                 return View("~/Views/Home/ShowError.cshtml"); // orphaned drive - error
             }
 
+            // fetch drive from DB
             var drive = await _context.Drive.Include(d => d.TypeId)
                               .Include(d => d.UserId)
                               .Include(d => d.Images).ThenInclude(img => img.Tags)
                               .FirstOrDefaultAsync(m => m.Id == id);
 
+            // verify user's permissions to view the images on this page
             var CookieDrive = ((ClaimsIdentity)User.Identity).Claims.FirstOrDefault(x => x.Type == "drive");
             if (drive == null)
             {
                 //drive not found, is it yours?
                 if(CookieDrive != null && Int32.Parse(CookieDrive.Value) == id)
                 {
+                    // user has no drive, suggest making a new one
                     return RedirectToAction("Create", null);
                 }
                 if (CookieDrive != null && Int32.Parse(CookieDrive.Value) == -1)
@@ -188,6 +193,14 @@ namespace InternetAppProject.Controllers
                 }
                 ViewData["ErrorMsg"] = "The Drive you are trying to view is not found.";
                 return View("~/Views/Home/ShowError.cshtml"); // orphaned drive - error
+            }
+
+            // dynamically fix counting errors with number of images
+            if(drive.Current_usage != drive.Images.Count())
+            {
+                drive.Current_usage = drive.Images.Count();
+                _context.Update(drive);
+                await _context.SaveChangesAsync();
             }
 
             if(drive.UserId == null)
@@ -408,8 +421,11 @@ namespace InternetAppProject.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Fill(int? id, string word)
         {
+            // example: https://pixabay.com/api/?key=23510481-c5bf39e0b210f2fe4301098dd&q=israel&image_type=photo&pretty=true
+           
             int max_allowed = 3;
 
             if (id == null)
@@ -420,8 +436,11 @@ namespace InternetAppProject.Controllers
             {
                 word = "Technology";
             }
+
+            // Fetch drive (including user to verify permissions, and images to count current capacity)
             var drive = await _context.Drive.Include(d => d.UserId).Include(d => d.TypeId).Include(d => d.Images)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (drive == null)
             {
                 return NotFound();
@@ -432,9 +451,11 @@ namespace InternetAppProject.Controllers
                 ViewData["ErrorMsg"] = "Oops! You are not logged in. Please login.";
                 return View("~/Views/Home/ShowError.cshtml"); // user not logged in.
             }
+
+            // convert id string to int and compare drive's owner to the current user
             if (drive.UserId.Id != Int32.Parse(UserId.Value))
             {
-                ViewData["ErrorMsg"] = "Oops! You do not have a permission!.";
+                ViewData["ErrorMsg"] = "Oops! You do not have permissions to fill this drive!";
                 return View("~/Views/Home/ShowError.cshtml");// no permission
             }
 
@@ -451,6 +472,7 @@ namespace InternetAppProject.Controllers
                 HttpResponseMessage Res = await client.GetAsync("api/?key=" + key + "&q=" + word + "&image_type=photo&pretty=true");
                 if (Res.IsSuccessStatusCode)
                 {
+                    // parse response text into JSON
                     var Response = Res.Content.ReadAsStringAsync().Result;
                     JObject parsed = JObject.Parse(Response);
 
@@ -468,15 +490,31 @@ namespace InternetAppProject.Controllers
                             byte[] image = c.DownloadData(parsed["hits"][i]["webformatURL"].ToString());
                             I.Data = image;
                         }
+
+                        // add tags to the new image
                         I.Description = "this image was originally uploaded by Pixabay/" + parsed["hits"][i]["user"].ToString();
+                        I.Tags = new List<Tag>();
+                        string[] allTags = parsed["hits"][i]["tags"].ToString().Split(",");
+                        Tag temp;
+                        for(int j = 0; j < allTags.Length; j++)
+                        {
+                            temp = _context.Tag.Where(t => t.Name.ToLower().Replace(" ", "").Equals(allTags[j].ToLower().Replace(" ", ""))).FirstOrDefault();
+                            if(temp == null)
+                            {
+                                temp = new Tag { Name = allTags[j].ToLower().Replace(" ", "") };
+                                _context.Tag.Add(temp);
+                                await _context.SaveChangesAsync();
+                            }
+                            ((List<Tag>)I.Tags).Add(temp);
+                        }
                         if (pixabay_tag != null)
                         {
-                            I.Tags = new List<Tag>();
                             ((List<Tag>)I.Tags).Add(pixabay_tag);
                         }
                         _context.Image.Update(I);
                         drive.Current_usage++;
                     }
+                    drive.Current_usage = drive.Images.Count();
                     _context.Drive.Update(drive);
                     await _context.SaveChangesAsync();
                 }
@@ -492,6 +530,7 @@ namespace InternetAppProject.Controllers
 
         private int UserPaid(User user)
         {
+            // returns how much a certain user has paid to us until now (in total)
             if(user == null)
             {
                 return 0;

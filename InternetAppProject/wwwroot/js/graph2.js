@@ -3,7 +3,7 @@ $(document).ready(function () {
 
     var json_result = $.ajax({
         type: "GET",
-        url: "/PurchaseEvents/CountByDayJson",
+        url: "/PurchaseEvents/",
         contentType: "application/json; charset=utf-8",
         dataType: "json",
     });
@@ -12,7 +12,7 @@ $(document).ready(function () {
         // Now I can use this dataset:
         function (lineData) {
 
-            var parser = d3.timeParse("%Y-%M-%d")
+            var parser = d3.timeParse("%Y-%m-%d")
 
             lineData.forEach(function (d) {
                 console.log(d.date);

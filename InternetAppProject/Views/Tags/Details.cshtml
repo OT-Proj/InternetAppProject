@@ -4,35 +4,37 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>All images tagged as: @Html.DisplayFor(model => model.Name)</h1> <br>
-<div class="row">
-    @foreach (Image img in Model.Images)
-    {
-        @if (img.Data != null)
-        {
-            string temp = Convert.ToBase64String(img.Data);
-            // show image card
-    <div class="col-md-3 gy-5">
-        <div class="card" style="width: 18rem;">
-            <a asp-controller="Images" asp-action="Details" asp-route-id="@img.Id">
-                <img class="card-img-top" alt="Card image cap" src="data:image/png;base64,@temp" />
-            </a>
-            <div class="card-body">
-                <p class="card-text">@img.Description</p>
-                @foreach (Tag t in img.Tags)
+<h1 class="text-center">All images tagged as: @Html.DisplayFor(model => model.Name)</h1>
+<section>
+    <div class="container">
+        <div class="row align-self-center">
+            @foreach (Image img in Model.Images)
+            {
+                @if (img.Data != null)
                 {
-                    <a asp-controller="Tags" asp-action="Details" asp-route-id="@t.Id">
-                        <span class="badge bg-primary"><span class="image-tag">@t.Name</span></span>
-                    </a>
+                    string temp = Convert.ToBase64String(img.Data);
+                    // show image card
+                    <div class="col-md-3 gy-5">
+                        <div class="card">
+                            <a asp-controller="Images" asp-action="Details" asp-route-id="@img.Id">
+                                <img class="card-img-top" alt="Card image cap" src="data:image/png;base64,@temp" />
+                            </a>
+                            <div class="card-body">
+                                <p class="card-text">@img.Description</p>
+                                @foreach (Tag t in img.Tags)
+                                {
+                                    <span class="badge bg-primary image-tag gx-1">
+                                        <a class="text-white text-decoration-none" asp-controller="Tags" asp-action="Details" asp-route-id="@t.Id">
+                                            @t.Name
+                                        </a>
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
                 }
-            </div>
+            }
         </div>
     </div>
-            
-        }
-    }
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+</section>

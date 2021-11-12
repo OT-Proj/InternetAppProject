@@ -22,16 +22,21 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
-            <br />
+            <div class="text-danger">
+                @if (!String.IsNullOrEmpty(ViewBag.Error))
+                {
+                    @ViewBag.Error
 
-            <div class="form-group">
-                <input type="submit" value="Login" class="btn btn-primary" />
+                }
+                else
+                {
+                    <br />
+                }
             </div>
 
-            @if (!String.IsNullOrEmpty(ViewBag.Error))
-            {
-                <div class="text-danger">@ViewBag.Error</div>
-            }
+            <div class="form-group justify-content-center text-center g-5">
+                <input type="submit" value="Login" class="btn btn-primary" />
+            </div>
         </form>
     </div>
 </div>

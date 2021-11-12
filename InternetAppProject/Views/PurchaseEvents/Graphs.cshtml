@@ -9,21 +9,22 @@
 <link rel="stylesheet" href="~/css/graph.css">
 <div class="text-left">
     <h1>Graphs (last 7 days)</h1>
-    <table>
-        <tr>
-            <td>
-                <div id="svg1" class="svg1"></div>
-            </td>
-            <td>
-                <div id="svg2" class="svg2"></div>
-            </td>
-        </tr>
+    <div class="table-responsive">
+        <table>
+            <tr>
+                <td>
+                    <div id="svg1" class="svg1"></div>
+                </td>
+                <td>
+                    <div id="svg2" class="svg2"></div>
+                </td>
+            </tr>
 
-    </table>  
+        </table>
+    </div>
 </div>
 
-@section Scripts{
-    <script src="~/js/d3.v5.min.js"></script>
-    <script src="~/js/graph1.js"></script>
-    <script src="~/js/graph2.js"></script>
-}
+    @section Scripts{
+        <script src="~/js/d3.v5.min.js"></script>
+        <script src="~/js/graph1.js"></script>
+    }

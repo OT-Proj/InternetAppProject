@@ -16,39 +16,41 @@
     </div>
 </section>
 <section>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Name)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Zip)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.D)
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model != null)
-            {
-                @foreach (var item in Model)
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Zip)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.D)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
                 {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Zip)
-                        </td>
-                        <td>
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Drives" asp-action="Details" asp-route-id="@item.D.Id.ToString()">@Html.DisplayFor(modelItem => item.Name)'s Drive</a>
-                        </td>
-                    </tr>
-                }}
-        </tbody>
-    </table>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Zip)
+                            </td>
+                            <td>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Drives" asp-action="Details" asp-route-id="@item.D.Id.ToString()">@Html.DisplayFor(modelItem => item.Name)'s Drive</a>
+                            </td>
+                        </tr>
+                    }}
+            </tbody>
+        </table>
+    </div>
 </section>
 <script type="text/template" id="template">
     <tr>

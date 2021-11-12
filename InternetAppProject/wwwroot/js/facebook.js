@@ -1,4 +1,5 @@
-﻿window.fbAsyncInit = function () {
+﻿// load facebook API
+window.fbAsyncInit = function () {
     FB.init({
         appId: '163121062684887', // App ID
         channelUrl: '//mynetwork.net/', // Channel File
@@ -9,6 +10,7 @@
     });
 };
 
+// send message to facebook to post on the profile
 $('.btnPost').click(function () {
     console.log("hello??");
     var MyMessage = $('#postText').val();

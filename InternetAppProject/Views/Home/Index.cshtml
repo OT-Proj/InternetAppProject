@@ -2,31 +2,25 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
+<div class="text-center justify-content-center">
+    <p class="text-black">
+        <h1 class="fw-bold">Welcome!</h1>
+        This is MoodleDrive, our image sharing platform! <br />
+        Here you can store your own images or import from Pixabay.com webservice. <br />
+        You can also upgrade your business plan to upload more images. <br />
+        Feel free to explore our website, there are many suprises to be found! <br />
+        Enjoy our project!
 
-    <canvas id="myCanvas" width="300" height="70"></canvas>
-
-    <br />
-
-    <p>
-        <h5>
-            to our website!!!
-            <br />
-            <br />
-            Here you can store your images or import from Pixabay.com.
-            <br />
-            You can also upgrade your business plan to upload more images!
-            <br />
-            Enjoy our project!
-        </h5>
     </p>
-
-    <br />
-
-    <video id="videoplayer" src="@Url.Content("~/video/Welcome - 8479.mp4")" controls width="640" height="360" loop />
-
+    <div class="justify-content-center  embed-responsive-16by9">
+        <video id="videoplayer" controls loop>
+            <source src="@Url.Content("~/video/Welcome - 24829.mp4")" type="video/mp4">
+        </video>
+    </div>
+    <div>
+        <canvas id="myCanvas"></canvas>
+    </div>
 </div>
-
 @section Scripts {
     <script src="~/js/canvas.js"></script>
 }

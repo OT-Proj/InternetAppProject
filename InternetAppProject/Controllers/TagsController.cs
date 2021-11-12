@@ -24,7 +24,11 @@ namespace InternetAppProject.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
-            var tags = _context.Tag.Include(x => x.Images);
+            var tags = _context.Tag;
+            if(tags == null)
+            {
+                return View(new List<Tag>()); 
+            }
             return View(await tags.ToListAsync());
         }
 
@@ -36,7 +40,7 @@ namespace InternetAppProject.Controllers
                 return NotFound();
             }
 
-            var tag = await _context.Tag.Include(x => x.Images)
+            var tag = await _context.Tag.Include(x => x.Images).ThenInclude(i => i.Tags)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (tag == null)
             {
@@ -149,6 +153,10 @@ namespace InternetAppProject.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var tag = await _context.Tag.FindAsync(id);
+            if(tag == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
             _context.Tag.Remove(tag);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

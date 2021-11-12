@@ -6,7 +6,11 @@
 
 <h1>Upgrade your drive</h1>
 
-<h4>please pay a lot!</h4>
+<h4>We'd like your money!</h4>
+<h6>
+    Please note you only pay for the <b>difference</b> of what you paid until now, <br />
+    That means if you already have paid us in the past - you can upgrade for a lowered cost.
+</h6>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -20,7 +24,7 @@
                     <tr>
                         <td>Amount to Pay:</td>
                         <td>@ViewBag.Amount&nbsp;|&nbsp;</td> 
-                        <td>Number of Images:</td>
+                        <td>Max. Images:</td>
                         <td>@ViewBag.Images</td>
                     </tr>
                  </tbody>
@@ -34,11 +38,12 @@
         </form>
     </div>
 </div>
+
 <script type="text/template" id="template">
     <tr>
         <td>Amount to Pay:</td>
         <td>${amount}&nbsp;|&nbsp;</td> 
-        <td>Number of Images:</td>
+        <td>Max. Images:</td>
         <td>${images}</td>
     </tr>
 </script>

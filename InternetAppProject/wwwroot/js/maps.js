@@ -1,6 +1,7 @@
 ﻿var markers = {};
 var size;
 
+// get addresses from DB
 $.ajax({
     method: "get",
     url: "/Workplaces/FetchJson",
@@ -13,6 +14,7 @@ $.ajax({
     });
 }).done(function () {
 
+    // load google API maps
     var map = new google.maps.Map(document.getElementById('map'), {
         zoom: 15,
         center: new google.maps.LatLng(31.97012071073282, 34.77270090743654),
@@ -21,6 +23,7 @@ $.ajax({
 
     var infowindow = new google.maps.InfoWindow();
 
+    // draw markers on the points from the DB
     var marker, i;
     console.log("size: " + size);
     for (i = 0; i < size; i++) {
@@ -31,6 +34,7 @@ $.ajax({
             map: map
         });
 
+        // make markers clickable
         google.maps.event.addListener(marker, 'click', (function (marker, i) {
             return function () {
                 infowindow.setContent(markers[i]["name"]);
