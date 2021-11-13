@@ -20,7 +20,7 @@ $('.btnPost').click(function () {
         {
             "message": MyMessage,
             //"access_token": "EAACUW5TZCKNcBALpcUufZAvYXoh42vDDwQLZBQcN4u7OkN5ZAG8tWXayMHLZCr8ELKo8rZANtvcKCh8XpkaW4to9Aue41vjSopThiB7NSQpS0zrzngroR5OMcpZBlU93hXQhtQKLYul0Q0NXSihMRXuGDdOoVYaPKczaPf4xfAqIHBwLFKHvKq11S0Lszgw6iMZD"
-            "access_token": "EAACUW5TZCKNcBAJrnlywjKolYlc7to5DNfd9RQY9wc2GyNLCjQnaEk3gMvkzKgosoKoB23aS6bH8Tpynzar2ZCzRALrg7OZAwMHg33ve7gyitcwLQBlPDRzovjTIr8291OifZC9HcRAwdhjqyTK42HXRgoS50fZBgH15QEabK9muIb6Q1kZARczKld89c4flMZD"
+            "access_token": "EAACUW5TZCKNcBAA9oisJiLoM9pX9wmQC95Yh70OIul93xQ8SaQDPLeZCxZC2yTnURWHpqQjSD5BJNtFHXGrpnCZAhnYzZA7qj4oHhwKDuGlEoP3DnqQi1OrVnRNPVfosjMJMZCaDUj9U92DeWkk9ERXPN37KyEtyymU9PzIcpZC3OMYTmYfdJH5XGqhfVXJ6ZBIZD"
         },
         function (response) {
             $('.error').html("");
