@@ -20,7 +20,7 @@ $('.btnPost').click(function () {
         {
             "message": MyMessage,
             //"access_token": "EAACUW5TZCKNcBALpcUufZAvYXoh42vDDwQLZBQcN4u7OkN5ZAG8tWXayMHLZCr8ELKo8rZANtvcKCh8XpkaW4to9Aue41vjSopThiB7NSQpS0zrzngroR5OMcpZBlU93hXQhtQKLYul0Q0NXSihMRXuGDdOoVYaPKczaPf4xfAqIHBwLFKHvKq11S0Lszgw6iMZD"
-            "access_token": "EAACUW5TZCKNcBAFa12PSOQBWo6yNZCKco9JqNdY3i0vNRZASsUzzJQN3GnX4NqgeNRSyLAYxcvmvTCCAEMuMgaXHeZBJ1812TUN2RxzRCWEno8eDHh7SLUq4K8MgAR0ueaBsfasra0xNc136wLIar6mzA1VLKGiZAoli4txLrZAnAiZBJCdOFcXCjKex65ZBSOkZD"
+            "access_token": "EAACUW5TZCKNcBAJrnlywjKolYlc7to5DNfd9RQY9wc2GyNLCjQnaEk3gMvkzKgosoKoB23aS6bH8Tpynzar2ZCzRALrg7OZAwMHg33ve7gyitcwLQBlPDRzovjTIr8291OifZC9HcRAwdhjqyTK42HXRgoS50fZBgH15QEabK9muIb6Q1kZARczKld89c4flMZD"
         },
         function (response) {
             $('.error').html("");
