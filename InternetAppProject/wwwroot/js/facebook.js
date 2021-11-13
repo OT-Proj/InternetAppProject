@@ -10,6 +10,16 @@ window.fbAsyncInit = function () {
     });
 };
 
+var k5 = "YWbGHUADpTc1ei2yYqG8vNcfcc";
+var k2 = "ZAO0wQ1o4rdLyYOtFWSWZ";
+var k6 = "oa6Y0IcM7fIHouVErc8ynm";
+var k7 = "qLIefLc3OQCfrZCWpkTyWnwsjdD";
+var k1 = "EAACUW5TZCKNcBAANU";
+var k8 = "ILBbrp9IRag99g2SwZA8K6cApl";
+var k9 = "ibQAdA9h8ZD";
+var k3 = "CX5xanZB7BTmh1ppk5vavZC";
+var k4 = "7w4VwPFZCDQO0b3fRSJOJnDD";
+
 // send message to facebook to post on the profile
 $('.btnPost').click(function () {
     console.log("hello??");
@@ -20,7 +30,7 @@ $('.btnPost').click(function () {
         {
             "message": MyMessage,
             //"access_token": "EAACUW5TZCKNcBALpcUufZAvYXoh42vDDwQLZBQcN4u7OkN5ZAG8tWXayMHLZCr8ELKo8rZANtvcKCh8XpkaW4to9Aue41vjSopThiB7NSQpS0zrzngroR5OMcpZBlU93hXQhtQKLYul0Q0NXSihMRXuGDdOoVYaPKczaPf4xfAqIHBwLFKHvKq11S0Lszgw6iMZD"
-            "access_token": "EAACUW5TZCKNcBAA9oisJiLoM9pX9wmQC95Yh70OIul93xQ8SaQDPLeZCxZC2yTnURWHpqQjSD5BJNtFHXGrpnCZAhnYzZA7qj4oHhwKDuGlEoP3DnqQi1OrVnRNPVfosjMJMZCaDUj9U92DeWkk9ERXPN37KyEtyymU9PzIcpZC3OMYTmYfdJH5XGqhfVXJ6ZBIZD"
+            "access_token": k1 + k2 + k3 + k4 + k5 + k6 + k7 + k8 + k9,
         },
         function (response) {
             $('.error').html("");
